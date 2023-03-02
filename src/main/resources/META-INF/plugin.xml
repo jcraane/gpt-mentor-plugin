@@ -27,9 +27,9 @@
                     text="Explain Code"/>
             <action id="improveCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
                     text="Improve Code"/>
-            <action id="reviewCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+            <action id="reviewCode" class="com.github.jcraane.gptmentorplugin.actions.ReviewCodeAction"
                     text="Review Code"/>
-            <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+            <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.CreateUnitTestAction"
                     text="Create Unit Test"/>
         </group>
     </actions>

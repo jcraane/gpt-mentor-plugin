@@ -1,42 +1,29 @@
 package com.github.jcraane.gptmentorplugin.actions
 
+import com.github.jcraane.gptmentorplugin.openapi.BasicAction
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
+import com.github.jcraane.gptmentorplugin.ui.ShowSuggestionDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.project.Project
 import io.ktor.client.*
 import kotlinx.coroutines.*
+import javax.swing.SwingUtilities
 
-class ReviewCodeAction : AnAction() {
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
-    private
-    var apiJob: Job? = null
-
-    private val openApi = RealOpenApi(
-        HttpClient(),
-    )
-
-    override fun actionPerformed(e: AnActionEvent) {
-        println("PrintSelectedTextAction.actionPerformed")
-        val project = e.getData(CommonDataKeys.PROJECT)
-        val editor = e.getData(CommonDataKeys.EDITOR)
-
-        if (project == null || editor == null) {
-            return
-        }
-
-        val selectedText = editor.selectionModel.selectedText
-        println("Selected Text: $selectedText")
-
-       /* apiJob?.cancel()
-        apiJob = scope.launch {
-            selectedText?.let {
-                val explanation = openApi.getExplanation(it)
-                println("Explanation: $explanation")
+class ReviewCodeAction : BaseSimpleChatGptAction() {
+    override suspend fun doAction(project: Project, code: String) {
+        try {
+            val chatGptResponse = openApi.executeBasicAction(
+                BasicAction.ReviewCode(code))
+            chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
+                SwingUtilities.invokeLater {
+                    ShowSuggestionDialog(project, content).show()
+                }
             }
-        }*/
-
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }

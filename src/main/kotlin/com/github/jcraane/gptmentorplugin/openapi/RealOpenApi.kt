@@ -24,14 +24,12 @@ class RealOpenApi(
         } ?: throw IllegalStateException("No API key found")
     }
 
-    override suspend fun explainCode(
-        codeSnippet: String,
-    ): ChatGptResponse {
+    override suspend fun executeBasicAction(basicAction: BasicAction): ChatGptResponse {
 
         val request = chatGptRequest {
             message {
                 role = ChatGptRequest.Message.Role.USER
-                content = "Explain the following code: $codeSnippet"
+                content = basicAction.action
             }
         }
 

@@ -26,7 +26,6 @@ abstract class BaseSimpleChatGptAction : AnAction() {
         }
 
         val selectedText = editor.selectionModel.selectedText
-        println("Selected Text: $selectedText")
 
         apiJob?.cancel()
         apiJob = scope.launch {
