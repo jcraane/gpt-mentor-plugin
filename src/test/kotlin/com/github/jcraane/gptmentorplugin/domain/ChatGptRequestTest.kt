@@ -1,6 +1,6 @@
 package com.github.jcraane.gptmentorplugin.domain
 
-import kotlinx.serialization.decodeFromString
+import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
 import kotlinx.serialization.json.Json
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -31,5 +31,21 @@ class ChatGptRequestTest {
         assertEquals(ChatGptRequest.Message.Role.SYSTEM, request.messages[1].role)
         assertEquals("Hello!", request.messages[0].content)
         assertEquals("Hi there!", request.messages[1].content)
+    }
+
+    @Test
+    fun testDeserialize() {
+        val expectedRequest = ChatGptRequest(
+            model = "gpt-4.0-turbo",
+            temperature = 0.9f,
+            maxTokens = 2048,
+            messages = listOf(
+                ChatGptRequest.Message(ChatGptRequest.Message.Role.USER, "Hello!"),
+                ChatGptRequest.Message(ChatGptRequest.Message.Role.SYSTEM, "Hi there!")
+            )
+        )
+
+        val json = Json.encodeToString(ChatGptRequest.serializer(), expectedRequest)
+        val actualRequest = Json.decodeFromString(ChatGptRequest.serializer(), json)
     }
 }

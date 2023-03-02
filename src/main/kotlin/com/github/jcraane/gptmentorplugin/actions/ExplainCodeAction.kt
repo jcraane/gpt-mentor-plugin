@@ -1,12 +1,13 @@
 package com.github.jcraane.gptmentorplugin.actions
 
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
-import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
+import com.github.jcraane.gptmentorplugin.ui.ShowSuggestionDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import io.ktor.client.*
 import kotlinx.coroutines.*
+import javax.swing.SwingUtilities
 
 class ExplainCodeAction : AnAction() {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -32,8 +33,16 @@ class ExplainCodeAction : AnAction() {
         apiJob?.cancel()
         apiJob = scope.launch {
             selectedText?.let { code ->
-                val explanation = openApi.explainCode(code)
-                println("Explanation: $explanation")
+                try {
+                    val chatGptResponse = openApi.explainCode(code)
+                    chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
+                        SwingUtilities.invokeLater {
+                            ShowSuggestionDialog(project, content).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }

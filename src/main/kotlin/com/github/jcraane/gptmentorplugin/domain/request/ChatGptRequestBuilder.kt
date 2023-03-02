@@ -1,4 +1,4 @@
-package com.github.jcraane.gptmentorplugin.domain
+package com.github.jcraane.gptmentorplugin.domain.request
 
 fun chatGptRequest(block: ChatGptRequestBuilder.() -> Unit): ChatGptRequest {
     return ChatGptRequestBuilder().apply(block).build()

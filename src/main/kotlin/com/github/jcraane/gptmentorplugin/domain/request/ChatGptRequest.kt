@@ -1,9 +1,6 @@
-package com.github.jcraane.gptmentorplugin.domain
+package com.github.jcraane.gptmentorplugin.domain.request
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -15,6 +12,7 @@ data class ChatGptRequest(
     val model: String = "gpt-3.5-turbo",
     val messages: List<Message>,
     val temperature: Float = 0.8f,
+    @SerialName("max_tokens")
     val maxTokens: Int = 1024,
 ) {
     @Serializable
@@ -39,8 +37,8 @@ data class ChatGptRequest(
 
                 override fun deserialize(decoder: Decoder): Role {
                     return when (val code = decoder.decodeString()) {
-                        "user" -> Role.USER
-                        "system" -> Role.SYSTEM
+                        "user" -> USER
+                        "system" -> SYSTEM
                         else -> throw IllegalArgumentException("Unknown Role code: $code")
                     }
                 }
