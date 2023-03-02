@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import io.ktor.client.*
 import kotlinx.coroutines.*
 
-//todo retrieve api key from settings
 class ExplainCodeAction : AnAction() {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -20,7 +19,6 @@ class ExplainCodeAction : AnAction() {
     )
 
     override fun actionPerformed(e: AnActionEvent) {
-        println("PrintSelectedTextAction.actionPerformed")
         val project = e.getData(CommonDataKeys.PROJECT)
         val editor = e.getData(CommonDataKeys.EDITOR)
 
