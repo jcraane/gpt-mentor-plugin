@@ -1,0 +1,2 @@
+# Private env file is not stored in Git since it contains sensitive data
+http-client.private.env.json

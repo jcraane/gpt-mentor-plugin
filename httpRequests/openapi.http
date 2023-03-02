@@ -1,0 +1,13 @@
+###
+POST https://api.openai.com/v1/chat/completions
+Content-Type: application/json
+Authorization: Bearer {{apiToken}}
+
+{
+  "model": "gpt-3.5-turbo",
+  "messages": [{
+    "role": "user",
+    "content": "Explain the following code: fun main() {println(\"Hello World\") }"
+  }],
+  "max_tokens": 1024
+}

@@ -26,6 +26,15 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    // coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    // sklf4j
+    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("io.ktor:ktor-client-core:2.2.2")
+    implementation("io.ktor:ktor-client-cio:2.2.2")
+}
+
 // Set the JVM language level used to build project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
     jvmToolchain(11)
@@ -41,8 +50,11 @@ intellij {
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
 }
 
+println("Version = ${properties("pluginVersion")}")
+
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
+    version.set(properties("pluginVersion"))
     groups.set(emptyList())
     repositoryUrl.set(properties("pluginRepositoryUrl"))
 }
@@ -61,6 +73,17 @@ kover.xmlReport {
 }
 
 tasks {
+    // Set the JVM compatibility versions
+    properties("javaVersion").let {
+        withType<JavaCompile> {
+            sourceCompatibility = it
+            targetCompatibility = it
+        }
+        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+            kotlinOptions.jvmTarget = it
+        }
+    }
+
     wrapper {
         gradleVersion = properties("gradleVersion")
     }
@@ -84,14 +107,22 @@ tasks {
         )
 
         // Get the latest available change notes from the changelog file
-        changeNotes.set(provider {
+
+        /*
+        Commented because of: Execution failed for task ':patchPluginXml'.
+> Error while evaluating property 'changeNotes' of task ':patchPluginXml'
+   > Failed to calculate the value of task ':patchPluginXml' property 'changeNotes'.
+      > org.jetbrains.changelog.exceptions.MissingVersionException: Version is missing: any
+         */
+
+        /*changeNotes.set(provider {
             with(changelog) {
                 renderItem(
                     getOrNull(properties("pluginVersion")) ?: getLatest(),
                     Changelog.OutputType.HTML,
                 )
             }
-        })
+        })*/
     }
 
     // Configure UI tests plugin

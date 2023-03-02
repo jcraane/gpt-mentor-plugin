@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.jcraane.gptmentorplugin</id>
-    <name>IntelliJ Platform Plugin gpt-mentor-plugin</name>
+    <name>GPT Mentor</name>
     <vendor>jcraane</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -15,4 +15,34 @@
         <listener class="com.github.jcraane.gptmentorplugin.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+
+    <!--    todo add keyboard shortcuts-->
+    <actions>
+        <group id="org.intellij.sdk.action.GroupedActions" text="GPT Mentor"
+               popup="true">
+            <add-to-group
+                    group-id="ToolsMenu"
+                    anchor="last"/>
+            <action id="explainCode" class="com.github.jcraane.gptmentorplugin.actions.ExplainCodeAction"
+                    text="Explain Code"/>
+            <action id="improveCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+                    text="Improve Code"/>
+            <action id="reviewCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+                    text="Review Code"/>
+            <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+                    text="Create Unit Test"/>
+        </group>
+    </actions>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                instance="com.github.jcraane.gptmentorplugin.configuration.GptMentorConfigurable"
+                id="com.github.jcraane.fasttravel.configuration.FastTravelConfigurable"
+                displayName="GptMentor"/>
+
+     <!--   <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"
+                            serviceInterface="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"/>-->
+    </extensions>
+
 </idea-plugin>
