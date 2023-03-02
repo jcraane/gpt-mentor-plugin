@@ -1,7 +1,7 @@
 package com.github.jcraane.gptmentorplugin.services
 
-import com.intellij.openapi.project.Project
 import com.github.jcraane.gptmentorplugin.MyBundle
+import com.intellij.openapi.project.Project
 
 class MyProjectService(project: Project) {
 

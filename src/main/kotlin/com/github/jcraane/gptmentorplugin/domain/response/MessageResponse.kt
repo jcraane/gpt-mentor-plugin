@@ -9,5 +9,5 @@ data class MessageResponse(
     @SerialName("content")
     val content: String,
     @SerialName("role")
-    val role: String
+    val role: String,
 )

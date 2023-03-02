@@ -12,20 +12,32 @@ import kotlinx.serialization.json.Json
 
 class RealOpenApi(
     private val client: HttpClient,
+    private val credentialsManager: GptMentorCredentialsManager,
 ) : OpenApi {
 
     private val json = Json {
         encodeDefaults = true
+        coerceInputValues = true
+        ignoreUnknownKeys = true
     }
 
     private suspend fun withAuth(block: suspend (apiKey: String) -> String): String {
-        return GptMentorCredentialsManager.getPassword()?.let { apiKey ->
+        return credentialsManager.getPassword()?.let { apiKey ->
             block(apiKey)
         } ?: throw IllegalStateException("No API key found")
     }
 
-    override suspend fun executeBasicAction(basicAction: BasicAction): ChatGptResponse {
+    private suspend fun makeHttpRequest(url: String, request: ChatGptRequest): String {
+        return withAuth { apiKey ->
+            client.post(url) {
+                bearerAuth(apiKey)
+                contentType(ContentType.Application.Json)
+                setBody(json.encodeToString(ChatGptRequest.serializer(), request))
+            }.bodyAsText()
+        }
+    }
 
+    override suspend fun executeBasicAction(basicAction: BasicAction): ChatGptResponse {
         val request = chatGptRequest {
             message {
                 role = ChatGptRequest.Message.Role.USER
@@ -33,16 +45,11 @@ class RealOpenApi(
             }
         }
 
-        val response = withAuth { apiKey ->
-            val response = client.post("https://api.openai.com/v1/chat/completions") {
-                bearerAuth(apiKey)
-                contentType(ContentType.Application.Json)
-                setBody(json.encodeToString(ChatGptRequest.serializer(), request))
-            }
-
-            response.bodyAsText()
-        }
-
+        val response = makeHttpRequest(API_ENDPOINT, request)
         return json.decodeFromString(ChatGptResponse.serializer(), response)
+    }
+
+    companion object {
+        const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
     }
 }

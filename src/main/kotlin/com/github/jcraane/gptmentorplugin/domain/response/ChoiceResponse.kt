@@ -11,5 +11,5 @@ data class ChoiceResponse(
     @SerialName("index")
     val index: Int,
     @SerialName("message")
-    val message: MessageResponse
+    val message: MessageResponse,
 )

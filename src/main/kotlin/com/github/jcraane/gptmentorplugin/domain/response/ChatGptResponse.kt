@@ -17,5 +17,5 @@ data class ChatGptResponse(
     @SerialName("object")
     val objectX: String,
     @SerialName("usage")
-    val usage: UsageResponse
+    val usage: UsageResponse,
 )

@@ -2,7 +2,6 @@ package com.github.jcraane.gptmentorplugin.security
 
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.openapi.project.Project
 
 
 object GptMentorCredentialsManager {

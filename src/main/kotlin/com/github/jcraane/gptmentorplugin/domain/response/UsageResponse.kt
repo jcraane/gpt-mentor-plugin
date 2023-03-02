@@ -11,5 +11,5 @@ data class UsageResponse(
     @SerialName("prompt_tokens")
     val promptTokens: Int,
     @SerialName("total_tokens")
-    val totalTokens: Int
+    val totalTokens: Int,
 )

@@ -8,7 +8,7 @@ class ChatGptRequestBuilder(
     var model: String = "gpt-3.5-turbo",
     var messages: MutableList<MessageBuilder> = mutableListOf(),
     var temperature: Float = 0.8f,
-    var maxTokens: Int = 1024
+    var maxTokens: Int = 1024,
 ) {
     fun message(block: MessageBuilder.() -> Unit) {
         messages.add(MessageBuilder().apply(block))
@@ -25,7 +25,7 @@ class ChatGptRequestBuilder(
 
     class MessageBuilder(
         var role: ChatGptRequest.Message.Role = ChatGptRequest.Message.Role.USER,
-        var content: String = ""
+        var content: String = "",
     ) {
         fun role(role: ChatGptRequest.Message.Role) {
             this.role = role
