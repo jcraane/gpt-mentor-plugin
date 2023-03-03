@@ -9,6 +9,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.jcraane.gptmentorplugin.services.MyProjectService"/>
+
+        <toolWindow id="GPT-Mentor" factoryClass="com.github.jcraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
+        anchor="right">
+
+        </toolWindow>
     </extensions>
 
     <applicationListeners>
