@@ -2,6 +2,7 @@ package com.github.jcraane.gptmentorplugin.configuration
 
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.intellij.openapi.options.Configurable
+import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
 import javax.swing.JComponent
@@ -9,7 +10,7 @@ import javax.swing.JPanel
 
 class GptMentorConfigurable : Configurable {
     private lateinit var settingsPanel: JPanel
-    private var openAiApiKey = JBTextField()
+    private var openAiApiKey = JBPasswordField()
 
     override fun createComponent(): JComponent {
         settingsPanel = JPanel()

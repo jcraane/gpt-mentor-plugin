@@ -12,9 +12,8 @@ import io.ktor.client.*
 import kotlinx.coroutines.*
 
 abstract class BaseSimpleChatGptAction : AnAction() {
-    protected val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
-    protected var apiJob: Job? = null
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var apiJob: Job? = null
 
     protected val openApi = RealOpenApi(
         HttpClient(),
