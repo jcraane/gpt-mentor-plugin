@@ -5,7 +5,8 @@ import com.intellij.util.messages.Topic
 val CHAT_GPT_ACTION_TOPIC: Topic<ChatGptApiListener> = Topic.create("GptMentorChatGptTopic", ChatGptApiListener::class.java)
 
 interface ChatGptApiListener {
-    fun onSuccess(message: String)
+    fun onPromptReady(message: String)
+    fun onExplanationReady(explanation: String)
     fun onError(message: String)
     fun onLoading()
 }

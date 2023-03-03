@@ -37,11 +37,11 @@ class RealOpenApi(
         }
     }
 
-    override suspend fun executeBasicAction(basicAction: BasicAction): ChatGptResponse {
+    override suspend fun executeBasicAction(basicPrompt: BasicPrompt): ChatGptResponse {
         val request = chatGptRequest {
             message {
                 role = ChatGptRequest.Message.Role.USER
-                content = basicAction.action
+                content = basicPrompt.action
             }
         }
 

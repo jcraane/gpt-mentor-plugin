@@ -11,46 +11,83 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.*
 
 class GptMentorToolWindowFactory : ToolWindowFactory {
     private var editorTextField: EditorTextField? = null
 
     private val jbLabel = JBLabel("Initial content")
+    val promptTextArea = JBTextArea(
+        "Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a " +
+                "custom one.!"
+    ).apply {
+        lineWrap = true
+    }
 
-//    todo create a nice layout with a loader and other input fields
+    val explanationArea = JBTextArea().apply {
+        lineWrap = true
+    }
+
+    //    todo create a nice layout with a loader and other input fields
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
-        val content: Content = contentFactory.createContent(createEditorContent(project, ""), "", false)
+//        val content: Content = contentFactory.createContent(createEditorContent(project, ""), "", false)
+        val content: Content = contentFactory.createContent(createAWTComponent(), "", false)
         toolWindow.contentManager.addContent(content)
 
         project.messageBus.connect()
             .subscribe(CHAT_GPT_ACTION_TOPIC, object : ChatGptApiListener {
-                override fun onSuccess(message: String) {
+                override fun onPromptReady(message: String) {
+                    promptTextArea.text = message
+                }
+
+                override fun onExplanationReady(explanation: String) {
                     ApplicationManager.getApplication().invokeLater {
-                        jbLabel.text = "OnSuccess"
-                        editorTextField?.text = message
+                        explanationArea.text = explanation
                     }
                 }
 
                 override fun onError(message: String) {
                     ApplicationManager.getApplication().invokeLater {
-                        jbLabel.text = "OnError"
+                        explanationArea.text = message
                     }
                 }
 
                 override fun onLoading() {
                     ApplicationManager.getApplication().invokeLater {
-                        jbLabel.text = "OnLoading"
+                        explanationArea.text = "Loading..."
                     }
                 }
             })
     }
+
+    fun createAWTComponent(): JComponent {
+        val panel = JPanel(BorderLayout())
+
+        panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        val layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+        panel.layout = layout
+        val promptLabel = JBLabel("Prompt: ")
+        panel.add(promptLabel)
+
+        panel.add(Box.createVerticalStrut(10))
+
+        panel.add(promptTextArea)
+        val explanationLabel = JBLabel("Explanation: ")
+
+        panel.add(Box.createVerticalStrut(20))
+        panel.add(explanationLabel)
+
+        panel.add(Box.createVerticalStrut(10))
+        panel.add(explanationArea)
+
+        return panel
+    }
+
 
     private fun createEditorContent(project: Project, contents: String): JComponent {
         val editorFactory = EditorFactory.getInstance()
@@ -72,6 +109,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
 
         val scrollPane = JBScrollPane(editorTextField)
 
+//        private val indicator: ProgressIndicator = ProgressManager.getInstance().progressIndicator
         val panel = JPanel(BorderLayout())
         panel.add(scrollPane, BorderLayout.CENTER)
 

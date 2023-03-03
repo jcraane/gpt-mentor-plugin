@@ -1,17 +1,13 @@
 package com.github.jcraane.gptmentorplugin.actions
 
 import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
+import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
-import com.github.jcraane.gptmentorplugin.ui.GptMentorToolWindowFactory
-import com.github.jcraane.gptmentorplugin.ui.ShowSuggestionDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import io.ktor.client.*
 import kotlinx.coroutines.*
 
@@ -38,36 +34,36 @@ abstract class BaseSimpleChatGptAction : AnAction() {
         apiJob?.cancel()
         apiJob = scope.launch {
             selectedText?.let { code ->
-                doAction(project, code)
+                val prompt = createPrompt(code)
+                publishLoading(project)
+                publishPrompt(project, prompt.action)
+                try {
+                    doAction(project, code, prompt)
+                } catch (e: Exception) {
+                    publishError(project, e.message ?: "An unknown error occurred")
+                }
             }
         }
     }
 
-    protected fun publishResult(project: Project, message: String) {
-        project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onSuccess(message)
+    abstract protected fun createPrompt(code: String): BasicPrompt
+
+    protected fun publishLoading(project: Project) {
+        project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onLoading()
     }
 
-    protected fun showSuggestionInToolWindow(project: Project) {
-        /*ToolWindowManager.getInstance(project).getToolWindow(GptMentorToolWindowFactory.ID)?.also { toolWindow ->
-            if (toolWindow.isVisible) {
-                ApplicationManager.getApplication().invokeLater({
-                    toolWindow.contentManager.contents.firstOrNull()?.component
-                }, ModalityState.any())
-            }
-
-        }*/
-
-        /*ApplicationManager.getApplication().invokeLater({
-            ShowSuggestionDialog(project, code).show()
-        }, ModalityState.any())*/
+    protected fun publishPrompt(project: Project, message: String) {
+        project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onPromptReady(message)
     }
 
-    protected fun showOrUpdateDialog(project: Project, code: String) {
-        ApplicationManager.getApplication().invokeLater({
-            ShowSuggestionDialog(project, code).show()
-        }, ModalityState.any())
+    protected fun publishExplanation(project: Project, message: String) {
+        project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onExplanationReady(message)
+    }
+
+    protected fun publishError(project: Project, message: String) {
+        project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onError(message)
     }
 
 
-    abstract suspend fun doAction(project: Project, code: String)
+    abstract suspend fun doAction(project: Project, code: String, prompt: BasicPrompt)
 }
