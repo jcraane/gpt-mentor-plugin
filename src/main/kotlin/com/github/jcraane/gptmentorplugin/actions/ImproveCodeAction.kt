@@ -10,7 +10,7 @@ class ImproveCodeAction : BaseSimpleChatGptAction() {
                 BasicAction.ImproveCode(code)
             )
             chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
-                showOrUpdateDialog(project, content)
+                publishResult(project, content)
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -10,7 +10,7 @@ class CreateUnitTestAction : BaseSimpleChatGptAction() {
                 BasicAction.CreateUnitTest(code)
             )
             chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
-                showOrUpdateDialog(project, content)
+                publishResult(project, content)
             }
         } catch (e: Exception) {
             e.printStackTrace()

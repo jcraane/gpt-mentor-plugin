@@ -9,12 +9,8 @@ class ExplainCodeAction : BaseSimpleChatGptAction() {
             val chatGptResponse = openApi.executeBasicAction(
                 BasicAction.ExplainCode(code)
             )
-            chatGptResponse.choices.firstOrNull()?.message?.content?.let { explanation ->
-                /*SwingUtilities.invokeLater {
-                    ShowSuggestionDialog(project, content).show()
-                }*/
-//                showSuggestionInToolWindow(project)
-                publishResult(project, explanation)
+            chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
+                publishResult(project, content)
             }
         } catch (e: Exception) {
             e.printStackTrace()

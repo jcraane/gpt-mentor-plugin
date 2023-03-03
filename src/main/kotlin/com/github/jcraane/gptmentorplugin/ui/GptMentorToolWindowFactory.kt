@@ -23,14 +23,10 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
 
     private val jbLabel = JBLabel("Initial content")
 
+//    todo create a nice layout with a loader and other input fields
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val panel = JPanel()
-        panel.add(jbLabel)
-        panel.add(createEditorContent(project, ""))
-
         val contentFactory = ContentFactory.SERVICE.getInstance()
-        panel.add(createEditorContent(project, ""))
-        val content: Content = contentFactory.createContent(panel, "", false)
+        val content: Content = contentFactory.createContent(createEditorContent(project, ""), "", false)
         toolWindow.contentManager.addContent(content)
 
         project.messageBus.connect()
@@ -75,7 +71,6 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
         }
 
         val scrollPane = JBScrollPane(editorTextField)
-        scrollPane.preferredSize = Dimension(1024, 800)
 
         val panel = JPanel(BorderLayout())
         panel.add(scrollPane, BorderLayout.CENTER)
