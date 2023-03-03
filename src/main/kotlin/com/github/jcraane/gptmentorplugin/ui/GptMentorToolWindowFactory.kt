@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
@@ -28,7 +29,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         GptMentorCredentialsManager,
     )
 
-    val promptTextArea = JBTextArea(
+    private val promptTextArea = JBTextArea(
         "Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a " +
                 "custom one.!"
     ).apply {
@@ -65,7 +66,8 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
 
         panel.add(Box.createVerticalStrut(10))
 
-        panel.add(promptTextArea)
+        val scrollPane = JBScrollPane(promptTextArea)
+        panel.add(scrollPane)
 
         val submitButton = JButton("Submit")
         submitButton.addActionListener {
@@ -94,7 +96,8 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         val explanationLabel = JBLabel("Explanation: ")
 
         panel.add(Box.createVerticalStrut(10))
-        panel.add(explanationArea)
+        val explanationScroll = JBScrollPane(explanationArea)
+        panel.add(explanationScroll)
 
         return panel
     }

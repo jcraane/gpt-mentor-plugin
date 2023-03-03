@@ -4,10 +4,13 @@ import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
+import com.github.jcraane.gptmentorplugin.ui.GptMentorToolWindowFactory
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindowManager
 import io.ktor.client.*
 import kotlinx.coroutines.*
 
@@ -34,6 +37,13 @@ abstract class BaseSimpleChatGptAction : AnAction() {
         apiJob = scope.launch {
             selectedText?.let { code ->
                 val prompt = createPrompt(code)
+
+                ToolWindowManager.getInstance(project).getToolWindow(GptMentorToolWindowFactory.ID)?.also { toolWindow ->
+                    ApplicationManager.getApplication().invokeLater {
+                        toolWindow.show()
+                    }
+                }
+
                 publishLoading(project)
                 publishPrompt(project, prompt.action)
                 try {
