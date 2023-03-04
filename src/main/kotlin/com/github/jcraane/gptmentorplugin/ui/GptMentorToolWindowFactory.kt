@@ -5,8 +5,13 @@ import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
+import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBLabel
@@ -16,9 +21,8 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import io.ktor.client.*
 import kotlinx.coroutines.*
-import java.awt.BorderLayout
-import java.awt.Component
 import javax.swing.*
+
 
 class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -42,7 +46,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
-        val content: Content = contentFactory.createContent(createAWTComponent(), "", false)
+        val content: Content = contentFactory.createContent(createMainView(project), "", false)
         toolWindow.contentManager.addContent(content)
         subscribeToChatGptActions(project)
     }
@@ -51,54 +55,94 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
     }
 
-    fun createAWTComponent(): JComponent {
+
+    fun createMainView(project: Project): JComponent {
+        val promptPanel = createVerticalBoxPanel()
+        promptPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+
+        createPromptLabelPanel().also { promptPanel.add(it) }
+        promptPanel.add(Box.createVerticalStrut(10))
+        val promptScrollPane = createPromptScrollPane()
+        promptPanel.add(promptScrollPane)
+        promptPanel.add(Box.createVerticalStrut(10))
+        val buttonPanel = createButtonPanel(project)
+        promptPanel.add(buttonPanel)
+        promptPanel.add(Box.createVerticalStrut(10))
+        createExplanationLabelPanel().also { promptPanel.add(it) }
+        val explanationScrollPane = createExplanationScrollPane()
+        promptPanel.add(explanationScrollPane)
+
+        return promptPanel
+    }
+
+    private fun createVerticalBoxPanel(): JPanel {
         val panel = JPanel()
-        panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+        return panel
+    }
 
-        val layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-        panel.layout = layout
+    private fun createPromptLabelPanel(): JPanel {
+        val panel = createHorizontalBoxPanel()
+        panel.add(JBLabel("Prompt: "))
+        panel.add(Box.createHorizontalGlue())
+        return panel
+    }
 
-        JPanel().apply {
-            this.layout = BoxLayout(this, BoxLayout.X_AXIS)
-            this.add(JBLabel("Prompt: "))
-            this.add(Box.createHorizontalGlue())
-        }.also { panel.add(it) }
+    private fun createPromptScrollPane(): JBScrollPane {
+        return JBScrollPane(promptTextArea)
+    }
 
-        panel.add(Box.createVerticalStrut(10))
-
-        val scrollPane = JBScrollPane(promptTextArea)
-        panel.add(scrollPane)
-
-        val submitButton = JButton("Submit")
-        submitButton.addActionListener {
-            executePrompt(promptTextArea.text)
+    private fun createButtonPanel(project: Project): JPanel {
+        val panel = createHorizontalBoxPanel()
+        val submitButton = JButton("Submit").apply {
+            addActionListener {
+                executePrompt(promptTextArea.text)
+            }
         }
-        val buttonPanel = JPanel().apply {
-            this.layout = BoxLayout(this, BoxLayout.X_AXIS)
-            add(submitButton)
-            panel.add(Box.createHorizontalStrut(5))
-            add(JButton("Clear").apply {
-                addActionListener {
-                    promptTextArea.text = ""
-                    explanationArea.text = ""
+        panel.add(submitButton)
+        panel.add(Box.createHorizontalStrut(5))
+        val clearButton = JButton("Clear")
+        clearButton.addActionListener {
+            promptTextArea.text = ""
+            explanationArea.text = ""
+        }
+        panel.add(clearButton)
+
+        val newFileButton = JButton("New File")
+        newFileButton.addActionListener {
+            val newFileAction = ActionManager.getInstance().getAction("NewFile")
+
+//            todo does not work yet.
+            val module = ModuleManager.getInstance(project).modules?.firstOrNull()
+
+            if (module != null) {
+                ModuleRootManager.getInstance(module).sourceRoots.firstOrNull()?.path?.let { path ->
+                    val dataContext = DataManager.getInstance().getDataContext()
+                    val event = AnActionEvent.createFromDataContext(path, null, dataContext)
+                    newFileAction.actionPerformed(event)
                 }
-            })
-            this.add(Box.createHorizontalGlue())
+            }
         }
-        panel.add(Box.createVerticalStrut(10))
-        panel.add(buttonPanel)
+        panel.add(newFileButton)
 
-        JPanel().apply {
-            this.layout = BoxLayout(this, BoxLayout.X_AXIS)
-            this.add(JBLabel("Explanation: "))
-            this.add(Box.createHorizontalGlue())
-        }.also { panel.add(it) }
-        val explanationLabel = JBLabel("Explanation: ")
+        panel.add(Box.createHorizontalGlue())
+        return panel
+    }
 
-        panel.add(Box.createVerticalStrut(10))
-        val explanationScroll = JBScrollPane(explanationArea)
-        panel.add(explanationScroll)
+    private fun createExplanationLabelPanel(): JPanel {
+        val panel = createHorizontalBoxPanel()
+        panel.add(JBLabel("Explanation: "))
+        panel.add(Box.createHorizontalGlue())
+        return panel
+    }
 
+    private fun createExplanationScrollPane(): JBScrollPane {
+        return JBScrollPane(explanationArea)
+    }
+
+    private fun createHorizontalBoxPanel(): JPanel {
+        val panel = JPanel()
+        panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
         return panel
     }
 

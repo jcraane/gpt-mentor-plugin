@@ -9,9 +9,9 @@ interface OpenApi {
 sealed class BasicPrompt(
     open val action: String,
 ) {
-    data class ExplainCode(val code: String) : BasicPrompt("Explain code: $code")
-    data class ImproveCode(val code: String) : BasicPrompt("Improve this code: $code")
-    data class ReviewCode(val code: String) : BasicPrompt("Review this code: $code")
-    data class CreateUnitTest(val code: String) : BasicPrompt("Create a unit test for : $code")
+    data class ExplainCode(val code: String) : BasicPrompt("Explain code: \n\n$code")
+    data class ImproveCode(val code: String) : BasicPrompt("Improve this code: \n\n$code")
+    data class ReviewCode(val code: String) : BasicPrompt("Review this code: \n\n$code")
+    data class CreateUnitTest(val code: String) : BasicPrompt("Create a unit test for : \n\n$code")
     data class UserDefined(val prompt: String) : BasicPrompt(prompt)
 }
