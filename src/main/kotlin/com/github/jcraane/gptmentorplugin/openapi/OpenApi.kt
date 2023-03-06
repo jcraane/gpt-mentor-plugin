@@ -7,6 +7,8 @@ interface OpenApi {
     suspend fun executeBasicAction(basicPrompt: BasicPrompt): ChatGptResponse
 
     suspend fun executeBasicActionStreaming(basicPrompt: BasicPrompt): Flow<StreamingResponse>
+
+    suspend fun stopGenerating()
 }
 
 sealed class BasicPrompt(

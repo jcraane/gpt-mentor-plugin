@@ -83,11 +83,21 @@ class ChatPanel : JPanel(), ChatView {
         }
         panel.add(submitButton)
         panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
-        val clearButton = JButton("New Chat")
-        clearButton.addActionListener {
+
+        val stopButton = JButton("Stop").apply {
+            addActionListener {
+                presenter.onStopClicked()
+            }
+        }
+        panel.add(stopButton)
+
+        panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
+        val newChatButton = JButton("New Chat")
+        newChatButton.addActionListener {
             presenter.onNewChatClicked()
         }
-        panel.add(clearButton)
+
+        panel.add(newChatButton)
         panel.add(Box.createHorizontalGlue())
         return panel
     }

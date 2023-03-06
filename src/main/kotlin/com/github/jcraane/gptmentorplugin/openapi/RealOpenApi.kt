@@ -13,7 +13,9 @@ import io.ktor.util.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.isActive
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -66,7 +68,6 @@ class RealOpenApi(
                 }
             }
 
-
             val request = Request.Builder()
                 .url(API_ENDPOINT)
                 .header("Authorization", "Bearer ${credentialsManager.getPassword()}")
@@ -74,7 +75,6 @@ class RealOpenApi(
                 .addHeader("Content-Type", "application/json")
                 .post(JSON.encodeToString(ChatGptRequest.serializer(), chatGptRequest).toRequestBody())
                 .build()
-
 
             val listener = ChatGptEventSourceListener { response ->
                 try {
@@ -97,7 +97,6 @@ class RealOpenApi(
                 .newEventSource(request = request, listener = listener)
 
             okHttpClient.newCall(request).execute().use { response ->
-                println("plugin:: response: $response")
                 if (!response.isSuccessful) {
                     trySend(StreamingResponse.Error(response.message))
                 }
@@ -107,6 +106,10 @@ class RealOpenApi(
                 eventSource.cancel()
             }
         }
+
+    override suspend fun stopGenerating() {
+        TODO("Not yet implemented")
+    }
 
     companion object {
         const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"

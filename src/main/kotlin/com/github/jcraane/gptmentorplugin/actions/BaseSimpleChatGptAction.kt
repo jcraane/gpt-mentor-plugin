@@ -42,6 +42,8 @@ abstract class BaseSimpleChatGptAction : AnAction() {
             return
         }
 
+//        todo we should not call coroutine here but let presenter know that we need to execute the action. Else we cannot cancel this
+//         coroutine scope
         val selectedText = editor.selectionModel.selectedText
 
         apiJob?.cancel()

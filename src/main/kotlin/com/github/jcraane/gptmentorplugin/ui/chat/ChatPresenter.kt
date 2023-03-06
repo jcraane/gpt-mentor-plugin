@@ -61,6 +61,9 @@ class ChatPresenter(
         }
     }
 
+    fun onStopClicked() {
+        apiJob?.cancel()
+    }
 
     override fun onPromptReady(message: String) {
         chatView.setPrompt(message)
