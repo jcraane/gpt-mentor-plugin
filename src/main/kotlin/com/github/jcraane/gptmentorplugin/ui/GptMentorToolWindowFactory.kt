@@ -4,6 +4,7 @@ import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
+import com.github.jcraane.gptmentorplugin.openapi.StreamingResponse
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -16,6 +17,9 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import io.ktor.client.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.swing.*
@@ -97,7 +101,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         val panel = createHorizontalBoxPanel()
         val submitButton = JButton("Submit").apply {
             addActionListener {
-                executePrompt(promptTextArea.text)
+                executeStreaming(promptTextArea.text)
             }
         }
         panel.add(submitButton)
@@ -149,21 +153,26 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         return panel
     }
 
-    private fun executePrompt(prompt: String) {
+    private fun executeStreaming(prompt: String) {
         apiJob?.cancel()
         apiJob = scope.launch {
-            onLoading()
             onPromptReady(prompt)
-            try {
-                val chatGptResponse = openApi.executeBasicAction(BasicPrompt.UserDefined(prompt))
-                chatGptResponse.choices.firstOrNull()?.message?.content?.let { content ->
-                    onExplanationReady(content)
+            openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
+                .onStart {
+                    onExplanationReady("")
                 }
-            } catch (e: Exception) {
-                onExplanationReady(e.message ?: "Unknown error")
-            }
+                .collect { streamingResponse ->
+                    when (streamingResponse) {
+                        is StreamingResponse.Data -> onAppendExplanation(streamingResponse.data)
+                        is StreamingResponse.Error -> onError(streamingResponse.error)
+                        StreamingResponse.Done -> {
+                            // Do nothing
+                        }
+                    }
+                }
         }
     }
+
 
     companion object {
         const val ID = "GPT-Mentor"

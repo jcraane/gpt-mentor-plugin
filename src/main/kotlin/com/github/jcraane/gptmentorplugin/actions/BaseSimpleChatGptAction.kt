@@ -72,9 +72,6 @@ abstract class BaseSimpleChatGptAction : AnAction() {
             .onStart {
                 publishExplanation(project, "")
             }
-            .onEach {
-                println("PLUGIN::: Received: $it")
-            }
             .collect {
                 when (it) {
                     is StreamingResponse.Data -> appendExplanation(project, it.data)
