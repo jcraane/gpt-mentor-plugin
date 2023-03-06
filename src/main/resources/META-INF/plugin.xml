@@ -21,7 +21,6 @@
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 
-    <!--    todo add keyboard shortcuts-->
     <actions>
         <group id="org.intellij.sdk.action.GroupedActions" text="GPT Mentor"
                popup="true">

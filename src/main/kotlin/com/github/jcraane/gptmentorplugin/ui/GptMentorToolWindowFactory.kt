@@ -1,11 +1,5 @@
 package com.github.jcraane.gptmentorplugin.ui
 
-import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
-import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
-import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
-import com.github.jcraane.gptmentorplugin.openapi.StreamingResponse
-import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
@@ -15,32 +9,14 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
-import io.ktor.client.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 import javax.swing.*
 
-
-class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var apiJob: Job? = null
-
-    private val openApi = RealOpenApi(
-        client = HttpClient(),
-        okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.MINUTES)
-            .writeTimeout(10, TimeUnit.MINUTES)
-            .build(),
-        credentialsManager = GptMentorCredentialsManager,
-    )
+class GptMentorToolWindowFactory : ToolWindowFactory, ToolWindowView {
+    private val presenter = ToolWindowPresenter(this)
 
     private val promptTextArea = JBTextArea(
         "Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a " +
-                "custom one.!"
+                "custom one!"
     ).apply {
         lineWrap = true
     }
@@ -51,17 +27,12 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
-        val content: Content = contentFactory.createContent(createMainView(project), "", false)
+        val content: Content = contentFactory.createContent(createMainView(), "", false)
         toolWindow.contentManager.addContent(content)
-        subscribeToChatGptActions(project)
+        presenter.onAttach(project)
     }
 
-    private fun subscribeToChatGptActions(project: Project) {
-        project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
-    }
-
-
-    fun createMainView(project: Project): JComponent {
+    private fun createMainView(): JComponent {
         val promptPanel = createVerticalBoxPanel()
         promptPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
@@ -70,7 +41,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         val promptScrollPane = createPromptScrollPane()
         promptPanel.add(promptScrollPane)
         promptPanel.add(Box.createVerticalStrut(10))
-        val buttonPanel = createButtonPanel(project)
+        val buttonPanel = createButtonPanel()
         promptPanel.add(buttonPanel)
         promptPanel.add(Box.createVerticalStrut(10))
         createExplanationLabelPanel().also { promptPanel.add(it) }
@@ -97,19 +68,18 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         return JBScrollPane(promptTextArea)
     }
 
-    private fun createButtonPanel(project: Project): JPanel {
+    private fun createButtonPanel(): JPanel {
         val panel = createHorizontalBoxPanel()
         val submitButton = JButton("Submit").apply {
             addActionListener {
-                executeStreaming(promptTextArea.text)
+                presenter.onSubmitClicked()
             }
         }
         panel.add(submitButton)
         panel.add(Box.createHorizontalStrut(5))
         val clearButton = JButton("New Chat")
         clearButton.addActionListener {
-            promptTextArea.text = ""
-            explanationArea.text = ""
+            presenter.onNewChatClicked()
         }
         panel.add(clearButton)
 
@@ -153,44 +123,24 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         return panel
     }
 
-    private fun executeStreaming(prompt: String) {
-        apiJob?.cancel()
-        apiJob = scope.launch {
-            onPromptReady(prompt)
-            openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
-                .onStart {
-                    onExplanationReady("")
-                }
-                .collect { streamingResponse ->
-                    when (streamingResponse) {
-                        is StreamingResponse.Data -> onAppendExplanation(streamingResponse.data)
-                        is StreamingResponse.Error -> onError(streamingResponse.error)
-                        StreamingResponse.Done -> {
-                            // Do nothing
-                        }
-                    }
-                }
-        }
-    }
-
 
     companion object {
         const val ID = "GPT-Mentor"
     }
 
-    override fun onPromptReady(message: String) {
+    override fun setPrompt(message: String) {
         ApplicationManager.getApplication().invokeLater {
             promptTextArea.text = message
         }
     }
 
-    override fun onExplanationReady(explanation: String) {
+    override fun clearExplanation() {
         ApplicationManager.getApplication().invokeLater {
-            explanationArea.text = explanation
+            explanationArea.text = ""
         }
     }
 
-    override fun onError(message: String) {
+    override fun showError(message: String) {
         ApplicationManager.getApplication().invokeLater {
             explanationArea.text = message
         }
@@ -203,9 +153,20 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         }
     }
 
-    override fun onLoading() {
+    override fun showLoading() {
         ApplicationManager.getApplication().invokeLater {
             explanationArea.text = "Loading..."
+        }
+    }
+
+    override fun getPrompt(): String {
+        return promptTextArea.text
+    }
+
+    override fun clearAll() {
+        ApplicationManager.getApplication().invokeLater {
+            promptTextArea.text = ""
+            explanationArea.text = ""
         }
     }
 }
