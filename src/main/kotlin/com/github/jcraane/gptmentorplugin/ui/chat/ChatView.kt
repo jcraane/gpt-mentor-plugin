@@ -7,7 +7,7 @@ interface ChatView {
 
     fun showError(message: String)
 
-    fun onAppendExplanation(explanation: String)
+    fun appendExplanation(explanation: String)
 
     fun showLoading()
 

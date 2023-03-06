@@ -137,7 +137,7 @@ class ChatPanel : JPanel(), ChatView {
         }
     }
 
-    override fun onAppendExplanation(explanation: String) {
+    override fun appendExplanation(explanation: String) {
         ApplicationManager.getApplication().invokeLater {
             val currentText = explanationArea.text
             explanationArea.text = currentText + explanation

@@ -40,23 +40,25 @@ class ChatPresenter(
     private fun executeStreaming(prompt: String) {
         apiJob?.cancel()
         apiJob = scope.launch {
-            onPromptReady(prompt)
+            chatView.setPrompt(prompt)
             kotlin.runCatching {
                 openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
                     .onStart {
-                        onExplanationReady("")
+                        chatView.clearExplanation()
                     }
                     .collect { streamingResponse ->
                         when (streamingResponse) {
-                            is StreamingResponse.Data -> onAppendExplanation(streamingResponse.data)
-                            is StreamingResponse.Error -> onError(streamingResponse.error)
+                            is StreamingResponse.Data -> chatView.appendExplanation(streamingResponse.data)
+                            is StreamingResponse.Error -> chatView.showError(streamingResponse.error)
                             StreamingResponse.Done -> {
                                 // Do nothing
                             }
                         }
                     }
             }.onFailure {
-                onError(it.message ?: "Unknown error")
+                if (it !is CancellationException) {
+                    chatView.showError(it.message ?: "Unknown error")
+                }
             }
         }
     }
@@ -65,24 +67,8 @@ class ChatPresenter(
         apiJob?.cancel()
     }
 
-    override fun onPromptReady(message: String) {
-        chatView.setPrompt(message)
-    }
-
-    override fun onExplanationReady(explanation: String) {
-        chatView.clearExplanation()
-    }
-
-    override fun onError(message: String) {
-        chatView.showError(message)
-    }
-
-    override fun onAppendExplanation(explanation: String) {
-        chatView.onAppendExplanation(explanation)
-    }
-
-    override fun onLoading() {
-        chatView.showLoading()
+    override fun onNewPrompt(prompt: BasicPrompt) {
+        executeStreaming(prompt.action)
     }
 
     fun onNewChatClicked() {
