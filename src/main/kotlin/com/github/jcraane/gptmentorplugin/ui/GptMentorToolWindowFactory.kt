@@ -5,13 +5,8 @@ import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBLabel
@@ -21,6 +16,8 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import io.ktor.client.*
 import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.swing.*
 
 
@@ -29,8 +26,12 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
     private var apiJob: Job? = null
 
     private val openApi = RealOpenApi(
-        HttpClient(),
-        GptMentorCredentialsManager,
+        client = HttpClient(),
+        okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.MINUTES)
+            .writeTimeout(10, TimeUnit.MINUTES)
+            .build(),
+        credentialsManager = GptMentorCredentialsManager,
     )
 
     private val promptTextArea = JBTextArea(
@@ -101,29 +102,31 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
         }
         panel.add(submitButton)
         panel.add(Box.createHorizontalStrut(5))
-        val clearButton = JButton("Clear")
+        val clearButton = JButton("New Chat")
         clearButton.addActionListener {
             promptTextArea.text = ""
             explanationArea.text = ""
         }
         panel.add(clearButton)
 
-        val newFileButton = JButton("New File")
-        newFileButton.addActionListener {
-            val newFileAction = ActionManager.getInstance().getAction("NewFile")
+        /*
+                val newFileButton = JButton("New File")
+                newFileButton.addActionListener {
+                    val newFileAction = ActionManager.getInstance().getAction("NewFile")
 
-//            todo does not work yet.
-            val module = ModuleManager.getInstance(project).modules?.firstOrNull()
+        //            todo does not work yet.
+                    val module = ModuleManager.getInstance(project).modules?.firstOrNull()
 
-            if (module != null) {
-                ModuleRootManager.getInstance(module).sourceRoots.firstOrNull()?.path?.let { path ->
-                    val dataContext = DataManager.getInstance().getDataContext()
-                    val event = AnActionEvent.createFromDataContext(path, null, dataContext)
-                    newFileAction.actionPerformed(event)
+                    if (module != null) {
+                        ModuleRootManager.getInstance(module).sourceRoots.firstOrNull()?.path?.let { path ->
+                            val dataContext = DataManager.getInstance().getDataContext()
+                            val event = AnActionEvent.createFromDataContext(path, null, dataContext)
+                            newFileAction.actionPerformed(event)
+                        }
+                    }
                 }
-            }
-        }
-        panel.add(newFileButton)
+                panel.add(newFileButton)
+        */
 
         panel.add(Box.createHorizontalGlue())
         return panel
@@ -181,6 +184,13 @@ class GptMentorToolWindowFactory : ToolWindowFactory, ChatGptApiListener {
     override fun onError(message: String) {
         ApplicationManager.getApplication().invokeLater {
             explanationArea.text = message
+        }
+    }
+
+    override fun onAppendExplanation(explanation: String) {
+        ApplicationManager.getApplication().invokeLater {
+            val currentText = explanationArea.text
+            explanationArea.text = currentText + explanation
         }
     }
 

@@ -8,5 +8,9 @@ interface ChatGptApiListener {
     fun onPromptReady(message: String)
     fun onExplanationReady(explanation: String)
     fun onError(message: String)
+    /**
+     * Append explanation to the current explanation. Can be used for streaming backend responses.
+     */
+    fun onAppendExplanation(explanation: String)
     fun onLoading()
 }

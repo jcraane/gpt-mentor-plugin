@@ -14,6 +14,7 @@ data class ChatGptRequest(
     val temperature: Float = 0.8f,
     @SerialName("max_tokens")
     val maxTokens: Int = 1024,
+    val stream: Boolean = false,
 ) {
     @Serializable
     data class Message(

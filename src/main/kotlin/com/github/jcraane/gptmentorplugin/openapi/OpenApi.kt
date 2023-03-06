@@ -1,9 +1,12 @@
 package com.github.jcraane.gptmentorplugin.openapi
 
 import com.github.jcraane.gptmentorplugin.domain.response.ChatGptResponse
+import kotlinx.coroutines.flow.Flow
 
 interface OpenApi {
     suspend fun executeBasicAction(basicPrompt: BasicPrompt): ChatGptResponse
+
+    suspend fun executeBasicActionStreaming(basicPrompt: BasicPrompt): Flow<StreamingResponse>
 }
 
 sealed class BasicPrompt(
@@ -15,3 +18,4 @@ sealed class BasicPrompt(
     data class CreateUnitTest(val code: String) : BasicPrompt("Create a unit test for : \n\n$code")
     data class UserDefined(val prompt: String) : BasicPrompt(prompt)
 }
+

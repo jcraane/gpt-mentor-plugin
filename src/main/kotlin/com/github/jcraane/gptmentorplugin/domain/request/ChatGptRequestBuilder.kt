@@ -9,6 +9,7 @@ class ChatGptRequestBuilder(
     var messages: MutableList<MessageBuilder> = mutableListOf(),
     var temperature: Float = 0.8f,
     var maxTokens: Int = 1024,
+    var stream: Boolean = false,
 ) {
     fun message(block: MessageBuilder.() -> Unit) {
         messages.add(MessageBuilder().apply(block))
@@ -19,7 +20,8 @@ class ChatGptRequestBuilder(
             model = model,
             messages = messages.map { it.build() },
             temperature = temperature,
-            maxTokens = maxTokens
+            maxTokens = maxTokens,
+            stream = stream,
         )
     }
 
