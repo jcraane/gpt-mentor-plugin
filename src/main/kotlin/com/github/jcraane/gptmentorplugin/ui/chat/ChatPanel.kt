@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.*
 
 class ChatPanel : JPanel(), ChatView {
