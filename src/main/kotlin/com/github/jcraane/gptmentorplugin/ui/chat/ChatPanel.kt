@@ -151,6 +151,10 @@ class ChatPanel : JPanel(), ChatView {
         }
     }
 
+    override fun setFocusOnPrompt() {
+        promptTextArea.requestFocusInWindow()
+    }
+
     companion object {
         private const val PROMPT_MAX_HEIGHT = 200
     }

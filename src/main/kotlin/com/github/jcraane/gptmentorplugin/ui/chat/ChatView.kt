@@ -14,4 +14,6 @@ interface ChatView {
     fun getPrompt(): String
 
     fun clearAll()
+
+    fun setFocusOnPrompt()
 }

@@ -84,5 +84,6 @@ class ChatPresenter(
 
     fun onNewChatClicked() {
         chatView.clearAll()
+        chatView.setFocusOnPrompt()
     }
 }
