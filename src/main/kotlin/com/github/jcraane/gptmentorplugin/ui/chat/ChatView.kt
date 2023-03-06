@@ -1,8 +1,6 @@
-package com.github.jcraane.gptmentorplugin.ui
+package com.github.jcraane.gptmentorplugin.ui.chat
 
-import com.intellij.openapi.application.ApplicationManager
-
-interface ToolWindowView {
+interface ChatView {
     fun setPrompt(message: String)
 
     fun clearExplanation()
