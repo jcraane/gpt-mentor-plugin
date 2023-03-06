@@ -1,5 +1,3 @@
-- Add default shortcuts. ctrl + option + shift + (I|E|R|T)
-- Add option to stop generating
 - Add chat history tab and option to select a chat nd continue from there
     - Delete chats
     - Name/rename chats

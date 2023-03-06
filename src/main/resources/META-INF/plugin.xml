@@ -26,15 +26,33 @@
                popup="true">
             <add-to-group
                     group-id="ToolsMenu"
-                    anchor="last"/>
+                    anchor="last">
+            </add-to-group>
             <action id="explainCode" class="com.github.jcraane.gptmentorplugin.actions.ExplainCodeAction"
-                    text="Explain Code"/>
+                    text="Explain Code">
+                <keyboard-shortcut first-keystroke="control alt shift E" keymap="$default" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
+
             <action id="improveCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
-                    text="Improve Code"/>
+                    text="Improve Code">
+                <keyboard-shortcut first-keystroke="control alt shift I" keymap="$default" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
             <action id="reviewCode" class="com.github.jcraane.gptmentorplugin.actions.ReviewCodeAction"
-                    text="Review Code"/>
+                    text="Review Code">
+                <keyboard-shortcut first-keystroke="control alt shift R" keymap="$default" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
             <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.CreateUnitTestAction"
-                    text="Create Unit Test"/>
+                    text="Create Unit Test">
+                <keyboard-shortcut first-keystroke="control alt shift T" keymap="$default" />
+                <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
         </group>
     </actions>
 
@@ -44,9 +62,6 @@
                 instance="com.github.jcraane.gptmentorplugin.configuration.GptMentorConfigurable"
                 id="com.github.jcraane.fasttravel.configuration.FastTravelConfigurable"
                 displayName="GptMentor"/>
-
-     <!--   <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"
-                            serviceInterface="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"/>-->
     </extensions>
 
 </idea-plugin>
