@@ -17,10 +17,13 @@ class ChatPanel : JPanel(), ChatView {
                 "custom one!"
     ).apply {
         lineWrap = true
+        minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
+        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
     }
 
     private val explanationArea = JBTextArea().apply {
         lineWrap = true
+        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
     }
 
     init {
@@ -38,13 +41,20 @@ class ChatPanel : JPanel(), ChatView {
 
         createPromptLabelPanel().also { promptPanel.add(it) }
         promptPanel.add(Box.createVerticalStrut(10))
-        val promptScrollPane = createPromptScrollPane()
+        val promptScrollPane = JBScrollPane(promptTextArea).apply {
+            maximumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
+            minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
+            preferredSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
+        }
         promptPanel.add(promptScrollPane)
+        promptPanel.add(Box.createVerticalStrut(10))
+
         promptPanel.add(Box.createVerticalStrut(10))
         val buttonPanel = createButtonPanel()
         promptPanel.add(buttonPanel)
         promptPanel.add(Box.createVerticalStrut(10))
         createExplanationLabelPanel().also { promptPanel.add(it) }
+        promptPanel.add(Box.createVerticalStrut(10))
         val explanationScrollPane = createExplanationScrollPane()
         promptPanel.add(explanationScrollPane)
 
@@ -64,10 +74,6 @@ class ChatPanel : JPanel(), ChatView {
         return panel
     }
 
-    private fun createPromptScrollPane(): JBScrollPane {
-        return JBScrollPane(promptTextArea)
-    }
-
     private fun createButtonPanel(): JPanel {
         val panel = createHorizontalBoxPanel()
         val submitButton = JButton("Submit").apply {
@@ -76,32 +82,12 @@ class ChatPanel : JPanel(), ChatView {
             }
         }
         panel.add(submitButton)
-        panel.add(Box.createHorizontalStrut(5))
+        panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
         val clearButton = JButton("New Chat")
         clearButton.addActionListener {
             presenter.onNewChatClicked()
         }
         panel.add(clearButton)
-
-        /*
-                val newFileButton = JButton("New File")
-                newFileButton.addActionListener {
-                    val newFileAction = ActionManager.getInstance().getAction("NewFile")
-
-        //            todo does not work yet.
-                    val module = ModuleManager.getInstance(project).modules?.firstOrNull()
-
-                    if (module != null) {
-                        ModuleRootManager.getInstance(module).sourceRoots.firstOrNull()?.path?.let { path ->
-                            val dataContext = DataManager.getInstance().getDataContext()
-                            val event = AnActionEvent.createFromDataContext(path, null, dataContext)
-                            newFileAction.actionPerformed(event)
-                        }
-                    }
-                }
-                panel.add(newFileButton)
-        */
-
         panel.add(Box.createHorizontalGlue())
         return panel
     }
@@ -163,5 +149,9 @@ class ChatPanel : JPanel(), ChatView {
             promptTextArea.text = ""
             explanationArea.text = ""
         }
+    }
+
+    companion object {
+        private const val PROMPT_MAX_HEIGHT = 200
     }
 }
