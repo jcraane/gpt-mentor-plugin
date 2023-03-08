@@ -21,6 +21,15 @@ data class ChatGptRequest(
         val role: Role,
         val content: String,
     ) {
+        companion object {
+            fun newUserMessage(content: String): Message {
+                return Message(Role.USER, content)
+            }
+
+            fun newSystemMessage(content: String): Message {
+                return Message(Role.SYSTEM, content)
+            }
+        }
         @Serializable(with = Role.RoleSerializer::class)
         enum class Role(val code: String) {
             USER("user"),

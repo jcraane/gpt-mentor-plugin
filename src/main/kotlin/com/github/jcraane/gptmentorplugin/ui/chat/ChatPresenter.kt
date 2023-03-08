@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
+import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
@@ -11,8 +12,6 @@ import com.intellij.openapi.project.Project
 import io.ktor.client.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
@@ -26,12 +25,12 @@ class ChatPresenter(
             .build(),
         credentialsManager = GptMentorCredentialsManager,
     ),
-
-    private var chat: BasicPrompt.Chat? = null
-
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
+
+    private var chat: BasicPrompt.Chat? = null
+    private val explanationBuilder = StringBuilder()
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
@@ -40,23 +39,40 @@ class ChatPresenter(
     fun onSubmitClicked() {
         val prompt = chatView.getPrompt()
         chatView.setPrompt(prompt)
-        chatView.clearExplanation()
-        executeStreaming(prompt)
+
+        val newChat = (chat ?: BasicPrompt.Chat(emptyList()))
+        val withNewUserMessage = newChat.copy(
+            messages = newChat.messages + ChatGptRequest.Message.newUserMessage(prompt)
+        )
+
+        chat = withNewUserMessage
+        executeStreaming(withNewUserMessage)
     }
 
-    private fun executeStreaming(prompt: String) {
+    private fun executeStreaming(prompt: BasicPrompt) {
         apiJob?.cancel()
         apiJob = scope.launch {
-            chatView.appendPrompt(prompt)
+            chatView.appendPrompt(prompt.action)
             kotlin.runCatching {
-                openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
+                openApi.executeBasicActionStreaming(prompt)
                     .collect { streamingResponse ->
                         when (streamingResponse) {
-                            is StreamingResponse.Data -> chatView.appendExplanation(streamingResponse.data)
+                            is StreamingResponse.Data -> {
+                                explanationBuilder.append(streamingResponse.data)
+                                chatView.appendExplanation(streamingResponse.data)
+                            }
+
                             is StreamingResponse.Error -> chatView.showError(streamingResponse.error)
                             StreamingResponse.Done -> {
                                 chatView.onExplanationDone()
                                 chatView.clearPrompt()
+                                chat = chat?.let {
+                                    it.copy(
+                                        messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
+                                    )
+                                }
+
+                                explanationBuilder.clear()
                             }
                         }
                     }
@@ -75,11 +91,12 @@ class ChatPresenter(
     override fun onNewPrompt(prompt: BasicPrompt) {
         chatView.setPrompt(prompt.action)
         chatView.clearExplanation()
-        executeStreaming(prompt.action)
+        executeStreaming(prompt)
     }
 
     fun onNewChatClicked() {
         chatView.clearAll()
         chatView.setFocusOnPrompt()
+        chat = BasicPrompt.Chat(emptyList())
     }
 }

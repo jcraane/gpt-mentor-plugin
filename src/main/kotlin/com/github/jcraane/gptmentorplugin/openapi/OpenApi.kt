@@ -31,11 +31,10 @@ sealed class BasicPrompt(
     data class ImproveCode(val code: String) : BasicPrompt("Improve this code: \n\n$code")
     data class ReviewCode(val code: String) : BasicPrompt("Review this code: \n\n$code")
     data class CreateUnitTest(val code: String) : BasicPrompt("Create a unit test for : \n\n$code")
-    data class UserDefined(val prompt: String) : BasicPrompt(prompt)
-    data class Chat(val messages: List<ChatGptRequest.Message>) : BasicPrompt("") {
+    data class Chat(val messages: List<ChatGptRequest.Message>) : BasicPrompt(messages.lastOrNull()?.content ?: "") {
         override fun createRequest(): ChatGptRequest {
             return chatGptRequest {
-                messages.forEach { message ->
+                this@Chat.messages.forEach { message ->
                     message {
                         role = message.role
                         content = message.content

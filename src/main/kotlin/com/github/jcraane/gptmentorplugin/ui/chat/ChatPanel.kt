@@ -202,7 +202,7 @@ class ChatPanel : JPanel(), ChatView {
 
     override fun onExplanationDone() {
         ApplicationManager.getApplication().invokeLater {
-            explanationArea.styledDocument.addNewLines(1)
+            explanationArea.styledDocument.addNewLines(2)
             promptTextArea.text = ""
         }
         setFocusOnPrompt()
