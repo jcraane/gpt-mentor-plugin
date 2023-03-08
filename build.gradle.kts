@@ -41,6 +41,8 @@ dependencies {
     // Used for SSE
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:okhttp-sse:4.9.3")
+
+    testImplementation("io.mockk:mockk:1.12.0")
 }
 
 // Set the JVM language level used to build project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
