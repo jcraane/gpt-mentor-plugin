@@ -1,6 +1,8 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
 interface ChatView {
+    fun appendPrompt(message: String)
+
     fun setPrompt(message: String)
 
     fun clearExplanation()
@@ -17,4 +19,5 @@ interface ChatView {
 
     fun setFocusOnPrompt()
     fun onExplanationDone()
+    fun clearPrompt()
 }

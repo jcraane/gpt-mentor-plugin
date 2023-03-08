@@ -26,6 +26,9 @@ class ChatPresenter(
             .build(),
         credentialsManager = GptMentorCredentialsManager,
     ),
+
+    private var chat: BasicPrompt.Chat? = null
+
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
@@ -35,25 +38,25 @@ class ChatPresenter(
     }
 
     fun onSubmitClicked() {
-        chatView.setPrompt("")
-        executeStreaming(chatView.getPrompt())
+        val prompt = chatView.getPrompt()
+        chatView.setPrompt(prompt)
+        chatView.clearExplanation()
+        executeStreaming(prompt)
     }
 
     private fun executeStreaming(prompt: String) {
         apiJob?.cancel()
         apiJob = scope.launch {
-            chatView.setPrompt(prompt)
+            chatView.appendPrompt(prompt)
             kotlin.runCatching {
                 openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
-                    .onCompletion {
-                        chatView.onExplanationDone()
-                    }
                     .collect { streamingResponse ->
                         when (streamingResponse) {
                             is StreamingResponse.Data -> chatView.appendExplanation(streamingResponse.data)
                             is StreamingResponse.Error -> chatView.showError(streamingResponse.error)
                             StreamingResponse.Done -> {
-                                // Do nothing
+                                chatView.onExplanationDone()
+                                chatView.clearPrompt()
                             }
                         }
                     }
@@ -70,6 +73,8 @@ class ChatPresenter(
     }
 
     override fun onNewPrompt(prompt: BasicPrompt) {
+        chatView.setPrompt(prompt.action)
+        chatView.clearExplanation()
         executeStreaming(prompt.action)
     }
 

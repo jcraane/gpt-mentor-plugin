@@ -1,9 +1,14 @@
 package com.github.jcraane.gptmentorplugin.domain.request
 
+@DslMarker
+annotation class GptRequest
+
+@GptRequest
 fun chatGptRequest(block: ChatGptRequestBuilder.() -> Unit): ChatGptRequest {
     return ChatGptRequestBuilder().apply(block).build()
 }
 
+@GptRequest
 class ChatGptRequestBuilder(
     var model: String = "gpt-3.5-turbo",
     var messages: MutableList<MessageBuilder> = mutableListOf(),

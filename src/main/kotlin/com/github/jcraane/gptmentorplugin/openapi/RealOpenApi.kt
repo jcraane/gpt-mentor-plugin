@@ -60,13 +60,7 @@ class RealOpenApi(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun executeBasicActionStreaming(basicPrompt: BasicPrompt) =
         callbackFlow {
-            val chatGptRequest = chatGptRequest {
-                message {
-                    role = ChatGptRequest.Message.Role.USER
-                    content = basicPrompt.action
-                    stream = true
-                }
-            }
+            val chatGptRequest = basicPrompt.createRequest()
 
             val request = Request.Builder()
                 .url(API_ENDPOINT)

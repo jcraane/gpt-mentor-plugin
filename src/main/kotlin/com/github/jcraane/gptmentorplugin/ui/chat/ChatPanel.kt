@@ -32,20 +32,24 @@ class ChatPanel : JPanel(), ChatView {
     private val userStyle = explanationArea.addStyle("User", null).apply {
         StyleConstants.setFontFamily(this, "Consolas");
         StyleConstants.setFontSize(this, 14);
-        StyleConstants.setForeground(this, JBColor(
-            Color(77, 111, 151),
-            Color(115, 170, 212)
-        ));
+        StyleConstants.setForeground(
+            this, JBColor(
+                Color(77, 111, 151),
+                Color(115, 170, 212)
+            )
+        );
     }
 
     private val systemStyle = explanationArea.addStyle("System", null).apply {
         StyleConstants.setFontFamily(this, "Consolas");
         StyleConstants.setFontSize(this, 14);
-        StyleConstants.setForeground(this,
+        StyleConstants.setForeground(
+            this,
             JBColor(
                 Color(103, 81, 111),
                 Color(187, 134, 206)
-            ));
+            )
+        );
     }
 
     init {
@@ -141,11 +145,19 @@ class ChatPanel : JPanel(), ChatView {
         return panel
     }
 
+    override fun appendPrompt(message: String) {
+        ApplicationManager.getApplication().invokeLater {
+            val doc = explanationArea.styledDocument
+            doc.insertString(explanationArea.styledDocument.length, message, userStyle)
+            if (message.endsWith("\n").not() && message.isNotEmpty()) {
+                explanationArea.styledDocument.addNewLines(2)
+            }
+        }
+    }
+
     override fun setPrompt(message: String) {
         ApplicationManager.getApplication().invokeLater {
             promptTextArea.text = message
-            val doc = explanationArea.styledDocument
-            doc.insertString(explanationArea.styledDocument.length, message, userStyle)
         }
     }
 
@@ -194,6 +206,12 @@ class ChatPanel : JPanel(), ChatView {
             promptTextArea.text = ""
         }
         setFocusOnPrompt()
+    }
+
+    override fun clearPrompt() {
+        ApplicationManager.getApplication().invokeLater {
+            promptTextArea.text = ""
+        }
     }
 
     private fun StyledDocument.addNewLines(numberOfLines: Int) {
