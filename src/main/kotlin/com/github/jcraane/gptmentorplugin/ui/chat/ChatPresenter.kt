@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import io.ktor.client.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -34,6 +35,7 @@ class ChatPresenter(
     }
 
     fun onSubmitClicked() {
+        chatView.setPrompt("")
         executeStreaming(chatView.getPrompt())
     }
 
@@ -43,8 +45,8 @@ class ChatPresenter(
             chatView.setPrompt(prompt)
             kotlin.runCatching {
                 openApi.executeBasicActionStreaming(BasicPrompt.UserDefined(prompt))
-                    .onStart {
-                        chatView.clearExplanation()
+                    .onCompletion {
+                        chatView.onExplanationDone()
                     }
                     .collect { streamingResponse ->
                         when (streamingResponse) {

@@ -16,4 +16,5 @@ interface ChatView {
     fun clearAll()
 
     fun setFocusOnPrompt()
+    fun onExplanationDone()
 }

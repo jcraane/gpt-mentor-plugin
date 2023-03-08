@@ -2,12 +2,16 @@ package com.github.jcraane.gptmentorplugin.ui.chat
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import javax.swing.*
+import javax.swing.text.StyleConstants
+import javax.swing.text.StyledDocument
 
 class ChatPanel : JPanel(), ChatView {
     private val presenter = ChatPresenter(this)
@@ -21,9 +25,27 @@ class ChatPanel : JPanel(), ChatView {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
     }
 
-    private val explanationArea = JBTextArea().apply {
-        lineWrap = true
+    private val explanationArea = JTextPane().apply {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    }
+
+    private val userStyle = explanationArea.addStyle("User", null).apply {
+        StyleConstants.setFontFamily(this, "Consolas");
+        StyleConstants.setFontSize(this, 14);
+        StyleConstants.setForeground(this, JBColor(
+            Color(77, 111, 151),
+            Color(115, 170, 212)
+        ));
+    }
+
+    private val systemStyle = explanationArea.addStyle("System", null).apply {
+        StyleConstants.setFontFamily(this, "Consolas");
+        StyleConstants.setFontSize(this, 14);
+        StyleConstants.setForeground(this,
+            JBColor(
+                Color(103, 81, 111),
+                Color(187, 134, 206)
+            ));
     }
 
     init {
@@ -122,6 +144,8 @@ class ChatPanel : JPanel(), ChatView {
     override fun setPrompt(message: String) {
         ApplicationManager.getApplication().invokeLater {
             promptTextArea.text = message
+            val doc = explanationArea.styledDocument
+            doc.insertString(explanationArea.styledDocument.length, message, userStyle)
         }
     }
 
@@ -139,8 +163,7 @@ class ChatPanel : JPanel(), ChatView {
 
     override fun appendExplanation(explanation: String) {
         ApplicationManager.getApplication().invokeLater {
-            val currentText = explanationArea.text
-            explanationArea.text = currentText + explanation
+            explanationArea.styledDocument.insertString(explanationArea.styledDocument.length, explanation, systemStyle)
         }
     }
 
@@ -163,6 +186,20 @@ class ChatPanel : JPanel(), ChatView {
 
     override fun setFocusOnPrompt() {
         promptTextArea.requestFocusInWindow()
+    }
+
+    override fun onExplanationDone() {
+        ApplicationManager.getApplication().invokeLater {
+            explanationArea.styledDocument.addNewLines(1)
+            promptTextArea.text = ""
+        }
+        setFocusOnPrompt()
+    }
+
+    private fun StyledDocument.addNewLines(numberOfLines: Int) {
+        val docLength = length
+        val newLines = "\n".repeat(numberOfLines)
+        insertString(docLength, newLines, null)
     }
 
     companion object {
