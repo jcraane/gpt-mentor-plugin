@@ -2,9 +2,7 @@
     - Delete chats
     - Name/rename chats
 - Add option to create new file from selection
-- Create new view with smaller prompt and history in explanation (with timestamps)
 - Add code formatting if code is detected
-- Provide nice wrapping options
 - Select code and copy to prompt with shortcut and plce cursus at start of component
 - Add advanced options like temperature, top-k, etc.
-- Api seems slower after some time
+

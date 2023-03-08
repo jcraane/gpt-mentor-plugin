@@ -56,25 +56,7 @@ class ChatPresenter(
             kotlin.runCatching {
                 openApi.executeBasicActionStreaming(prompt)
                     .collect { streamingResponse ->
-                        when (streamingResponse) {
-                            is StreamingResponse.Data -> {
-                                explanationBuilder.append(streamingResponse.data)
-                                chatView.appendExplanation(streamingResponse.data)
-                            }
-
-                            is StreamingResponse.Error -> chatView.showError(streamingResponse.error)
-                            StreamingResponse.Done -> {
-                                chatView.onExplanationDone()
-                                chatView.clearPrompt()
-                                chat = chat?.let {
-                                    it.copy(
-                                        messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
-                                    )
-                                }
-
-                                explanationBuilder.clear()
-                            }
-                        }
+                        handleResponse(streamingResponse)
                     }
             }.onFailure {
                 if (it !is CancellationException) {
@@ -82,6 +64,35 @@ class ChatPresenter(
                 }
             }
         }
+    }
+
+    private fun handleResponse(streamingResponse: StreamingResponse) {
+        when (streamingResponse) {
+            is StreamingResponse.Data -> handleData(streamingResponse.data)
+            is StreamingResponse.Error -> handleError(streamingResponse.error)
+            StreamingResponse.Done -> handleDone()
+        }
+    }
+
+    private fun handleData(data: String): Unit {
+        explanationBuilder.append(data)
+        chatView.appendExplanation(data)
+    }
+
+    private fun handleError(error: String): Unit {
+        chatView.showError(error)
+    }
+
+    private fun handleDone(): Unit {
+        chatView.onExplanationDone()
+        chatView.clearPrompt()
+        chat = chat?.let {
+            it.copy(
+                messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
+            )
+        }
+
+        explanationBuilder.clear()
     }
 
     fun onStopClicked() {
