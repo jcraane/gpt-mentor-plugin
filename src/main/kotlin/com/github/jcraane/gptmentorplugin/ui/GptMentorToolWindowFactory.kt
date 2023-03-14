@@ -19,18 +19,21 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
         val tabbedPane = JBTabbedPane().apply {
             addTab("Chat", ChatPanel().apply { onAttach(project) })
             addTab("History", createHistory(listOf("Apple", "Banana", "Orange", "Mango", "Pineapple")))
+            addChangeListener {
+                println("Selected tab: ${selectedIndex}")
+            }
         }
 
         val content: Content = contentFactory.createContent(tabbedPane, "", false)
         toolWindow.contentManager.addContent(content)
     }
 
-//    todo double click should load chat with chat history
     private fun createHistory(items: List<String>): JBList<String> {
         return JBList<String>(items).apply {
             addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent?) {
                     if (e?.clickCount == 2) {
+                        //    todo double click should load chat with chat history
                         val selected = selectedValue
                         JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
                     }

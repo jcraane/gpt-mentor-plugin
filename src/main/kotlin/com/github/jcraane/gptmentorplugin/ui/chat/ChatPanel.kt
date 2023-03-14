@@ -9,6 +9,8 @@ import com.intellij.ui.components.JBTextArea
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import javax.swing.*
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
@@ -23,6 +25,20 @@ class ChatPanel : JPanel(), ChatView {
         lineWrap = true
         minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        addKeyListener(object : KeyListener {
+            override fun keyTyped(e: java.awt.event.KeyEvent?) {
+
+            }
+
+            override fun keyPressed(e: java.awt.event.KeyEvent?) {
+                if (e?.keyCode == KeyEvent.VK_ENTER && e.isMetaDown) {
+                    presenter.onSubmitClicked()
+                }
+            }
+
+            override fun keyReleased(e: java.awt.event.KeyEvent?) {
+            }
+        })
     }
 
     private val explanationArea = JTextPane().apply {
