@@ -53,6 +53,12 @@
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
+            <action id="addComments" class="com.github.jcraane.gptmentorplugin.actions.AddCommentsAction"
+                    text="Add Comments">
+                <keyboard-shortcut first-keystroke="control alt shift C" keymap="$default" />
+                <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
         </group>
     </actions>
 

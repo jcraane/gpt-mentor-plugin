@@ -16,6 +16,15 @@ class ChatGptRequestBuilder(
     var maxTokens: Int = 1024,
     var stream: Boolean = false,
 ) {
+    fun systemPrompt(prompt: String) {
+        if (messages.isNotEmpty()) {
+            throw IllegalStateException("Cannot add a system prompt when messages list is not empty.")
+        }
+        messages.add(MessageBuilder().apply {
+            role = ChatGptRequest.Message.Role.SYSTEM
+            content = prompt
+        })
+    }
     fun message(block: MessageBuilder.() -> Unit) {
         messages.add(MessageBuilder().apply(block))
     }
