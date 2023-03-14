@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
+import com.github.jcraane.gptmentorplugin.common.extensions.onKeyPressed
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
@@ -25,20 +26,11 @@ class ChatPanel : JPanel(), ChatView {
         lineWrap = true
         minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        addKeyListener(object : KeyListener {
-            override fun keyTyped(e: java.awt.event.KeyEvent?) {
-
+        onKeyPressed { event ->
+            if (event?.keyCode == KeyEvent.VK_ENTER && event.isMetaDown) {
+                presenter.onSubmitClicked()
             }
-
-            override fun keyPressed(e: java.awt.event.KeyEvent?) {
-                if (e?.keyCode == KeyEvent.VK_ENTER && e.isMetaDown) {
-                    presenter.onSubmitClicked()
-                }
-            }
-
-            override fun keyReleased(e: java.awt.event.KeyEvent?) {
-            }
-        })
+        }
     }
 
     private val explanationArea = JTextPane().apply {
