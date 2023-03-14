@@ -5,4 +5,5 @@
 - Add code formatting if code is detected
 - Select code and copy to prompt with shortcut and plce cursus at start of component
 - Add advanced options like temperature, top-k, etc.
+- Add system message to provide context for the AI
 

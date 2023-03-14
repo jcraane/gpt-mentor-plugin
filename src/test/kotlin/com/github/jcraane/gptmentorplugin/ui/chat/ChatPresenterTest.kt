@@ -22,7 +22,6 @@ class ChatPresenterTest {
 
     @Before
     fun setup() {
-//        Dispatchers.setMain(testDispatcher)
         presenter = ChatPresenter(chatView, openApi)
     }
 
