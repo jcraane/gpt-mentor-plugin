@@ -48,32 +48,25 @@ class GptMentorConfigurable : Configurable {
         chatPrompt.text = config.systemPromptChat
 
         settingsPanel = panel {
-            row {
-                label(text = "OpenAI API Key")
+            row("OpenAI API Key") {
                 component(openAiApiKey)
             }
-            row {
-                label(text = "Explain Code Prompt")
+            row("Explain Code Prompt") {
                 component(explainCodePrompt)
             }
-            row {
-                label(text = "Create Unit Test Prompt")
+            row("Create Unit Test Prompt") {
                 component(createUnitTestPrompt)
             }
-            row {
-                label(text = "Improve Code Prompt")
+            row("Improve Code Prompt") {
                 component(improveCodePrompt)
             }
-            row {
-                label(text = "Review Code Prompt")
+            row("Review Code Prompt") {
                 component(reviewCodePrompt)
             }
-            row {
-                label(text = "Add Docs Prompt")
+            row("Add Docs Prompt") {
                 component(addDocsPrompt)
             }
-            row {
-                label(text = "Chat Prompt")
+            row("Chat Prompt") {
                 component(chatPrompt)
             }
         }
