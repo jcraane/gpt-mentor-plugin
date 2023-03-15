@@ -1,8 +1,7 @@
 package com.github.jcraane.gptmentorplugin.openapi
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
-import com.github.jcraane.gptmentorplugin.domain.request.chatGptRequest
-import com.github.jcraane.gptmentorplugin.domain.response.ChatGptResponse
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.openapi.response.streaming.ChatCompletion
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import io.ktor.client.*
@@ -13,10 +12,7 @@ import io.ktor.util.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.isActive
-import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -43,18 +39,6 @@ class RealOpenApi(
                 setBody(JSON.encodeToString(ChatGptRequest.serializer(), request))
             }.bodyAsText()
         }
-    }
-
-    override suspend fun executeBasicAction(basicPrompt: BasicPrompt): ChatGptResponse {
-        val request = chatGptRequest {
-            message {
-                role = ChatGptRequest.Message.Role.USER
-                content = basicPrompt.action
-            }
-        }
-
-        val response = makeHttpRequest(API_ENDPOINT, request)
-        return JSON.decodeFromString(ChatGptResponse.serializer(), response)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

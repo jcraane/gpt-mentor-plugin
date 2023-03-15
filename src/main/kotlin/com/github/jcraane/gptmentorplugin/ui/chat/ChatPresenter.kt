@@ -1,9 +1,9 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.OpenApi
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.openapi.StreamingResponse

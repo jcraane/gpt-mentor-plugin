@@ -1,7 +1,7 @@
 package com.github.jcraane.gptmentorplugin.domain
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequestBuilder
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequestBuilder
 import org.junit.Assert.*
 import org.junit.Test
 

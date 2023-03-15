@@ -1,7 +1,7 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.OpenApi
 import io.mockk.coVerify
 import io.mockk.every

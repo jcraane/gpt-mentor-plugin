@@ -1,6 +1,6 @@
 package com.github.jcraane.gptmentorplugin.messagebus
 
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.intellij.util.messages.Topic
 
 val CHAT_GPT_ACTION_TOPIC: Topic<ChatGptApiListener> = Topic.create("GptMentorChatGptTopic", ChatGptApiListener::class.java)

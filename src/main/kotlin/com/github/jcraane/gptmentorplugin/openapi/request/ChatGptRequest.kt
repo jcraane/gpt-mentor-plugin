@@ -1,4 +1,4 @@
-package com.github.jcraane.gptmentorplugin.domain.request
+package com.github.jcraane.gptmentorplugin.openapi.request
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind

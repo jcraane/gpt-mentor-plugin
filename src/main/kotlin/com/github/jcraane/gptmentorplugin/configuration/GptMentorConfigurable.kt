@@ -2,11 +2,11 @@ package com.github.jcraane.gptmentorplugin.configuration
 
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.intellij.openapi.options.Configurable
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextArea
-import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
-import java.awt.Dimension
+import java.awt.Color
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -24,8 +24,12 @@ class GptMentorConfigurable : Configurable {
 
     private val config: GptMentorSettingsState = GptMentorSettingsState.getInstance()
 
-    private fun createTextArea()= JBTextArea().apply {
+    private fun createTextArea() = JBTextArea().apply {
         lineWrap = true
+        BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(JBColor(Color.BLACK, Color.WHITE), 1),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        )
     }
 
 

@@ -1,7 +1,7 @@
 package com.github.jcraane.gptmentorplugin.actions
 
 import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys

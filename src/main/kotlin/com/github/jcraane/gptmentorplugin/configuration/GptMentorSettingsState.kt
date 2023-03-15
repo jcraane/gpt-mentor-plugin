@@ -1,6 +1,6 @@
 package com.github.jcraane.gptmentorplugin.configuration
 
-import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State

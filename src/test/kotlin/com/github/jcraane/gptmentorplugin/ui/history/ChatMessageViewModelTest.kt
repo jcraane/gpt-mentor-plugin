@@ -1,6 +1,6 @@
 package com.github.jcraane.gptmentorplugin.ui.history
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import org.junit.Assert.*
 import org.junit.Test
 

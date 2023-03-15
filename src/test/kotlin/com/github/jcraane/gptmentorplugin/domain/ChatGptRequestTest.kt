@@ -1,6 +1,6 @@
 package com.github.jcraane.gptmentorplugin.domain
 
-import com.github.jcraane.gptmentorplugin.domain.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import kotlinx.serialization.json.Json
 import org.junit.Test
 import kotlin.test.assertEquals
