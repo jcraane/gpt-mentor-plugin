@@ -11,7 +11,7 @@
         <projectService serviceImplementation="com.github.jcraane.gptmentorplugin.services.MyProjectService"/>
 
         <toolWindow id="GPT-Mentor" factoryClass="com.github.jcraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
-        anchor="right">
+                    anchor="right">
 
         </toolWindow>
     </extensions>
@@ -49,13 +49,13 @@
             </action>
             <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.CreateUnitTestAction"
                     text="Create Unit Test">
-                <keyboard-shortcut first-keystroke="control alt shift T" keymap="$default" />
+                <keyboard-shortcut first-keystroke="control alt shift T" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
             <action id="addComments" class="com.github.jcraane.gptmentorplugin.actions.AddCommentsAction"
                     text="Add Comments">
-                <keyboard-shortcut first-keystroke="control alt shift C" keymap="$default" />
+                <keyboard-shortcut first-keystroke="control alt shift C" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
@@ -68,6 +68,8 @@
                 instance="com.github.jcraane.gptmentorplugin.configuration.GptMentorConfigurable"
                 id="com.github.jcraane.fasttravel.configuration.FastTravelConfigurable"
                 displayName="GptMentor"/>
+
+        <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"/>
     </extensions>
 
 </idea-plugin>

@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.configuration
 
+import com.github.jcraane.gptmentorplugin.openapi.BasicPrompt
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
@@ -18,6 +19,12 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> {
     //    var openAiApiKey: String by GptMentorSettingsState()
     var openAiApiKey: String = "SECURED"
+    var systemPromptExplainCode: String = BasicPrompt.ExplainCode("").systemPrompt
+    var systemPromptCreateUnitTest: String = BasicPrompt.CreateUnitTest("").systemPrompt
+    var systemPromptImproveCode: String = BasicPrompt.ImproveCode("").systemPrompt
+    var systemPromptReviewCode: String = BasicPrompt.ReviewCode("").systemPrompt
+    var systemPromptAddDocs: String = BasicPrompt.AddComments("").systemPrompt
+    var systemPromptChat: String = BasicPrompt.Chat(emptyList()).systemPrompt
 
     override fun getState(): GptMentorSettingsState {
         return this
@@ -30,12 +37,4 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
     companion object {
         fun getInstance() = ServiceManager.getService(GptMentorSettingsState::class.java)
     }
-
-    /*operator fun getValue(thisRef: GptMentorSettingsState, property: KProperty<*>): String {
-        return GptMentorCredentialsManager.getPassword() ?: ""
-    }
-
-    operator fun setValue(thisRef: GptMentorSettingsState, property: KProperty<*>, value: String?) {
-        GptMentorCredentialsManager.setPassword(value)
-    }*/
 }
