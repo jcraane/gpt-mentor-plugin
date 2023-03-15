@@ -17,14 +17,13 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     storages = [Storage("GptMentorConfig.xml")]
 )
 class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> {
-    //    var openAiApiKey: String by GptMentorSettingsState()
     var openAiApiKey: String = "SECURED"
-    var systemPromptExplainCode: String = BasicPrompt.ExplainCode("").systemPrompt
-    var systemPromptCreateUnitTest: String = BasicPrompt.CreateUnitTest("").systemPrompt
-    var systemPromptImproveCode: String = BasicPrompt.ImproveCode("").systemPrompt
-    var systemPromptReviewCode: String = BasicPrompt.ReviewCode("").systemPrompt
-    var systemPromptAddDocs: String = BasicPrompt.AddComments("").systemPrompt
-    var systemPromptChat: String = BasicPrompt.Chat(emptyList()).systemPrompt
+    var systemPromptExplainCode: String = DEFAULT_PROMPT_EXPLAIN
+    var systemPromptCreateUnitTest: String = DEFAULT_PROMPT_CREATE_UNIT_TEST
+    var systemPromptImproveCode: String = DEFAULT_PROMPT_IMPROVE_CODE
+    var systemPromptReviewCode: String = DEFAULT_PROMPT_REVIEW
+    var systemPromptAddDocs: String = DEFAULT_PROMPT_ADD_DOCS
+    var systemPromptChat: String = DEFAULT_PROMPT_CHAT
 
     override fun getState(): GptMentorSettingsState {
         return this
@@ -36,5 +35,45 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
 
     companion object {
         fun getInstance() = ServiceManager.getService(GptMentorSettingsState::class.java)
+
+        private const val DEFAULT_PROMPT = "You are an expert AI programmer."
+
+        private const val DEFAULT_PROMPT_EXPLAIN = """
+        You are an expert AI programmer and an expert in explaining code to medior and junior programmers.
+
+        - Explain the code in concise sentences
+        - Provide examples when possible to explain what the code does
+    """
+
+        private const val DEFAULT_PROMPT_REVIEW = """
+        You are an expert AI programmer reviewing code written by others. During the review:
+
+        - Summarize what is good about the code
+        - Mention where the code can be improved and why if applicable
+        - Check if there are potential security issues
+        - Check if there are potential performance issues
+        - Check if deprecated code is used and suggest alternatives
+        - DO NOT EXPLAIN THE CODE
+    """
+
+        private const val DEFAULT_PROMPT_CREATE_UNIT_TEST = """
+        You are an expert AI programmer which uses unit tests to verify behavior.
+
+        - Write unit tests for the obvious cases
+        - Write unit tests for the edge cases
+        - DO NOT EXPLAIN THE TEST
+    """
+
+        private const val DEFAULT_PROMPT_IMPROVE_CODE = DEFAULT_PROMPT
+
+        private const val DEFAULT_PROMPT_ADD_DOCS = """
+        You are an expert AI programmer which writes code documentation to explain code to other developers.
+
+        - Add documentation for explaining non-obvious things
+        - Do not write comments which are obvious in the code
+        - ONLY WRITE DOCS
+        - DO NOT EXPLAIN THE CODE
+    """
+        private const val DEFAULT_PROMPT_CHAT = DEFAULT_PROMPT
     }
 }

@@ -4,6 +4,7 @@ import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.PromptFactory
 import com.github.jcraane.gptmentorplugin.openapi.OpenApi
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.openapi.StreamingResponse
@@ -40,7 +41,7 @@ class ChatPresenter(
         val prompt = chatView.getPrompt()
         chatView.setPrompt(prompt)
 
-        val newChat = (chat ?: BasicPrompt.Chat(emptyList()))
+        val newChat = (chat ?: PromptFactory.chat(emptyList()))
         val withNewUserMessage = newChat.copy(
             messages = newChat.messages + ChatGptRequest.Message.newUserMessage(prompt)
         )
@@ -108,6 +109,6 @@ class ChatPresenter(
     fun onNewChatClicked() {
         chatView.clearAll()
         chatView.setFocusOnPrompt()
-        chat = BasicPrompt.Chat(emptyList())
+        chat = PromptFactory.chat(emptyList())
     }
 }
