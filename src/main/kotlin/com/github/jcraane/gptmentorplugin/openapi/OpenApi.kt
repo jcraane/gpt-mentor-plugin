@@ -38,16 +38,17 @@ sealed class BasicPrompt(
     """.trimIndent()
     )
 
-    data class ImproveCode(val code: String) : BasicPrompt("Improve this code: \n\n$code", "You are an expert AI programmer.")
+    data class ImproveCode(val code: String) : BasicPrompt("Improve this code: \n\n$code", DEFAULT_PROMPT)
     data class ReviewCode(val code: String) : BasicPrompt(
         "Review this code: \n\n$code", """
         You are an expert AI programmer reviewing code written by others. During the review:
 
-        1. Summarize what is good about the code
-        2. Mention where the code can be improved and why if applicable
-        5. Check if there are potential security issues
-        6. Check if there are potential performance issues
-        7. Check if deprecated code is used and suggest alternatives
+        - Summarize what is good about the code
+        - Mention where the code can be improved and why if applicable
+        - Check if there are potential security issues
+        - Check if there are potential performance issues
+        - Check if deprecated code is used and suggest alternatives
+        - DO NOT EXPLAIN THE CODE
     """.trimIndent()
     )
 
@@ -65,12 +66,12 @@ sealed class BasicPrompt(
         - Add documentation for explaining non-obvious things
         - Do not write comments which are obvious in the code
         - ONLY WRITE DOCS
-        - DO NOT PROVIDE AN EXPLANATION OF THE CODE
+        - DO NOT EXPLAIN THE CODE
     """.trimIndent()
     )
 
     data class Chat(val messages: List<ChatGptRequest.Message>) :
-        BasicPrompt(messages.lastOrNull()?.content ?: "", "You are a senior AI programmer.") {
+        BasicPrompt(messages.lastOrNull()?.content ?: "", DEFAULT_PROMPT) {
         override fun createRequest(): ChatGptRequest {
             return chatGptRequest {
                 this@Chat.messages.forEach { message ->
@@ -82,5 +83,9 @@ sealed class BasicPrompt(
                 stream = true
             }
         }
+    }
+
+    companion object {
+        private const val DEFAULT_PROMPT = "You are an expert AI programmer."
     }
 }
