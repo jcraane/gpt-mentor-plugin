@@ -11,7 +11,6 @@ import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
 import javax.swing.*
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
@@ -19,10 +18,7 @@ import javax.swing.text.StyledDocument
 class ChatPanel : JPanel(), ChatView {
     private val presenter = ChatPresenter(this)
 
-    private val promptTextArea = JBTextArea(
-        "Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a " +
-                "custom one!"
-    ).apply {
+    private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
         minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -230,5 +226,8 @@ class ChatPanel : JPanel(), ChatView {
 
     companion object {
         private const val PROMPT_MAX_HEIGHT = 200
+        private val INTRO_MESSAGE = """
+            Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a custom one!           
+        """.trimIndent()
     }
 }
