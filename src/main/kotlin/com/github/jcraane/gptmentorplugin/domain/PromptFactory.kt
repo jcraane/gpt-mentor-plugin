@@ -12,4 +12,5 @@ object PromptFactory {
     fun createUnitTest(code: String) = BasicPrompt.CreateUnitTest(code, state.systemPromptCreateUnitTest)
     fun addComments(code: String) = BasicPrompt.AddComments(code, state.systemPromptAddDocs)
     fun chat(messages: List<ChatGptRequest.Message>) = BasicPrompt.Chat(messages, state.systemPromptChat)
+    fun promptFromSelection(code: String) = BasicPrompt.PromptFromSelection(code, "")
 }

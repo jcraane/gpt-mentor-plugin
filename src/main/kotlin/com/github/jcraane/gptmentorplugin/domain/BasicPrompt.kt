@@ -6,6 +6,7 @@ import com.github.jcraane.gptmentorplugin.openapi.request.chatGptRequest
 sealed class BasicPrompt(
     open val action: String,
     open val systemPrompt: String,
+    open val executeImmediate: Boolean,
 ) {
     open fun createRequest(): ChatGptRequest {
         return chatGptRequest {
@@ -20,24 +21,29 @@ sealed class BasicPrompt(
     }
 
     data class ExplainCode(val code: String, val systemMessage: String) : BasicPrompt(
-        "Explain code: \n\n$code", systemMessage.trimIndent()
+        action = "Explain code: \n\n$code", systemPrompt = systemMessage.trimIndent(), executeImmediate = true
     )
 
-    data class ImproveCode(val code: String, val systemMessage: String) : BasicPrompt("Improve this code: \n\n$code", systemMessage)
+    data class ImproveCode(val code: String, val systemMessage: String) : BasicPrompt(
+        action = "Improve this code: \n\n$code",
+        systemPrompt = systemMessage,
+        executeImmediate = true
+    )
+
     data class ReviewCode(val code: String, val systemMessage: String) : BasicPrompt(
-        "Review this code: \n\n$code", systemMessage
+        action = "Review this code: \n\n$code", systemPrompt = systemMessage, executeImmediate = true
     )
 
     data class CreateUnitTest(val code: String, val systemMessage: String) : BasicPrompt(
-        "Create a unit test for : \n\n$code", systemMessage
+        action = "Create a unit test for : \n\n$code", systemPrompt = systemMessage, executeImmediate = true
     )
 
     data class AddComments(val code: String, val systemMessage: String) : BasicPrompt(
-        "Add docs to this code: \n\n$code", systemMessage
+        action = "Add docs to this code: \n\n$code", systemPrompt = systemMessage, executeImmediate = true
     )
 
     data class Chat(val messages: List<ChatGptRequest.Message>, val systemMessage: String) :
-        BasicPrompt(messages.lastOrNull()?.content ?: "", systemMessage) {
+        BasicPrompt(action = messages.lastOrNull()?.content ?: "", systemPrompt = systemMessage, executeImmediate = true) {
         override fun createRequest(): ChatGptRequest {
             return chatGptRequest {
                 this@Chat.messages.forEach { message ->
@@ -50,4 +56,8 @@ sealed class BasicPrompt(
             }
         }
     }
+
+    data class PromptFromSelection(val code: String, val systemMessage: String) : BasicPrompt(
+        action = code, systemPrompt = systemMessage, executeImmediate = false
+    )
 }

@@ -59,6 +59,12 @@
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
+            <action id="promptFromSelection" class="com.github.jcraane.gptmentorplugin.actions.PromptFromSelectionAction"
+                    text="Prompt From Selection">
+                <keyboard-shortcut first-keystroke="control alt shift P" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
         </group>
     </actions>
 

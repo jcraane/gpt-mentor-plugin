@@ -159,9 +159,16 @@ class ChatPanel : JPanel(), ChatView {
         }
     }
 
-    override fun setPrompt(message: String) {
+    override fun setPrompt(message: String, positionCursorAtEnd: Boolean) {
         ApplicationManager.getApplication().invokeLater {
-            promptTextArea.text = message
+            if (positionCursorAtEnd) {
+                val messageWithNewLines = "$message\n\n"
+                promptTextArea.text = messageWithNewLines
+                promptTextArea.caretPosition = message.length
+                setFocusOnPrompt()
+            } else {
+                promptTextArea.text = message
+            }
         }
     }
 

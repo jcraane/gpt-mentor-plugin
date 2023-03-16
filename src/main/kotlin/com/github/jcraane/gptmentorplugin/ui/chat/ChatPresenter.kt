@@ -101,9 +101,11 @@ class ChatPresenter(
     }
 
     override fun onNewPrompt(prompt: BasicPrompt) {
-        chatView.setPrompt(prompt.action)
+        chatView.setPrompt(prompt.action, positionCursorAtEnd = prompt.executeImmediate.not())
         chatView.clearExplanation()
-        executeStreaming(prompt)
+        if (prompt.executeImmediate) {
+            executeStreaming(prompt)
+        }
     }
 
     fun onNewChatClicked() {

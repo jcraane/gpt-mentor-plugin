@@ -85,29 +85,21 @@ class GptMentorConfigurable : Configurable {
         settingsPanel.add(openAiApiKey, c)
 
         var gridY = 0
-        for (i in prompts.indices) {
+        for (promptIndex in prompts.indices) {
             c.gridy = ++gridY
-            settingsPanel.add(labels[i], c)
+            settingsPanel.add(labels[promptIndex], c)
 
             c.gridx = 1
             c.weightx = COMPONENT_WEIGHT
             c.anchor = GridBagConstraints.LINE_START
             c.insets = Insets(0, GAP, GAP, 0)
 
-            settingsPanel.add(prompts[i], c)
+            settingsPanel.add(prompts[promptIndex], c)
 
             val resetButton = JButton("Reset")
             resetButton.preferredSize = Dimension(RESET_BUTTON_WIDTH, RESET_BUTTON_HEIGHT)
             resetButton.addActionListener {
-                // Reset the prompt to its default value
-                when (i) {
-                    0 -> explainCodePrompt.text = DEFAULT_PROMPT_EXPLAIN
-                    1 -> createUnitTestPrompt.text = DEFAULT_PROMPT_CREATE_UNIT_TEST
-                    2 -> improveCodePrompt.text = DEFAULT_PROMPT_IMPROVE_CODE
-                    3 -> reviewCodePrompt.text = DEFAULT_PROMPT_REVIEW
-                    4 -> addDocsPrompt.text = DEFAULT_PROMPT_ADD_DOCS
-                    5 -> chatPrompt.text = DEFAULT_PROMPT_CHAT
-                }
+                resetPrompt(promptIndex)
             }
             c.gridy = ++gridY
             c.gridx = 1
@@ -126,6 +118,17 @@ class GptMentorConfigurable : Configurable {
         }
 
         return settingsPanel
+    }
+
+    private fun resetPrompt(i: Int) {
+        when (i) {
+            0 -> explainCodePrompt.text = DEFAULT_PROMPT_EXPLAIN
+            1 -> createUnitTestPrompt.text = DEFAULT_PROMPT_CREATE_UNIT_TEST
+            2 -> improveCodePrompt.text = DEFAULT_PROMPT_IMPROVE_CODE
+            3 -> reviewCodePrompt.text = DEFAULT_PROMPT_REVIEW
+            4 -> addDocsPrompt.text = DEFAULT_PROMPT_ADD_DOCS
+            5 -> chatPrompt.text = DEFAULT_PROMPT_CHAT
+        }
     }
 
 
