@@ -38,6 +38,8 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.2.2")
     implementation("io.ktor:ktor-client-cio:2.2.2")
 
+    // junit
+    testImplementation("junit:junit:4.13.2")
     // Used for SSE
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:okhttp-sse:4.9.3")

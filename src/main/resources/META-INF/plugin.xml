@@ -76,6 +76,8 @@
                 displayName="GptMentor"/>
 
         <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"/>
+
+        <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.ui.history.state.HistoryState"/>
     </extensions>
 
 </idea-plugin>

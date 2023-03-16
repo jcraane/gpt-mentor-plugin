@@ -17,7 +17,7 @@ class ChatPresenterTest {
     private val chatView: ChatView = mockk(relaxed = true)
     private val openApi: OpenApi = mockk(relaxed = true)
 
-    private val prompt = BasicPrompt.ExplainCode("action")
+    private val prompt = BasicPrompt.ExplainCode("action", "")
     private val message = ChatGptRequest.Message.newUserMessage("action")
 
     @Before
@@ -34,7 +34,7 @@ class ChatPresenterTest {
                 chatView.setPrompt("action")
                 chatView.appendPrompt("action")
                 openApi.executeBasicActionStreaming(
-                    BasicPrompt.Chat(listOf(message))
+                    BasicPrompt.Chat(listOf(message), "")
                 )
             }
         }

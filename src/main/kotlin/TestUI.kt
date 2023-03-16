@@ -1,65 +1,56 @@
-import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTextArea
-import java.awt.Dimension
-import javax.swing.*
+import com.github.jcraane.gptmentorplugin.openapi.JSON
+import com.github.jcraane.gptmentorplugin.ui.history.state.History
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryItem
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryMessage
+import kotlin.reflect.KProperty
 
 fun main() {
-    val frame = JFrame("My Swing Panel")
+    val state = HistoryState2()
 
-    val promptTextArea = JTextArea(
-        "Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a " +
-                "custom one!"
-    ).apply {
-        lineWrap = true
-        maximumSize = Dimension(800, 150)
+    println(state.history)
+
+    state.history = History(
+        items = listOf(
+            HistoryItem(
+                title = "Item 1",
+                messages = listOf(
+                    HistoryMessage("Sender 1", "Message 1"),
+                    HistoryMessage("Recipient 1", "Reply 1"),
+                    HistoryMessage("Sender 1", "Message 2"),
+                )
+            ),
+            HistoryItem(
+                title = "Item 2",
+                messages = listOf(
+                    HistoryMessage("Sender 2", "Message 1"),
+                    HistoryMessage("Recipient 2", "Reply 1"),
+                )
+            ),
+            HistoryItem(
+                title = "Item 3",
+                messages = listOf(
+                    HistoryMessage("Sender 3", "Message 1"),
+                )
+            ),
+        )
+    )
+
+    println(state.history)
+}
+
+private class HistoryState2 {
+    var jsonBlob: String = JSON.encodeToString(History.serializer(), History(emptyList()))
+    var history: History by this
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): History {
+        return if (jsonBlob.isNotEmpty()) {
+            JSON.decodeFromString(History.serializer(), jsonBlob)
+        } else {
+            History(emptyList())
+        }
     }
 
-    val promptPanel = createVerticalBoxPanel()
-    promptPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-    createPromptLabelPanel().also { promptPanel.add(it) }
-    promptPanel.add(Box.createVerticalStrut(10))
-    val promptScrollPane = JScrollPane(promptTextArea).apply {
-        maximumSize = Dimension(800, 150)
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: History) {
+        jsonBlob = JSON.encodeToString(History.serializer(), value)
     }
-    promptPanel.add(promptScrollPane)
-//    promptPanel.add(promptTextArea)
-
-
-    val panel = createHorizontalBoxPanel()
-    // add button to pnel
-    val button = JButton("Click me")
-    panel.add(button)
-    panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
-    //add another button
-    val button2 = JButton("Click me 2")
-    panel.add(button2)
-
-    promptPanel.add(panel)
-    frame.add(promptPanel)
-    frame.pack()
-    frame.setSize(800, 600)
-    frame.isVisible = true
-    frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 }
-
-private fun createVerticalBoxPanel(): JPanel {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-    return panel
-}
-
-private fun createPromptLabelPanel(): JPanel {
-    val panel = createHorizontalBoxPanel()
-    panel.add(JLabel("Prompt: "))
-    panel.add(Box.createHorizontalGlue())
-    return panel
-}
-
-
-private fun createHorizontalBoxPanel(): JPanel {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
-    return panel
-}
-

@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.domain
 
+import com.github.jcraane.gptmentorplugin.openapi.JSON
 import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import kotlinx.serialization.json.Json
 import org.junit.Test
@@ -16,11 +17,11 @@ class ChatGptRequestTest {
                 {"role": "system", "content": "Hi there!"}
             ],
             "temperature": 0.9,
-            "maxTokens": 2048
+            "max_tokens": 2048
         }"""
 
         // When
-        val request = Json.decodeFromString(ChatGptRequest.serializer(), json)
+        val request = JSON.decodeFromString(ChatGptRequest.serializer(), json)
 
         // Then
         assertEquals("gpt-3.5-turbo", request.model)
@@ -45,7 +46,7 @@ class ChatGptRequestTest {
             )
         )
 
-        val json = Json.encodeToString(ChatGptRequest.serializer(), expectedRequest)
+        val json = JSON.encodeToString(ChatGptRequest.serializer(), expectedRequest)
         val actualRequest = Json.decodeFromString(ChatGptRequest.serializer(), json)
     }
 }
