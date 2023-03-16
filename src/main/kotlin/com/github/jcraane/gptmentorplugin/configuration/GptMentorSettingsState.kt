@@ -36,16 +36,16 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
     companion object {
         fun getInstance() = ServiceManager.getService(GptMentorSettingsState::class.java)
 
-        private const val DEFAULT_PROMPT = "You are an expert AI programmer."
+        const val DEFAULT_PROMPT = "You are an expert AI programmer."
 
-        private const val DEFAULT_PROMPT_EXPLAIN = """
+        const val DEFAULT_PROMPT_EXPLAIN = """
         You are an expert AI programmer and an expert in explaining code to medior and junior programmers.
 
         - Explain the code in concise sentences
         - Provide examples when possible to explain what the code does
     """
 
-        private const val DEFAULT_PROMPT_REVIEW = """
+        const val DEFAULT_PROMPT_REVIEW = """
         You are an expert AI programmer reviewing code written by others. During the review:
 
         - Summarize what is good about the code
@@ -56,7 +56,7 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
         - DO NOT EXPLAIN THE CODE
     """
 
-        private const val DEFAULT_PROMPT_CREATE_UNIT_TEST = """
+        const val DEFAULT_PROMPT_CREATE_UNIT_TEST = """
         You are an expert AI programmer which uses unit tests to verify behavior.
 
         - Write unit tests for the obvious cases
@@ -64,9 +64,9 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
         - DO NOT EXPLAIN THE TEST
     """
 
-        private const val DEFAULT_PROMPT_IMPROVE_CODE = DEFAULT_PROMPT
+        const val DEFAULT_PROMPT_IMPROVE_CODE = DEFAULT_PROMPT
 
-        private const val DEFAULT_PROMPT_ADD_DOCS = """
+        const val DEFAULT_PROMPT_ADD_DOCS = """
         You are an expert AI programmer which writes code documentation to explain code to other developers.
 
         - Add documentation for explaining non-obvious things
@@ -74,6 +74,6 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
         - ONLY WRITE DOCS
         - DO NOT EXPLAIN THE CODE
     """
-        private const val DEFAULT_PROMPT_CHAT = DEFAULT_PROMPT
+        const val DEFAULT_PROMPT_CHAT = DEFAULT_PROMPT
     }
 }

@@ -1,15 +1,19 @@
 package com.github.jcraane.gptmentorplugin.configuration
 
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_DOCS
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CHAT
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CREATE_UNIT_TEST
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_EXPLAIN
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_IMPROVE_CODE
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_REVIEW
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.intellij.openapi.options.Configurable
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextArea
-import com.intellij.ui.layout.panel
-import java.awt.Color
-import javax.swing.BorderFactory
-import javax.swing.JComponent
-import javax.swing.JPanel
+import java.awt.*
+import javax.swing.*
+
 
 class GptMentorConfigurable : Configurable {
     private lateinit var settingsPanel: JPanel
@@ -47,31 +51,83 @@ class GptMentorConfigurable : Configurable {
         addDocsPrompt.text = config.systemPromptAddDocs
         chatPrompt.text = config.systemPromptChat
 
-        settingsPanel = panel {
-            row("OpenAI API Key") {
-                component(openAiApiKey)
+        settingsPanel = JPanel()
+        settingsPanel.layout = GridBagLayout()
+        val c = GridBagConstraints()
+
+        c.weightx = LABEL_WEIGHT
+        c.weighty = ROW_WEIGHT
+        c.fill = GridBagConstraints.BOTH
+        c.anchor = GridBagConstraints.LINE_END
+        c.insets = Insets(0, 0, GAP, GAP)
+
+        val prompts = arrayListOf(
+            explainCodePrompt,
+            createUnitTestPrompt,
+            improveCodePrompt,
+            reviewCodePrompt,
+            addDocsPrompt,
+            chatPrompt
+        )
+        val labels = listOf<Component>(
+            JLabel("Explain Code Prompt:", JLabel.TRAILING),
+            JLabel("Create Unit Test Prompt:", JLabel.TRAILING),
+            JLabel("Improve Code Prompt:", JLabel.TRAILING),
+            JLabel("Review Code Prompt:", JLabel.TRAILING),
+            JLabel("Add Docs Prompt:", JLabel.TRAILING),
+            JLabel("Chat Prompt:", JLabel.TRAILING)
+        )
+
+        c.gridy = 0
+        c.gridx = 0
+        settingsPanel.add(JLabel("OpenAI API Key:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
+        c.gridx = 1
+        settingsPanel.add(openAiApiKey, c)
+
+        var gridY = 0
+        for (i in prompts.indices) {
+            c.gridy = ++gridY
+            settingsPanel.add(labels[i], c)
+
+            c.gridx = 1
+            c.weightx = COMPONENT_WEIGHT
+            c.anchor = GridBagConstraints.LINE_START
+            c.insets = Insets(0, GAP, GAP, 0)
+
+            settingsPanel.add(prompts[i], c)
+
+            val resetButton = JButton("Reset")
+            resetButton.preferredSize = Dimension(RESET_BUTTON_WIDTH, RESET_BUTTON_HEIGHT)
+            resetButton.addActionListener {
+                // Reset the prompt to its default value
+                when (i) {
+                    0 -> explainCodePrompt.text = DEFAULT_PROMPT_EXPLAIN
+                    1 -> createUnitTestPrompt.text = DEFAULT_PROMPT_CREATE_UNIT_TEST
+                    2 -> improveCodePrompt.text = DEFAULT_PROMPT_IMPROVE_CODE
+                    3 -> reviewCodePrompt.text = DEFAULT_PROMPT_REVIEW
+                    4 -> addDocsPrompt.text = DEFAULT_PROMPT_ADD_DOCS
+                    5 -> chatPrompt.text = DEFAULT_PROMPT_CHAT
+                }
             }
-            row("Explain Code Prompt") {
-                component(explainCodePrompt)
+            c.gridy = ++gridY
+            c.gridx = 1
+            c.weightx = RESET_BUTTON_WEIGHT
+            c.insets = Insets(0, GAP, GAP, 0)
+            val buttonPanel = JPanel().apply {
+                layout = BoxLayout(this, BoxLayout.X_AXIS)
+                add(resetButton)
+                add(Box.createHorizontalGlue())
             }
-            row("Create Unit Test Prompt") {
-                component(createUnitTestPrompt)
-            }
-            row("Improve Code Prompt") {
-                component(improveCodePrompt)
-            }
-            row("Review Code Prompt") {
-                component(reviewCodePrompt)
-            }
-            row("Add Docs Prompt") {
-                component(addDocsPrompt)
-            }
-            row("Chat Prompt") {
-                component(chatPrompt)
-            }
+            settingsPanel.add(buttonPanel, c)
+
+            c.gridx = 0
+            c.weightx = LABEL_WEIGHT
+            c.insets = Insets(0, 0, GAP, GAP)
         }
+
         return settingsPanel
     }
+
 
     private fun getPassword() = GptMentorCredentialsManager.getPassword() ?: "YOUR_API_KEY"
 
@@ -100,7 +156,7 @@ class GptMentorConfigurable : Configurable {
         config.systemPromptExplainCode = explainCodePrompt.text
         config.systemPromptCreateUnitTest = createUnitTestPrompt.text
         config.systemPromptImproveCode = improveCodePrompt.text
-        config.systemPromptImproveCode = reviewCodePrompt.text
+        config.systemPromptReviewCode = reviewCodePrompt.text
         config.systemPromptAddDocs = addDocsPrompt.text
         config.systemPromptChat = chatPrompt.text
 
@@ -109,5 +165,15 @@ class GptMentorConfigurable : Configurable {
 
     override fun getDisplayName(): String {
         return "GPT-Mentor"
+    }
+
+    companion object {
+        private const val LABEL_WEIGHT = 0.3
+        private const val COMPONENT_WEIGHT = 0.7
+        private const val ROW_WEIGHT = 1.0
+        private const val GAP = 10
+        private const val RESET_BUTTON_WEIGHT = 0.2
+        private const val RESET_BUTTON_WIDTH = 60
+        private const val RESET_BUTTON_HEIGHT = 30
     }
 }
