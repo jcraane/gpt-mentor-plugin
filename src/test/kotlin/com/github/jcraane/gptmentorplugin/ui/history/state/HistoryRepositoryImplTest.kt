@@ -1,8 +1,5 @@
 package com.github.jcraane.gptmentorplugin.ui.history.state
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -13,10 +10,10 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun testAddHistoryItem() {
-        val currentHistory = History(listOf(HistoryItem("item1", emptyList())))
+        val currentHistory = History(listOf(HistoryItem("1", "item1", emptyList())))
         state.history = currentHistory
 
-        val newItem = HistoryItem("item2", emptyList())
+        val newItem = HistoryItem("2", "item2", emptyList())
         repository.addHistoryItem(newItem)
 
         assertEquals(currentHistory.items + newItem, state.history.items)
@@ -24,8 +21,8 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun testDeleteHistoryItem() {
-        val itemToDelete = HistoryItem("item1", emptyList())
-        val currentHistory = History(listOf(itemToDelete, HistoryItem("item2", emptyList())))
+        val itemToDelete = HistoryItem("1", "item1", emptyList())
+        val currentHistory = History(listOf(itemToDelete, HistoryItem("1", "item2", emptyList())))
         state.history = currentHistory
 
         repository.deleteHistoryItem(itemToDelete)
@@ -34,8 +31,8 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun testRenameHistoryItem() {
-        val itemToRename = HistoryItem("item1", emptyList())
-        val currentHistory = History(listOf(itemToRename, HistoryItem("item2", emptyList())))
+        val itemToRename = HistoryItem("1", "item1", emptyList())
+        val currentHistory = History(listOf(itemToRename, HistoryItem("2", "item2", emptyList())))
         state.history = currentHistory
 
         val newName = "newName"
@@ -54,7 +51,7 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun testGetAllHistoryItems() {
-        val currentHistory = History(listOf(HistoryItem("item1", emptyList()), HistoryItem("item2", emptyList())))
+        val currentHistory = History(listOf(HistoryItem("item1", "1", emptyList()), HistoryItem("item2", "2", emptyList())))
         state.history = currentHistory
         val result = repository.getAllHistoryItems()
         assertEquals(currentHistory.items, result)

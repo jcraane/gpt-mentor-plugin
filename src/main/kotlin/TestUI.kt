@@ -12,6 +12,7 @@ fun main() {
     state.history = History(
         items = listOf(
             HistoryItem(
+                id = "1",
                 title = "Item 1",
                 messages = listOf(
                     HistoryMessage("Sender 1", "Message 1"),
@@ -20,6 +21,7 @@ fun main() {
                 )
             ),
             HistoryItem(
+                id = "2",
                 title = "Item 2",
                 messages = listOf(
                     HistoryMessage("Sender 2", "Message 1"),
@@ -27,6 +29,7 @@ fun main() {
                 )
             ),
             HistoryItem(
+                id = "3",
                 title = "Item 3",
                 messages = listOf(
                     HistoryMessage("Sender 3", "Message 1"),

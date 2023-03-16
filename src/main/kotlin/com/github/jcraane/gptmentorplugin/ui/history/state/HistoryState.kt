@@ -1,12 +1,14 @@
 package com.github.jcraane.gptmentorplugin.ui.history.state
 
 import com.github.jcraane.gptmentorplugin.openapi.JSON
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 import kotlinx.serialization.Serializable
+import java.util.*
 import kotlin.reflect.KProperty
 
 @State(
@@ -50,9 +52,30 @@ data class History(
 
 @Serializable
 data class HistoryItem(
+    val id: String,
     val title: String,
-    val messages: List<HistoryMessage>,
-)
+    val messages: List<HistoryMessage> = emptyList(),
+) {
+    companion object {
+        const val NO_TITLE_PLACEHOLDER = "No title"
+
+        fun from(chatGptRequest: ChatGptRequest) = HistoryItem(
+            id = UUID.randomUUID().toString(),
+            title = chatGptRequest.title,
+            messages = chatGptRequest.messages.map {
+                HistoryMessage(
+                    content = it.content,
+                    role = it.role.code,
+                )
+            }
+        )
+
+        private val ChatGptRequest.title: String
+            get() {
+                return messages.firstOrNull()?.content?.split(" ")?.take(20)?.joinToString(" ") ?: NO_TITLE_PLACEHOLDER
+            }
+    }
+}
 
 @Serializable
 data class HistoryMessage(
