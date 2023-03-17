@@ -8,7 +8,6 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 import kotlinx.serialization.Serializable
-import java.util.*
 import kotlin.reflect.KProperty
 
 /**
@@ -61,7 +60,7 @@ class HistoryState : PersistentStateComponent<HistoryState> {
 
 @Serializable
 data class History(
-    val items: List<HistoryItem>,
+    val items: List<HistoryItem> = emptyList(),
 )
 
 @Serializable
@@ -71,10 +70,11 @@ data class HistoryItem(
     val messages: List<HistoryMessage> = emptyList(),
 ) {
     companion object {
-        const val NO_TITLE_PLACEHOLDER = "No title"
+        private const val NO_TITLE_PLACEHOLDER = "No title"
+        private const val MAX_TITLE_LENGTH = 40
 
-        fun from(chatGptRequest: ChatGptRequest) = HistoryItem(
-            id = UUID.randomUUID().toString(),
+        fun from(id: String, chatGptRequest: ChatGptRequest) = HistoryItem(
+            id = id,
             title = chatGptRequest.title,
             messages = chatGptRequest.messages.map {
                 HistoryMessage(
@@ -86,7 +86,7 @@ data class HistoryItem(
 
         private val ChatGptRequest.title: String
             get() {
-                return messages.firstOrNull()?.content?.split(" ")?.take(20)?.joinToString(" ") ?: NO_TITLE_PLACEHOLDER
+                return messages.firstOrNull()?.content?.split(" ")?.take(MAX_TITLE_LENGTH)?.joinToString(" ") ?: NO_TITLE_PLACEHOLDER
             }
     }
 }

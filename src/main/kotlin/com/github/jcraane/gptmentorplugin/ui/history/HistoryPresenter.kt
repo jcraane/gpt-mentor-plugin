@@ -6,6 +6,8 @@ class HistoryPresenter(
     private val view: HistoryView,
     private val repository: HistoryRepository,
 ) {
-
+    fun refreshHistory() {
+        view.showHistory(repository.getAllHistoryItems())
+    }
 }
 

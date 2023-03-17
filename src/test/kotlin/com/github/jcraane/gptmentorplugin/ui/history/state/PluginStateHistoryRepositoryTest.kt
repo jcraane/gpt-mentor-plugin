@@ -4,9 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 
-class HistoryRepositoryImplTest {
+class PluginStateHistoryRepositoryTest {
     private val state: HistoryState = HistoryState()
-    private val repository: HistoryRepository = HistoryRepositoryImpl(state)
+    private val repository: HistoryRepository = PluginStateHistoryRepository(state)
 
     @Test
     fun testAddHistoryItem() {
@@ -14,7 +14,7 @@ class HistoryRepositoryImplTest {
         state.history = currentHistory
 
         val newItem = HistoryItem("2", "item2", emptyList())
-        repository.addHistoryItem(newItem)
+        repository.addOrUpdateHistoryItem(newItem)
 
         assertEquals(currentHistory.items + newItem, state.history.items)
     }
@@ -55,5 +55,26 @@ class HistoryRepositoryImplTest {
         state.history = currentHistory
         val result = repository.getAllHistoryItems()
         assertEquals(currentHistory.items, result)
+    }
+
+
+    @Test
+    fun testUpdateExistingHistoryItem() {
+        val itemToUpdate = HistoryItem("1", "item1", emptyList())
+        val currentHistory = History(listOf(itemToUpdate, HistoryItem("2", "item2", emptyList())))
+        state.history = currentHistory
+
+        val updatedItem = itemToUpdate.copy(title = "updatedTitle")
+        repository.addOrUpdateHistoryItem(updatedItem)
+
+        val expectedUpdatedItems = currentHistory.items.map {
+            if (it == itemToUpdate) {
+                updatedItem
+            } else {
+                it
+            }
+        }
+
+        assertEquals(currentHistory.copy(items = expectedUpdatedItems), state.history)
     }
 }

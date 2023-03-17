@@ -5,6 +5,7 @@
 - Integrate diff action for selected code
 - Add code formatting if code is detected
 - Add advanced options like temperature, top-k, etc.
+- Add option to remove chat messages (from bottom to top)
 
 Update documentation:
 Configure your Open AI API key in the plugin settings. You can get one at: https://platform.openai.com/account/api-keys

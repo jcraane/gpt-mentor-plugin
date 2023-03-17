@@ -1,5 +1,7 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
+import com.github.jcraane.gptmentorplugin.common.IdGenerator
+import com.github.jcraane.gptmentorplugin.common.UUIDIdGenerator
 import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState
 import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.domain.PromptFactory
@@ -12,7 +14,7 @@ import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
 import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryItem
 import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepository
-import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepositoryImpl
+import com.github.jcraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
 import com.intellij.openapi.project.Project
 import io.ktor.client.*
 import kotlinx.coroutines.*
@@ -31,14 +33,20 @@ class ChatPresenter(
             .build(),
         credentialsManager = GptMentorCredentialsManager,
     ),
-    private val historyRepository: HistoryRepository = HistoryRepositoryImpl(),
+    private val historyRepository: HistoryRepository = PluginStateHistoryRepository(),
     private val promptFactory: PromptFactory = PromptFactory(GptMentorSettingsState.getInstance()),
+    private val idGenerator: IdGenerator = UUIDIdGenerator(),
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
 
     private var chat: BasicPrompt.Chat? = null
     private val explanationBuilder = StringBuilder()
+
+    /**
+     * The id of the current chat. Need to create or update the history.
+     */
+    private var chatId: String = idGenerator.generateId()
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
@@ -67,9 +75,6 @@ class ChatPresenter(
                     .collect { streamingResponse ->
                         handleResponse(streamingResponse)
                     }
-
-//                todo if an item already exists, update it
-                historyRepository.addHistoryItem(HistoryItem.from(chatGptRequest))
             }.onFailure {
                 if (it !is CancellationException) {
                     chatView.showError(it.message ?: "Unknown error")
@@ -99,9 +104,12 @@ class ChatPresenter(
         chatView.onExplanationDone()
         chatView.clearPrompt()
         chat = chat?.let {
-            it.copy(
+            val updated = it.copy(
                 messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
             )
+
+            historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatId, updated.createRequest()))
+            updated
         }
 
         explanationBuilder.clear()
@@ -112,6 +120,7 @@ class ChatPresenter(
     }
 
     override fun onNewPrompt(prompt: BasicPrompt) {
+        chatId = idGenerator.generateId()
         chatView.setPrompt(prompt.action, positionCursorAtEnd = prompt.executeImmediate.not())
         chatView.clearExplanation()
         if (prompt.executeImmediate) {
@@ -119,7 +128,13 @@ class ChatPresenter(
         }
     }
 
+    override fun onHistoryItemLoaded(historyItem: HistoryItem) {
+        chatId = historyItem.id
+//        todo implement
+    }
+
     fun onNewChatClicked() {
+        chatId = idGenerator.generateId()
         chatView.clearAll()
         chatView.setFocusOnPrompt()
         chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())

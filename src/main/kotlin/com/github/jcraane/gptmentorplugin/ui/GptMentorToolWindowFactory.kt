@@ -1,26 +1,41 @@
 package com.github.jcraane.gptmentorplugin.ui
 
 import com.github.jcraane.gptmentorplugin.ui.chat.ChatPanel
+import com.github.jcraane.gptmentorplugin.ui.history.HistoryPanel
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import javax.swing.JOptionPane
 
 class GptMentorToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
 
+//        todo introduce main mediator or something to handle global actions which trigger actions to panels from other panels
         val tabbedPane = JBTabbedPane().apply {
             addTab("Chat", ChatPanel().apply { onAttach(project) })
-            addTab("History", createHistory(listOf("Apple", "Banana", "Orange", "Mango", "Pineapple")))
+            val historyPanel = HistoryPanel()
+            addTab("History", historyPanel)
             addChangeListener {
-                println("Selected tab: ${selectedIndex}")
+                when (selectedIndex) {
+                    TAB_CHAT -> {
+                        println("Chat tab selected")
+                    }
+
+                    TAB_HISTORY -> {
+                        historyPanel.presenter.refreshHistory()
+                    }
+
+                    TAB_HELP -> {
+                        println("Help tab selected")
+                    }
+
+                    else -> {
+                        println("Unknown tab selected")
+                    }
+                }
             }
         }
 
@@ -28,21 +43,10 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
         toolWindow.contentManager.addContent(content)
     }
 
-    private fun createHistory(items: List<String>): JBList<String> {
-        return JBList<String>(items).apply {
-            addMouseListener(object : MouseAdapter() {
-                override fun mouseClicked(e: MouseEvent?) {
-                    if (e?.clickCount == 2) {
-                        //    todo double click should load chat with chat history
-                        val selected = selectedValue
-                        JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
-                    }
-                }
-            })
-        }
-    }
-
     companion object {
         const val ID = "GPT-Mentor"
+        private const val TAB_CHAT = 0
+        private const val TAB_HISTORY = 1
+        private const val TAB_HELP = 2
     }
 }

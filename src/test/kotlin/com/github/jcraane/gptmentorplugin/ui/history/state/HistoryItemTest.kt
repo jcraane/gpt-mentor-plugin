@@ -17,7 +17,7 @@ class HistoryItemTest {
             )
         )
 
-        val from = HistoryItem.from(request)
+        val from = HistoryItem.from(id = "1", request)
         assertTrue(from.id.isNotEmpty())
         // Assert message
         assertEquals(2, from.messages.size)

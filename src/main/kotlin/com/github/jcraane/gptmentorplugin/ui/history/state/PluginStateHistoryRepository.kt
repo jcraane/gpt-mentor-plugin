@@ -1,12 +1,23 @@
 package com.github.jcraane.gptmentorplugin.ui.history.state
 
-class HistoryRepositoryImpl(
+class PluginStateHistoryRepository(
     private val state: HistoryState = HistoryState.getInstance(),
 ) : HistoryRepository {
 
-    override fun addHistoryItem(item: HistoryItem) {
+    override fun addOrUpdateHistoryItem(item: HistoryItem) {
         val currentHistory = state.history
-        state.history = currentHistory.copy(items = currentHistory.items + item)
+        val updatedItems = currentHistory.items.map {
+            if (it.id == item.id) {
+                item
+            } else {
+                it
+            }
+        }
+        if (!updatedItems.contains(item)) {
+            state.history = currentHistory.copy(items = updatedItems + item)
+        } else {
+            state.history = currentHistory.copy(items = updatedItems)
+        }
     }
 
     override fun deleteHistoryItem(item: HistoryItem) {

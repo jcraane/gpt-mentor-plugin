@@ -16,7 +16,7 @@ import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
 
 class ChatPanel : JPanel(), ChatView {
-    private val presenter = ChatPresenter(this)
+    val presenter = ChatPresenter(this)
 
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
