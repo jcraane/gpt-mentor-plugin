@@ -20,8 +20,7 @@ class ChatContextTest {
         assertTrue(chatContext.chat is BasicPrompt.Chat)
         val chat = chatContext.chat as BasicPrompt.Chat
         assertEquals(1, chat.messages.size)
-        assertEquals(ChatGptRequest.Message.newUserMessage(prompt.code), chat.messages[0])
-        assertEquals(ChatGptRequest.Message.newUserMessage(prompt.action), chat.messages[1])
+        assertEquals(ChatGptRequest.Message.newUserMessage(prompt.action), chat.messages[0])
         assertEquals(prompt.systemPrompt, chat.systemMessage)
     }
 }
