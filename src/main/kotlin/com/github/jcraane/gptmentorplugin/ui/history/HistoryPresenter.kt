@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.ui.history
 
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryItem
 import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepository
 
 class HistoryPresenter(
@@ -8,6 +9,11 @@ class HistoryPresenter(
 ) {
     fun refreshHistory() {
         view.showHistory(repository.getAllHistoryItems())
+    }
+
+    fun delete(item: HistoryItem) {
+        repository.deleteHistoryItem(item)
+        refreshHistory()
     }
 }
 

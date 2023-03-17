@@ -40,13 +40,11 @@ class ChatPresenter(
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
 
-    private var chat: BasicPrompt.Chat? = null
+    /*private var chat: BasicPrompt.Chat? = null
     private val explanationBuilder = StringBuilder()
+    private var chatId: String = idGenerator.generateId()*/
 
-    /**
-     * The id of the current chat. Need to create or update the history.
-     */
-    private var chatId: String = idGenerator.generateId()
+    private var chatContext: ChatContext? = null
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
@@ -56,13 +54,14 @@ class ChatPresenter(
         val prompt = chatView.getPrompt()
         chatView.setPrompt(prompt)
 
-        val newChat = (chat ?: promptFactory.chat(emptyList()))
+        chatContext = chatContext?.addMessage(prompt)
+        /*val newChat = (chat ?: promptFactory.chat(emptyList()))
         val withNewUserMessage = newChat.copy(
             messages = newChat.messages + ChatGptRequest.Message.newUserMessage(prompt)
         )
 
-        chat = withNewUserMessage
-        executeStreaming(withNewUserMessage)
+        chat = withNewUserMessage*/
+        chatContext?.let { executeStreaming(it.chat) }
     }
 
     private fun executeStreaming(prompt: BasicPrompt) {
@@ -92,7 +91,8 @@ class ChatPresenter(
     }
 
     private fun handleData(data: String): Unit {
-        explanationBuilder.append(data)
+//        explanationBuilder.append(data)
+        chatContext = chatContext?.appendThread(data)
         chatView.appendExplanation(data)
     }
 
@@ -103,16 +103,15 @@ class ChatPresenter(
     private fun handleDone(): Unit {
         chatView.onExplanationDone()
         chatView.clearPrompt()
-        chat = chat?.let {
+        chatContext?.let { historyRepository.addOrUpdateHistoryItem(HistoryItem.from(it.chatId, it.chat.createRequest())) }
+        /*chat = chat?.let {
             val updated = it.copy(
                 messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
             )
 
             historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatId, updated.createRequest()))
             updated
-        }
-
-        explanationBuilder.clear()
+        }*/
     }
 
     fun onStopClicked() {
@@ -120,7 +119,16 @@ class ChatPresenter(
     }
 
     override fun onNewPrompt(prompt: BasicPrompt) {
-        chatId = idGenerator.generateId()
+        chatContext = ChatContext(
+            chatId = idGenerator.generateId(),
+            thread = "",
+            chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
+        )
+
+//        chatId = idGenerator.generateId()
+//        explanationBuilder.clear()
+//        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())
+
         chatView.setPrompt(prompt.action, positionCursorAtEnd = prompt.executeImmediate.not())
         chatView.clearExplanation()
         if (prompt.executeImmediate) {
@@ -129,14 +137,22 @@ class ChatPresenter(
     }
 
     override fun onHistoryItemLoaded(historyItem: HistoryItem) {
-        chatId = historyItem.id
+//        chatId = historyItem.id
 //        todo implement
     }
 
     fun onNewChatClicked() {
-        chatId = idGenerator.generateId()
+        chatContext = ChatContext(
+            chatId = idGenerator.generateId(),
+            thread = "",
+            chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
+        )
+
+/*        chatId = idGenerator.generateId()
+        explanationBuilder.clear()
+        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())*/
+
         chatView.clearAll()
         chatView.setFocusOnPrompt()
-        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())
     }
 }

@@ -14,14 +14,34 @@ class HistoryPanel : JPanel(), HistoryView {
     val presenter = HistoryPresenter(this, PluginStateHistoryRepository())
 
     private val historyList = JBList<HistoryItem>().apply {
-        setCellRenderer(HistoryItemRenderer())
+        cellRenderer = HistoryItemRenderer()
         addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
-                if (e?.clickCount == 2) {
+                if (e == null) {
+                    return
+                }
+
+                if (e.clickCount == 2) {
                     //    todo double click should load chat with chat history
 //                    todo how to communicate to chat panel to load new chat?
                     val selected = selectedValue
                     JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    val index = locationToIndex(e.point)
+                    selectedIndex = index
+                    val popupMenu = JPopupMenu()
+                    /*val renameItem = JMenuItem("Rename")
+                    renameItem.addActionListener {
+                        val selectedItem = selectedValue
+                    }*/
+                    val deleteItem = JMenuItem("Delete")
+                    deleteItem.addActionListener {
+                        val selectedItem = selectedValue
+                        presenter.delete(selectedItem)
+                    }
+//                    popupMenu.add(renameItem)
+                    popupMenu.add(deleteItem)
+                    popupMenu.show(e?.component, e.x, e.y)
                 }
             }
         })
