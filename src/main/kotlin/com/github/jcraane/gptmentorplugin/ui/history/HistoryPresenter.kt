@@ -24,5 +24,10 @@ class HistoryPresenter(
         }
         refreshHistory()
     }
+
+    fun rename(item: HistoryItem, newName: String) {
+        repository.renameHistoryItem(item, newName)
+        refreshHistory()
+    }
 }
 

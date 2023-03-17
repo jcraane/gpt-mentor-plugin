@@ -6,6 +6,8 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -28,17 +30,57 @@ class HistoryPanel : JPanel(), HistoryView {
                     JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
                 } else if (SwingUtilities.isRightMouseButton(e)) {
                     val selectedIndices = selectedIndices
-                    if (selectedIndices.isNotEmpty()) {
-                        val popupMenu = JPopupMenu()
-                        val deleteItem = JMenuItem("Delete")
-                        deleteItem.addActionListener {
-                            val selectedValues = selectedValues
-                            presenter.deleteAll(selectedValues)
+                    if (selectedIndices.size == 1) {
+                        val popupMenu = addPopupMenuWithDeleteAction()
+
+                        val renameItem = JMenuItem("Rename")
+                        renameItem.addActionListener {
+                            showEditTextField(selectedIndices)
                         }
-                        popupMenu.add(deleteItem)
+                        popupMenu.add(renameItem)
+
+                        popupMenu.show(e.component, e.x, e.y)
+                    } else if (selectedIndices.isNotEmpty()) {
+                        val popupMenu = addPopupMenuWithDeleteAction()
                         popupMenu.show(e.component, e.x, e.y)
                     }
                 }
+            }
+        })
+    }
+
+    private fun JBList<HistoryItem>.addPopupMenuWithDeleteAction(): JPopupMenu {
+        val popupMenu = JPopupMenu()
+        val deleteItem = JMenuItem("Delete")
+        deleteItem.addActionListener {
+            val selectedValues = selectedValues
+            presenter.deleteAll(selectedValues)
+        }
+        popupMenu.add(deleteItem)
+        return popupMenu
+    }
+
+    private fun JBList<HistoryItem>.showEditTextField(selectedIndices: IntArray) {
+        val selectedBounds = getCellBounds(selectedIndices.first(), selectedIndices.first())
+        val selectedItem = selectedValue
+        val textField = JTextField(selectedItem.title)
+        textField.bounds = selectedBounds
+        add(textField)
+        textField.requestFocusInWindow()
+        textField.caretPosition = textField.text.length
+        repaint()
+
+        textField.addActionListener {
+            val newValue = textField.text
+            presenter.rename(selectedItem, newValue)
+            remove(textField)
+            repaint()
+        }
+
+        textField.addFocusListener(object : FocusAdapter() {
+            override fun focusLost(e: FocusEvent?) {
+                remove(textField)
+                repaint()
             }
         })
     }
