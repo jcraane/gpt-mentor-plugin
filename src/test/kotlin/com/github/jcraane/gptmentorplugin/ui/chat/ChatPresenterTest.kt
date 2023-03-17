@@ -28,7 +28,7 @@ class ChatPresenterTest {
 
     @Before
     fun setup() {
-        presenter = ChatPresenter(chatView, openApi, historyRepository, PromptFactory(GptMentorSettingsState()))
+        presenter = ChatPresenter(chatView, openApi, historyRepository)
     }
 
     @Test

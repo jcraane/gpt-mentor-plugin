@@ -2,6 +2,7 @@ package com.github.jcraane.gptmentorplugin.ui.history.state
 
 import com.github.jcraane.gptmentorplugin.openapi.JSON
 import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
+import com.github.jcraane.gptmentorplugin.ui.chat.ChatContext
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
@@ -70,23 +71,35 @@ data class HistoryItem(
     val messages: List<HistoryMessage> = emptyList(),
 ) {
     companion object {
-        private const val NO_TITLE_PLACEHOLDER = "No title"
-        private const val MAX_TITLE_LENGTH = 40
+        const val NO_TITLE_PLACEHOLDER = "No title"
+        const val MAX_TITLE_LENGTH = 60
 
-        fun from(id: String, chatGptRequest: ChatGptRequest) = HistoryItem(
-            id = id,
-            title = chatGptRequest.title,
-            messages = chatGptRequest.messages.map {
-                HistoryMessage(
-                    content = it.content,
-                    role = it.role.code,
-                )
-            }
-        )
+        fun from(chatContext: ChatContext): HistoryItem {
+            val request = chatContext.chat.createRequest()
+            return HistoryItem(
+                id = chatContext.chatId,
+                title = request.title,
+                messages = request.messages.map {
+                    HistoryMessage(
+                        content = it.content,
+                        role = it.role.code,
+                    )
+                }
+            )
+        }
 
         private val ChatGptRequest.title: String
             get() {
-                return messages.firstOrNull()?.content?.split(" ")?.take(MAX_TITLE_LENGTH)?.joinToString(" ") ?: NO_TITLE_PLACEHOLDER
+                val firstMessage = messages
+                    .firstOrNull { it.role == ChatGptRequest.Message.Role.USER }?.content ?: ""
+                    .replace("\n", "")
+                    .replace(Regex("\\s+"), " ")
+
+                return when {
+                    firstMessage.isBlank() -> NO_TITLE_PLACEHOLDER
+                    firstMessage.length <= MAX_TITLE_LENGTH -> firstMessage
+                    else -> firstMessage.substring(0, MAX_TITLE_LENGTH).padEnd(MAX_TITLE_LENGTH + 3, '.')
+                }
             }
     }
 }

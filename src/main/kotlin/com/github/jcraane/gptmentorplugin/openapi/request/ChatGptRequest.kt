@@ -29,6 +29,10 @@ data class ChatGptRequest(
             fun newSystemMessage(content: String): Message {
                 return Message(Role.SYSTEM, content)
             }
+
+            fun newMessage(content: String, role: Role): Message {
+                return Message(role, content)
+            }
         }
         @Serializable(with = Role.RoleSerializer::class)
         enum class Role(val code: String) {

@@ -7,20 +7,16 @@ import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
  * Represents a chat in a messaging system.
  *
  * @param chatId A unique identifier for the chat.
- * @param thread A thread identifier for the chat.
  * @param chat An object representing the chat prompt.
  */
 class ChatContext(
     val chatId: String,
-    val thread: String,
     val chat: BasicPrompt,
 ) {
-    fun appendThread(data: String) = ChatContext(chatId, this.thread + data, chat)
-
-    fun addMessage(message: String): ChatContext {
+    fun addMessage(message: String, role: ChatGptRequest.Message.Role): ChatContext {
         val chatContext = when (chat) {
             is BasicPrompt.Chat -> {
-                ChatContext(chatId, thread, chat.copy(messages = chat.messages + ChatGptRequest.Message.newUserMessage(message)))
+                ChatContext(chatId, chat.copy(messages = chat.messages + ChatGptRequest.Message.newMessage(message, role)))
             }
 
             is BasicPrompt.AddComments -> getUpdatedChat(message, chat.code, chat.systemMessage)
@@ -41,7 +37,6 @@ class ChatContext(
         systemMessage: String,
     ) = ChatContext(
         chatId,
-        thread,
         BasicPrompt.Chat(
             messages = listOf(
                 ChatGptRequest.Message.newUserMessage(code),
@@ -49,4 +44,19 @@ class ChatContext(
             ), systemMessage
         )
     )
+
+    companion object {
+        fun fromPrompt(id: String, prompt: BasicPrompt): ChatContext {
+            val chat = when (prompt) {
+                is BasicPrompt.Chat -> prompt
+                else -> BasicPrompt.Chat(
+                    messages = listOf(
+                        ChatGptRequest.Message.newUserMessage(prompt.action)
+                    ),
+                    systemMessage = prompt.systemPrompt
+                )
+            }
+            return ChatContext(id, chat)
+        }
+    }
 }

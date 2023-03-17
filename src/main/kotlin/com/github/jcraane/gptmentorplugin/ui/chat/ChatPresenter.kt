@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.collect
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
-//todo we need to remember the context (the chat with the id, so we can persist it).
 class ChatPresenter(
     private val chatView: ChatView,
     private val openApi: OpenApi = RealOpenApi(
@@ -34,17 +33,16 @@ class ChatPresenter(
         credentialsManager = GptMentorCredentialsManager,
     ),
     private val historyRepository: HistoryRepository = PluginStateHistoryRepository(),
-    private val promptFactory: PromptFactory = PromptFactory(GptMentorSettingsState.getInstance()),
     private val idGenerator: IdGenerator = UUIDIdGenerator(),
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
 
-    /*private var chat: BasicPrompt.Chat? = null
     private val explanationBuilder = StringBuilder()
-    private var chatId: String = idGenerator.generateId()*/
-
-    private var chatContext: ChatContext? = null
+    private var chatContext: ChatContext = ChatContext(
+        chatId = idGenerator.generateId(),
+        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
+    )
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
@@ -54,14 +52,8 @@ class ChatPresenter(
         val prompt = chatView.getPrompt()
         chatView.setPrompt(prompt)
 
-        chatContext = chatContext?.addMessage(prompt)
-        /*val newChat = (chat ?: promptFactory.chat(emptyList()))
-        val withNewUserMessage = newChat.copy(
-            messages = newChat.messages + ChatGptRequest.Message.newUserMessage(prompt)
-        )
-
-        chat = withNewUserMessage*/
-        chatContext?.let { executeStreaming(it.chat) }
+        chatContext = chatContext.addMessage(prompt, ChatGptRequest.Message.Role.USER)
+        executeStreaming(chatContext.chat)
     }
 
     private fun executeStreaming(prompt: BasicPrompt) {
@@ -91,8 +83,7 @@ class ChatPresenter(
     }
 
     private fun handleData(data: String): Unit {
-//        explanationBuilder.append(data)
-        chatContext = chatContext?.appendThread(data)
+        explanationBuilder.append(data)
         chatView.appendExplanation(data)
     }
 
@@ -103,15 +94,8 @@ class ChatPresenter(
     private fun handleDone(): Unit {
         chatView.onExplanationDone()
         chatView.clearPrompt()
-        chatContext?.let { historyRepository.addOrUpdateHistoryItem(HistoryItem.from(it.chatId, it.chat.createRequest())) }
-        /*chat = chat?.let {
-            val updated = it.copy(
-                messages = it.messages + ChatGptRequest.Message.newSystemMessage(explanationBuilder.toString())
-            )
-
-            historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatId, updated.createRequest()))
-            updated
-        }*/
+        chatContext = chatContext.addMessage(explanationBuilder.toString(), ChatGptRequest.Message.Role.SYSTEM)
+        historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatContext))
     }
 
     fun onStopClicked() {
@@ -119,15 +103,8 @@ class ChatPresenter(
     }
 
     override fun onNewPrompt(prompt: BasicPrompt) {
-        chatContext = ChatContext(
-            chatId = idGenerator.generateId(),
-            thread = "",
-            chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
-        )
-
-//        chatId = idGenerator.generateId()
-//        explanationBuilder.clear()
-//        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())
+        explanationBuilder.clear()
+        chatContext = ChatContext.fromPrompt(id = idGenerator.generateId(), prompt = prompt)
 
         chatView.setPrompt(prompt.action, positionCursorAtEnd = prompt.executeImmediate.not())
         chatView.clearExplanation()
@@ -142,15 +119,11 @@ class ChatPresenter(
     }
 
     fun onNewChatClicked() {
+        explanationBuilder.clear()
         chatContext = ChatContext(
             chatId = idGenerator.generateId(),
-            thread = "",
             chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
         )
-
-/*        chatId = idGenerator.generateId()
-        explanationBuilder.clear()
-        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())*/
 
         chatView.clearAll()
         chatView.setFocusOnPrompt()
