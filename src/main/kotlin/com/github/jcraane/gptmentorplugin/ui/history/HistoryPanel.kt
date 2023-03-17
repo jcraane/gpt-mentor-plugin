@@ -10,6 +10,8 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
+//    todo double click should load chat with chat history
+//                    todo how to communicate to chat panel to load new chat?
 class HistoryPanel : JPanel(), HistoryView {
     val presenter = HistoryPresenter(this, PluginStateHistoryRepository())
 
@@ -22,26 +24,20 @@ class HistoryPanel : JPanel(), HistoryView {
                 }
 
                 if (e.clickCount == 2) {
-                    //    todo double click should load chat with chat history
-//                    todo how to communicate to chat panel to load new chat?
                     val selected = selectedValue
                     JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
                 } else if (SwingUtilities.isRightMouseButton(e)) {
-                    val index = locationToIndex(e.point)
-                    selectedIndex = index
-                    val popupMenu = JPopupMenu()
-                    /*val renameItem = JMenuItem("Rename")
-                    renameItem.addActionListener {
-                        val selectedItem = selectedValue
-                    }*/
-                    val deleteItem = JMenuItem("Delete")
-                    deleteItem.addActionListener {
-                        val selectedItem = selectedValue
-                        presenter.delete(selectedItem)
+                    val selectedIndices = selectedIndices
+                    if (selectedIndices.isNotEmpty()) {
+                        val popupMenu = JPopupMenu()
+                        val deleteItem = JMenuItem("Delete")
+                        deleteItem.addActionListener {
+                            val selectedValues = selectedValues
+                            presenter.deleteAll(selectedValues)
+                        }
+                        popupMenu.add(deleteItem)
+                        popupMenu.show(e.component, e.x, e.y)
                     }
-//                    popupMenu.add(renameItem)
-                    popupMenu.add(deleteItem)
-                    popupMenu.show(e?.component, e.x, e.y)
                 }
             }
         })

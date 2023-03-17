@@ -15,5 +15,14 @@ class HistoryPresenter(
         repository.deleteHistoryItem(item)
         refreshHistory()
     }
+
+    fun deleteAll(selectedValues: Array<Any>?) {
+        selectedValues?.forEach {
+            if (it is HistoryItem) {
+                repository.deleteHistoryItem(it)
+            }
+        }
+        refreshHistory()
+    }
 }
 
