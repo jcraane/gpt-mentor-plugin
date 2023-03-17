@@ -1,14 +1,18 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
-import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
-import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
-import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState
 import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.domain.PromptFactory
+import com.github.jcraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
+import com.github.jcraane.gptmentorplugin.messagebus.ChatGptApiListener
 import com.github.jcraane.gptmentorplugin.openapi.OpenApi
 import com.github.jcraane.gptmentorplugin.openapi.RealOpenApi
 import com.github.jcraane.gptmentorplugin.openapi.StreamingResponse
+import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryItem
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepository
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepositoryImpl
 import com.intellij.openapi.project.Project
 import io.ktor.client.*
 import kotlinx.coroutines.*
@@ -16,6 +20,7 @@ import kotlinx.coroutines.flow.collect
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
+//todo we need to remember the context (the chat with the id, so we can persist it).
 class ChatPresenter(
     private val chatView: ChatView,
     private val openApi: OpenApi = RealOpenApi(
@@ -26,6 +31,8 @@ class ChatPresenter(
             .build(),
         credentialsManager = GptMentorCredentialsManager,
     ),
+    private val historyRepository: HistoryRepository = HistoryRepositoryImpl(),
+    private val promptFactory: PromptFactory = PromptFactory(GptMentorSettingsState.getInstance()),
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
@@ -41,7 +48,7 @@ class ChatPresenter(
         val prompt = chatView.getPrompt()
         chatView.setPrompt(prompt)
 
-        val newChat = (chat ?: PromptFactory.chat(emptyList()))
+        val newChat = (chat ?: promptFactory.chat(emptyList()))
         val withNewUserMessage = newChat.copy(
             messages = newChat.messages + ChatGptRequest.Message.newUserMessage(prompt)
         )
@@ -55,10 +62,14 @@ class ChatPresenter(
         apiJob = scope.launch {
             chatView.appendPrompt(prompt.action)
             kotlin.runCatching {
-                openApi.executeBasicActionStreaming(prompt)
+                val chatGptRequest = prompt.createRequest()
+                openApi.executeBasicActionStreaming(chatGptRequest)
                     .collect { streamingResponse ->
                         handleResponse(streamingResponse)
                     }
+
+//                todo if an item already exists, update it
+                historyRepository.addHistoryItem(HistoryItem.from(chatGptRequest))
             }.onFailure {
                 if (it !is CancellationException) {
                     chatView.showError(it.message ?: "Unknown error")
@@ -111,6 +122,6 @@ class ChatPresenter(
     fun onNewChatClicked() {
         chatView.clearAll()
         chatView.setFocusOnPrompt()
-        chat = PromptFactory.chat(emptyList())
+        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList())
     }
 }

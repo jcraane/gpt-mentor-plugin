@@ -11,6 +11,20 @@ import kotlinx.serialization.Serializable
 import java.util.*
 import kotlin.reflect.KProperty
 
+/**
+ * This class is a persistent state component that stores the history of a certain action.
+ *
+ * It is annotated with @State, which is used to define the name and the storage location of the state.
+ *
+ * @property jsonBlob A JSON string that represents the state of the component.
+ * @property history A property delegate that initializes the 'history' property with the value of 'this'.
+ *
+ * This class implements the PersistentStateComponent interface, which allows it to save and load its state.
+ *
+ * The 'getValue' and 'setValue' operators are used to access the 'history' property.
+ *
+ * @see PersistentStateComponent
+ */
 @State(
     name = "HistoryState",
     storages = [Storage("HistoryState.xml")]

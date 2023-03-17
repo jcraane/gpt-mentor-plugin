@@ -1,6 +1,5 @@
 package com.github.jcraane.gptmentorplugin.openapi
 
-import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.openapi.response.streaming.ChatCompletion
 import com.github.jcraane.gptmentorplugin.security.GptMentorCredentialsManager
@@ -42,10 +41,8 @@ class RealOpenApi(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun executeBasicActionStreaming(basicPrompt: BasicPrompt) =
+    override suspend fun executeBasicActionStreaming(chatGptRequest: ChatGptRequest) =
         callbackFlow {
-            val chatGptRequest = basicPrompt.createRequest()
-
             val request = Request.Builder()
                 .url(API_ENDPOINT)
                 .header("Authorization", "Bearer ${credentialsManager.getPassword()}")

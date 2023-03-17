@@ -1,8 +1,12 @@
 package com.github.jcraane.gptmentorplugin.ui.chat
 
+import com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState
 import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
+import com.github.jcraane.gptmentorplugin.domain.PromptFactory
 import com.github.jcraane.gptmentorplugin.openapi.OpenApi
+import com.github.jcraane.gptmentorplugin.ui.history.state.HistoryRepository
+import io.mockk.MockKCancellation
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -20,9 +24,11 @@ class ChatPresenterTest {
     private val prompt = BasicPrompt.ExplainCode("action", "")
     private val message = ChatGptRequest.Message.newUserMessage("action")
 
+    private val historyRepository: HistoryRepository = mockk(relaxed = true)
+
     @Before
     fun setup() {
-        presenter = ChatPresenter(chatView, openApi)
+        presenter = ChatPresenter(chatView, openApi, historyRepository, PromptFactory(GptMentorSettingsState()))
     }
 
     @Test
@@ -34,7 +40,7 @@ class ChatPresenterTest {
                 chatView.setPrompt("action")
                 chatView.appendPrompt("action")
                 openApi.executeBasicActionStreaming(
-                    BasicPrompt.Chat(listOf(message), "")
+                    BasicPrompt.Chat(listOf(message), "").createRequest()
                 )
             }
         }
@@ -46,7 +52,7 @@ class ChatPresenterTest {
             coVerify {
                 chatView.setPrompt(prompt.action)
                 chatView.clearExplanation()
-                openApi.executeBasicActionStreaming(prompt)
+                openApi.executeBasicActionStreaming(prompt.createRequest())
             }
         }
 
