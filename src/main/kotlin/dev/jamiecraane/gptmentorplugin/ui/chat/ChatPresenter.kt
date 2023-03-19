@@ -137,7 +137,6 @@ class ChatPresenter(
                 }
             }
         }
-        println(chatContext)
     }
 
     fun onNewChatClicked() {

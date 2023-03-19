@@ -39,7 +39,7 @@ sealed class BasicPrompt(
     )
 
     data class AddComments(val code: String, val systemMessage: String) : BasicPrompt(
-        action = "Add docs to this code: \n\n$code", systemPrompt = systemMessage, executeImmediate = true
+        action = "$code\n\nAdd javadoc\n", systemPrompt = systemMessage, executeImmediate = true
     )
 
     data class Chat(val messages: List<ChatGptRequest.Message>, val systemMessage: String) :

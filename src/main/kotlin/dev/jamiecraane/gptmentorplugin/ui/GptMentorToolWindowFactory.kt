@@ -30,7 +30,6 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
             addChangeListener {
                 when (selectedIndex) {
                     TAB_CHAT -> {
-                        println("Chat tab selected")
                     }
 
                     TAB_HISTORY -> {
@@ -38,7 +37,6 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
                     }
 
                     TAB_HELP -> {
-                        println("Help tab selected")
                     }
 
                     else -> {

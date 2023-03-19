@@ -150,7 +150,6 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     override fun appendPrompt(message: String) {
-        println("appendPrompt: $message")
         ApplicationManager.getApplication().invokeLater {
             val doc = explanationArea.styledDocument
             doc.insertString(explanationArea.styledDocument.length, message, userStyle)
@@ -183,7 +182,6 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     override fun appendExplanation(explanation: String) {
-        println("Appending explanation: $explanation")
         ApplicationManager.getApplication().invokeLater {
             explanationArea.styledDocument.insertString(explanationArea.styledDocument.length, explanation, systemStyle)
         }
