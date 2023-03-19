@@ -1,5 +1,6 @@
 package com.github.jcraane.gptmentorplugin.ui.history.state
 
+import com.github.jcraane.gptmentorplugin.domain.BasicPrompt
 import com.github.jcraane.gptmentorplugin.openapi.JSON
 import com.github.jcraane.gptmentorplugin.openapi.request.ChatGptRequest
 import com.github.jcraane.gptmentorplugin.ui.chat.ChatContext
@@ -39,7 +40,12 @@ class HistoryState : PersistentStateComponent<HistoryState> {
     }
 
     override fun loadState(state: HistoryState) {
-        XmlSerializerUtil.copyBean(state, this)
+        try {
+            XmlSerializerUtil.copyBean(state, this)
+        } catch (e: Exception) {
+            history = History(emptyList())
+            jsonBlob = "{}"
+        }
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): History {
@@ -68,8 +74,24 @@ data class History(
 data class HistoryItem(
     val id: String,
     val title: String,
+    val systemPrompt: String,
     val messages: List<HistoryMessage> = emptyList(),
 ) {
+    fun getChatContext(): ChatContext {
+        return ChatContext(
+            chatId = id,
+            chat = BasicPrompt.Chat(
+                systemMessage = systemPrompt,
+                messages = messages.map {
+                    ChatGptRequest.Message(
+                        role = ChatGptRequest.Message.Role.fromCode(it.role),
+                        content = it.content,
+                    )
+                }
+            )
+        )
+    }
+
     companion object {
         const val NO_TITLE_PLACEHOLDER = "No title"
         const val MAX_TITLE_LENGTH = 60
@@ -79,6 +101,7 @@ data class HistoryItem(
             return HistoryItem(
                 id = chatContext.chatId,
                 title = request.title,
+                systemPrompt = chatContext.chat.systemPrompt,
                 messages = request.messages.map {
                     HistoryMessage(
                         content = it.content,

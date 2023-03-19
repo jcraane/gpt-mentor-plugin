@@ -113,9 +113,23 @@ class ChatPresenter(
         }
     }
 
-    override fun onHistoryItemLoaded(historyItem: HistoryItem) {
-//        chatId = historyItem.id
-//        todo implement
+    override fun loadChatFromHistory(historyItem: HistoryItem) {
+        chatContext = historyItem.getChatContext().also { context ->
+            explanationBuilder.clear()
+            chatView.clearAll()
+            chatView.setFocusOnPrompt()
+            val explanation = when (context.chat) {
+                is BasicPrompt.Chat -> {
+                    context.chat.messages
+                        .joinToString("\n") { it.content }
+                }
+
+                else -> {
+                    chatContext.chat.action
+                }
+            }
+            chatView.appendExplanation(explanation)
+        }
     }
 
     fun onNewChatClicked() {

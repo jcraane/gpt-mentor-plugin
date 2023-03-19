@@ -39,6 +39,10 @@ data class ChatGptRequest(
             USER("user"),
             SYSTEM("system");
 
+            companion object {
+                fun fromCode(code: String): Role = values().firstOrNull { it.code.equals(code, ignoreCase = true) } ?: USER
+            }
+
             @OptIn(ExperimentalSerializationApi::class)
             @Serializer(forClass = Role::class)
             object RoleSerializer : KSerializer<Role> {

@@ -15,5 +15,5 @@ interface ChatGptApiListener {
     /**
      * An item loaded from history will result in a chat which the user can continue.
      */
-    fun onHistoryItemLoaded(historyItem: HistoryItem)
+    fun loadChatFromHistory(historyItem: HistoryItem)
 }

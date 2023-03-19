@@ -13,10 +13,13 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
 
-//        todo introduce main mediator or something to handle global actions which trigger actions to panels from other panels
         val tabbedPane = JBTabbedPane().apply {
-            addTab("Chat", ChatPanel().apply { onAttach(project) })
-            val historyPanel = HistoryPanel()
+            val chatPanel = ChatPanel().apply { onAttach(project) }
+            addTab("Chat", chatPanel)
+            val historyPanel = HistoryPanel { historyItem ->
+                chatPanel.presenter.loadChatFromHistory(historyItem)
+                this.selectedIndex = TAB_CHAT
+            }
             addTab("History", historyPanel)
             addChangeListener {
                 when (selectedIndex) {
@@ -33,7 +36,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
                     }
 
                     else -> {
-                        println("Unknown tab selected")
+                        // Do nothing
                     }
                 }
             }

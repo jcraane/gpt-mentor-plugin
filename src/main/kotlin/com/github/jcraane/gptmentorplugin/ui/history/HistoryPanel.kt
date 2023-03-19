@@ -14,7 +14,9 @@ import javax.swing.*
 
 //    todo double click should load chat with chat history
 //                    todo how to communicate to chat panel to load new chat?
-class HistoryPanel : JPanel(), HistoryView {
+class HistoryPanel(
+    onChatSelected: (HistoryItem) -> Unit,
+) : JPanel(), HistoryView {
     val presenter = HistoryPresenter(this, PluginStateHistoryRepository())
 
     private val historyList = JBList<HistoryItem>().apply {
@@ -27,7 +29,7 @@ class HistoryPanel : JPanel(), HistoryView {
 
                 if (e.clickCount == 2) {
                     val selected = selectedValue
-                    JOptionPane.showMessageDialog(this@apply, "You double-clicked on $selected")
+                    onChatSelected(selected)
                 } else if (SwingUtilities.isRightMouseButton(e)) {
                     val selectedIndices = selectedIndices
                     if (selectedIndices.size == 1) {
