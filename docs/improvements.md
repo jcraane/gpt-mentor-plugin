@@ -1,11 +1,8 @@
-- Add chat history tab and option to select a chat nd continue from there
-    - Delete chats
-    - Name/rename chats
 - Add option to create new file from selection
 - Integrate diff action for selected code
 - Add code formatting if code is detected
 - Add advanced options like temperature, top-k, etc.
-- Add option to remove chat messages (from bottom to top)
+- Add option to remove chat messages (single thread) (from bottom to top)
 
 Update documentation:
 Configure your Open AI API key in the plugin settings. You can get one at: https://platform.openai.com/account/api-keys

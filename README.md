@@ -16,11 +16,18 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+GPT-Mentor which is powered by Open AI is a plugin that helps you to improve your code. It can explain your code, improve your code, review your code, create unit tests and add comments to your code.
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
+It also enables you to create custom chats. 
 
-To keep everything working, do not remove `<!-- ... -->` sections. 
+The default shortcuts for the standard actions are:
+- Explain Code: Ctrl + Alt + Shift + E
+- Improve Code: Ctrl + Alt + Shift + I
+- Review Code: Ctrl + Alt + Shift + R
+- Create Unit Test: Ctrl + Alt + Shift + T
+- Add Comments: Ctrl + Alt + Shift + C
+
+The history view displays the chat history. You can also remove messages from the history. Double click on a chat in the history view to open the chat in the editor.
 <!-- Plugin description end -->
 
 ## Installation
