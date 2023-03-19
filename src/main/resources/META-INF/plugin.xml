@@ -1,23 +1,23 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.jcraane.gptmentorplugin</id>
+    <id>dev.jamiecraane.gptmentorplugin</id>
     <name>GPT Mentor</name>
     <vendor>jcraane</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.jcraane.gptmentorplugin.services.MyProjectService"/>
+        <applicationService serviceImplementation="dev.jamiecraane.gptmentorplugin.services.MyApplicationService"/>
+        <projectService serviceImplementation="dev.jamiecraane.gptmentorplugin.services.MyProjectService"/>
 
-        <toolWindow id="GPT-Mentor" factoryClass="com.github.jcraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
+        <toolWindow id="GPT-Mentor" factoryClass="dev.jamiecraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
                     anchor="right">
 
         </toolWindow>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.jcraane.gptmentorplugin.listeners.MyProjectManagerListener"
+        <listener class="dev.jamiecraane.gptmentorplugin.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 
@@ -28,38 +28,38 @@
                     group-id="ToolsMenu"
                     anchor="last">
             </add-to-group>
-            <action id="explainCode" class="com.github.jcraane.gptmentorplugin.actions.ExplainCodeAction"
+            <action id="explainCode" class="dev.jamiecraane.gptmentorplugin.actions.ExplainCodeAction"
                     text="Explain Code">
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
 
-            <action id="improveCode" class="com.github.jcraane.gptmentorplugin.actions.ImproveCodeAction"
+            <action id="improveCode" class="dev.jamiecraane.gptmentorplugin.actions.ImproveCodeAction"
                     text="Improve Code">
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="reviewCode" class="com.github.jcraane.gptmentorplugin.actions.ReviewCodeAction"
+            <action id="reviewCode" class="dev.jamiecraane.gptmentorplugin.actions.ReviewCodeAction"
                     text="Review Code">
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="createUnitTest" class="com.github.jcraane.gptmentorplugin.actions.CreateUnitTestAction"
+            <action id="createUnitTest" class="dev.jamiecraane.gptmentorplugin.actions.CreateUnitTestAction"
                     text="Create Unit Test">
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="addComments" class="com.github.jcraane.gptmentorplugin.actions.AddCommentsAction"
+            <action id="addComments" class="dev.jamiecraane.gptmentorplugin.actions.AddCommentsAction"
                     text="Add Comments">
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="promptFromSelection" class="com.github.jcraane.gptmentorplugin.actions.PromptFromSelectionAction"
+            <action id="promptFromSelection" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromSelectionAction"
                     text="Prompt From Selection">
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X" replace-all="true"/>
@@ -71,13 +71,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable
-                instance="com.github.jcraane.gptmentorplugin.configuration.GptMentorConfigurable"
-                id="com.github.jcraane.fasttravel.configuration.FastTravelConfigurable"
+                instance="dev.jamiecraane.gptmentorplugin.configuration.GptMentorConfigurable"
+                id="dev.jamiecraane.fasttravel.configuration.FastTravelConfigurable"
                 displayName="GptMentor"/>
 
-        <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.configuration.GptMentorSettingsState"/>
+        <applicationService serviceImplementation="dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState"/>
 
-        <applicationService serviceImplementation="com.github.jcraane.gptmentorplugin.ui.history.state.HistoryState"/>
+        <applicationService serviceImplementation="dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryState"/>
     </extensions>
 
 </idea-plugin>
