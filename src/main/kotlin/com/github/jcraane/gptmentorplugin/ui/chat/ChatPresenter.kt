@@ -118,18 +118,26 @@ class ChatPresenter(
             explanationBuilder.clear()
             chatView.clearAll()
             chatView.setFocusOnPrompt()
-            val explanation = when (context.chat) {
+            when (context.chat) {
                 is BasicPrompt.Chat -> {
-                    context.chat.messages
-                        .joinToString("\n") { it.content }
+                    context.chat.messages.forEach { message ->
+                        when (message.role) {
+                            ChatGptRequest.Message.Role.USER -> {
+                                chatView.appendPrompt(message.content)
+                            }
+                            ChatGptRequest.Message.Role.SYSTEM -> {
+                                chatView.appendExplanation(message.content)
+                            }
+                        }
+                    }
                 }
 
                 else -> {
-                    chatContext.chat.action
+                    chatView.appendPrompt(chatContext.chat.action)
                 }
             }
-            chatView.appendExplanation(explanation)
         }
+        println(chatContext)
     }
 
     fun onNewChatClicked() {
