@@ -12,6 +12,18 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
+/**
+ * JPanel that displays a list of history items using a {@link JBList} and a custom {@link ListCellRenderer}.
+ * Provides functionality to delete and rename items on right-click and double-click actions, respectively.
+ * Implements the {@link HistoryView} interface to receive updates from the {@link HistoryPresenter} which manages the
+ * interaction with the {@link PluginStateHistoryRepository} to retrieve and store the history items.
+ *
+ * @param onChatSelected a lambda function that is called when a history item is double-clicked, and passes the selected
+ *                        item as a parameter.
+ * @see HistoryView
+ * @see HistoryPresenter
+ * @see PluginStateHistoryRepository
+ */
 class HistoryPanel(
     onChatSelected: (HistoryItem) -> Unit,
 ) : JPanel(), HistoryView {
