@@ -12,8 +12,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-//    todo double click should load chat with chat history
-//                    todo how to communicate to chat panel to load new chat?
 class HistoryPanel(
     onChatSelected: (HistoryItem) -> Unit,
 ) : JPanel(), HistoryView {
