@@ -1,15 +1,12 @@
 package dev.jamiecraane.gptmentorplugin.ui.history
 
-import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
-import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
+import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
+import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.event.FocusAdapter
-import java.awt.event.FocusEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import javax.swing.*
 
 /**
@@ -25,40 +22,41 @@ import javax.swing.*
  * @see PluginStateHistoryRepository
  */
 class HistoryPanel(
-    onChatSelected: (HistoryItem) -> Unit,
-) : JPanel(), HistoryView {
+    private val mouseAdapter: MouseAdapter = object : MouseAdapter() {},
+    private val onChatSelected: (HistoryItem) -> Unit,
+) : JPanel(), HistoryView, MouseListener by mouseAdapter {
     val presenter = HistoryPresenter(this, PluginStateHistoryRepository())
 
     private val historyList = JBList<HistoryItem>().apply {
         cellRenderer = HistoryItemRenderer()
-        addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent?) {
-                if (e == null) {
-                    return
+        addMouseListener(this@HistoryPanel)
+    }
+
+    override fun mouseClicked(e: MouseEvent?) {
+        if (e == null) {
+            return
+        }
+
+        if (e.clickCount == 2) {
+            val selected = historyList.selectedValue
+            onChatSelected(selected)
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            val selectedIndices = historyList.selectedIndices
+            if (selectedIndices.size == 1) {
+                val popupMenu = historyList.addPopupMenuWithDeleteAction()
+
+                val renameItem = JMenuItem("Rename")
+                renameItem.addActionListener {
+                    historyList.showEditTextField(selectedIndices)
                 }
+                popupMenu.add(renameItem)
 
-                if (e.clickCount == 2) {
-                    val selected = selectedValue
-                    onChatSelected(selected)
-                } else if (SwingUtilities.isRightMouseButton(e)) {
-                    val selectedIndices = selectedIndices
-                    if (selectedIndices.size == 1) {
-                        val popupMenu = addPopupMenuWithDeleteAction()
-
-                        val renameItem = JMenuItem("Rename")
-                        renameItem.addActionListener {
-                            showEditTextField(selectedIndices)
-                        }
-                        popupMenu.add(renameItem)
-
-                        popupMenu.show(e.component, e.x, e.y)
-                    } else if (selectedIndices.isNotEmpty()) {
-                        val popupMenu = addPopupMenuWithDeleteAction()
-                        popupMenu.show(e.component, e.x, e.y)
-                    }
-                }
+                popupMenu.show(e.component, e.x, e.y)
+            } else if (selectedIndices.isNotEmpty()) {
+                val popupMenu = historyList.addPopupMenuWithDeleteAction()
+                popupMenu.show(e.component, e.x, e.y)
             }
-        })
+        }
     }
 
     private fun JBList<HistoryItem>.addPopupMenuWithDeleteAction(): JPopupMenu {
