@@ -8,6 +8,5 @@
 
 - toolwindow is not shown automatically
 - Add proper logging
-- Add timestamp to chats and sort chats based on timestamp, newest first
 - use default shortcut to rename in history list
 
