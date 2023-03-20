@@ -28,8 +28,9 @@ class ChatPresenter(
     private val openApi: OpenApi = RealOpenApi(
         client = HttpClient(),
         okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.MINUTES)
-            .writeTimeout(10, TimeUnit.MINUTES)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
             .build(),
         credentialsManager = GptMentorCredentialsManager,
     ),
@@ -142,6 +143,7 @@ class ChatPresenter(
     }
 
     fun onNewChatClicked() {
+        apiJob?.cancel()
         explanationBuilder.clear()
         chatContext = ChatContext(
             chatId = idGenerator.generateId(),

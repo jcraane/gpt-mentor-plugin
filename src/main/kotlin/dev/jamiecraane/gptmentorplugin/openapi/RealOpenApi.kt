@@ -1,5 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.openapi
 
+import com.intellij.ide.plugins.PluginManager
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.openapi.response.streaming.ChatCompletion
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
@@ -17,7 +18,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.sse.EventSources
 
-//todo use streaming API to popuplate explanation in a streaming way (also option to stop generating explanation)
 class RealOpenApi(
     private val client: HttpClient,
     private val okHttpClient: OkHttpClient,
@@ -61,6 +61,7 @@ class RealOpenApi(
                         trySend(StreamingResponse.Data(content))
                     }
                 } catch (e: Exception) {
+                    logger.error(e)
                     if (e is CancellationException) {
                         throw e
                     } else {
@@ -71,9 +72,7 @@ class RealOpenApi(
             val eventSource = EventSources.createFactory(okHttpClient)
                 .newEventSource(request = request, listener = listener)
 
-            println("plugin: request: $request")
             okHttpClient.newCall(request).execute().use { response ->
-                println("plugin: response: $response")
                 if (!response.isSuccessful) {
                     trySend(StreamingResponse.Error(response.message))
                 }
@@ -84,11 +83,8 @@ class RealOpenApi(
             }
         }
 
-    override suspend fun stopGenerating() {
-        TODO("Not yet implemented")
-    }
-
     companion object {
         const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
+        private val logger = PluginManager.getLogger()
     }
 }

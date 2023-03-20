@@ -6,7 +6,7 @@
 
 ## Resolve issues before release
 
-- toolwindow is not shown automatically
 - Add proper logging
 - use default shortcut to rename in history list
-
+- 
+- Debug not result first time sometimes

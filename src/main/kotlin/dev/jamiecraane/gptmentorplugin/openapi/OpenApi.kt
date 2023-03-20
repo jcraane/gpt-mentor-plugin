@@ -5,7 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface OpenApi {
     suspend fun executeBasicActionStreaming(chatGptRequest: ChatGptRequest): Flow<StreamingResponse>
-
-    suspend fun stopGenerating()
 }
 
