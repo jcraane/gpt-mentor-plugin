@@ -65,10 +65,11 @@ class HistoryPanel(
     }
 
     override fun keyPressed(e: KeyEvent?) {
-        println("plugin:: keyPressed: ${e?.keyCode}")
         if (e?.keyCode == KeyEvent.VK_BACK_SPACE) {
             val selectedValues = historyList.selectedValuesList
             presenter.deleteAll(selectedValues)
+        } else if (e?.keyCode == KeyEvent.VK_F6 && e.isShiftDown) {
+            historyList.showEditTextField(historyList.selectedIndices)
         }
     }
 
