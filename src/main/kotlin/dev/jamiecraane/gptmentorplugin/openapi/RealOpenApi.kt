@@ -72,6 +72,7 @@ class RealOpenApi(
                 .newEventSource(request = request, listener = listener)
 
             okHttpClient.newCall(request).execute().use { response ->
+                println("plugin: response: $response")
                 if (!response.isSuccessful) {
                     trySend(StreamingResponse.Error(response.message))
                 }

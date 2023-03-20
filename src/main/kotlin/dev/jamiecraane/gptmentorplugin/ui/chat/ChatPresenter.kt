@@ -16,6 +16,7 @@ import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
 import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
 import com.intellij.openapi.project.Project
+import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import io.ktor.client.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -59,7 +60,7 @@ class ChatPresenter(
     private fun executeStreaming(prompt: BasicPrompt) {
         apiJob?.cancel()
         apiJob = scope.launch {
-            chatView.appendPrompt(prompt.action)
+            chatView.appendPrompt(prompt.action.addNewLinesIfNeeded(1))
             kotlin.runCatching {
                 val chatGptRequest = prompt.createRequest()
                 openApi.executeBasicActionStreaming(chatGptRequest)
@@ -67,6 +68,7 @@ class ChatPresenter(
                         handleResponse(streamingResponse)
                     }
             }.onFailure {
+                it.printStackTrace()
                 if (it !is CancellationException) {
                     chatView.showError(it.message ?: "Unknown error")
                 }
