@@ -23,13 +23,18 @@ import javax.swing.*
  */
 class HistoryPanel(
     private val mouseAdapter: MouseAdapter = object : MouseAdapter() {},
+    private val keyAdapter: KeyAdapter = object : KeyAdapter() {},
     private val onChatSelected: (HistoryItem) -> Unit,
-) : JPanel(), HistoryView, MouseListener by mouseAdapter {
+) : JPanel(),
+    HistoryView,
+    MouseListener by mouseAdapter,
+    KeyListener by keyAdapter {
     val presenter = HistoryPresenter(this, PluginStateHistoryRepository())
 
     private val historyList = JBList<HistoryItem>().apply {
         cellRenderer = HistoryItemRenderer()
         addMouseListener(this@HistoryPanel)
+        addKeyListener(this@HistoryPanel)
     }
 
     override fun mouseClicked(e: MouseEvent?) {
@@ -59,11 +64,19 @@ class HistoryPanel(
         }
     }
 
+    override fun keyPressed(e: KeyEvent?) {
+        println("plugin:: keyPressed: ${e?.keyCode}")
+        if (e?.keyCode == KeyEvent.VK_BACK_SPACE) {
+            val selectedValues = historyList.selectedValuesList
+            presenter.deleteAll(selectedValues)
+        }
+    }
+
     private fun JBList<HistoryItem>.addPopupMenuWithDeleteAction(): JPopupMenu {
         val popupMenu = JPopupMenu()
         val deleteItem = JMenuItem("Delete")
         deleteItem.addActionListener {
-            val selectedValues = selectedValues
+            val selectedValues = selectedValuesList
             presenter.deleteAll(selectedValues)
         }
         popupMenu.add(deleteItem)

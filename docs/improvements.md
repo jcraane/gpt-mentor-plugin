@@ -11,3 +11,4 @@
 - Add timestamp to chats and sort chats based on timestamp, newest first
 - Should we place chats relative to the project
 - append explanation wrapped niet meer
+- First time cmd+enter goes wrong
