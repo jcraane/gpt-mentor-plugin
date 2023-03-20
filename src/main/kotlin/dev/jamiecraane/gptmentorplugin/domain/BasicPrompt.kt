@@ -46,6 +46,7 @@ sealed class BasicPrompt(
         BasicPrompt(action = messages.lastOrNull()?.content ?: "", systemPrompt = systemMessage, executeImmediate = true) {
         override fun createRequest(): ChatGptRequest {
             return chatGptRequest {
+                this.systemPrompt(this@Chat.systemPrompt)
                 this@Chat.messages.forEach { message ->
                     message {
                         role = message.role
