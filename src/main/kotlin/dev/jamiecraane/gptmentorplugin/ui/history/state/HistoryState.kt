@@ -75,6 +75,7 @@ data class HistoryItem(
     val id: String,
     val title: String,
     val systemPrompt: String,
+    val timestamp: Long,
     val messages: List<HistoryMessage> = emptyList(),
 ) {
     fun getChatContext(): ChatContext {
@@ -96,12 +97,13 @@ data class HistoryItem(
         const val NO_TITLE_PLACEHOLDER = "No title"
         const val MAX_TITLE_LENGTH = 60
 
-        fun from(chatContext: ChatContext): HistoryItem {
+        fun from(chatContext: ChatContext, timestamp: Long = System.currentTimeMillis()): HistoryItem {
             val request = chatContext.chat.createRequest()
             return HistoryItem(
                 id = chatContext.chatId,
                 title = request.title,
                 systemPrompt = chatContext.chat.systemPrompt,
+                timestamp = timestamp,
                 messages = request.messages.map {
                     HistoryMessage(
                         content = it.content,

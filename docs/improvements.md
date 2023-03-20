@@ -9,6 +9,5 @@
 - toolwindow is not shown automatically
 - Add proper logging
 - Add timestamp to chats and sort chats based on timestamp, newest first
-- Should we place chats relative to the project? Which storage should we use then?
-- append explanation wrapped niet meer
+- use default shortcut to rename in history list
 

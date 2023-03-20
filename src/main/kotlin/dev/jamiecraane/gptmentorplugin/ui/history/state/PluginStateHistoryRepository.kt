@@ -39,5 +39,6 @@ class PluginStateHistoryRepository(
 
     override fun getAllHistoryItems(): List<HistoryItem> {
         return state.history.items
+            .sortedByDescending { it.timestamp }
     }
 }

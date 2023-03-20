@@ -71,6 +71,7 @@ class RealOpenApi(
             val eventSource = EventSources.createFactory(okHttpClient)
                 .newEventSource(request = request, listener = listener)
 
+            println("plugin: request: $request")
             okHttpClient.newCall(request).execute().use { response ->
                 println("plugin: response: $response")
                 if (!response.isSuccessful) {
