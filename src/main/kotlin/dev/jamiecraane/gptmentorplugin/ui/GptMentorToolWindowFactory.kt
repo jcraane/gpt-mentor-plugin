@@ -94,8 +94,13 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
                     - Review Code: Ctrl + Alt + Shift + R<br>
                     - Create Unit Test: Ctrl + Alt + Shift + T<br>
                     - Add Comments: Ctrl + Alt + Shift + C<br><br>
+                    
+                    Each action uses a custom system prompt to instruct ChatGPT how ot behave. Those prompts can be adjusted in the settings of the plugin if required.<br><br>
 
-                    The history view displays the chat history. You can also remove messages from the history. Double click on a chat in the history view to open the chat in the editor.<br><br>
+                    The history view displays the chat history. You can also remove messages from the history.<br> 
+                    - Double click on a chat in the history view to open the chat in the editor.<br>
+                    - Select one or multiple elements and use the backspace or context menu to delete items from the history<br>
+                    - Rename history items with the context menu or Shift+F6<br><br>
 
                     To start using it create an account and API key at: <a href="https://platform.openai.com/account/api-keys">https://platform.openai.com/account/api-keys</a><br><br>
                     

@@ -27,7 +27,15 @@ The default shortcuts for the standard actions are:
 - Create Unit Test: Ctrl + Alt + Shift + T
 - Add Comments: Ctrl + Alt + Shift + C
 
-The history view displays the chat history. You can also remove messages from the history. Double click on a chat in the history view to open the chat in the editor.
+Each action uses a custom system prompt to instruct ChatGPT how ot behave. Those prompts can be adjusted in the settings of the plugin if required.
+
+The history view displays the chat history. You can also remove messages from the history. - Double click on a chat in the history view to open the chat in the editor. - Select one or multiple elements and use the backspace or context menu to delete items from the history - Rename history items with the context menu or Shift+F6
+
+To start using it create an account and API key at: https://platform.openai.com/account/api-keys  
+
+After you have created an API key you can add it in the settings of the plugin.  
+
+To see the uptime of the OpenAI API visit: https://status.openai.com/uptime
 <!-- Plugin description end -->
 
 ## Installation
