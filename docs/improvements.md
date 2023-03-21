@@ -6,7 +6,3 @@
 
 ## Resolve issues before release
 
-- Integrate the urls in help:
-
-https://status.openai.com/uptime
-https://platform.openai.com/account/api-keys

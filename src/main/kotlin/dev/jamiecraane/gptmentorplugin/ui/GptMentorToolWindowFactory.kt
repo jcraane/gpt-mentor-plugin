@@ -24,6 +24,7 @@ import javax.swing.event.HyperlinkEvent
 
 class GptMentorToolWindowFactory : ToolWindowFactory {
     private var helpPane = JTextPane().apply {
+        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
         contentType = "text/html"
         isEditable = false
         addHyperlinkListener { e ->
@@ -109,13 +110,9 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
 
     private fun createHelpPanel(): Component {
         return JPanel().apply {
-            border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
             layout = BorderLayout()
-
             val scrollPane = JBScrollPane(helpPane)
             add(scrollPane, BorderLayout.CENTER)
-
-            UIUtil.isUnderDarcula()
         }
     }
 
