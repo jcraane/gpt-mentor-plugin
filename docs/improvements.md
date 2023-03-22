@@ -5,5 +5,6 @@
 - Add option to remove chat messages (single thread) (from bottom to top)
 - Use proper localization
 - Use standard rename shortcut
+- Add error handling when tokens is too large
 
 ## Resolve issues before release
