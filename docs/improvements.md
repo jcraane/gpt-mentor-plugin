@@ -6,5 +6,6 @@
 - Use proper localization
 - Use standard rename shortcut
 - Add error handling when tokens is too large
+- Remove deprecated code, see https://plugins.jetbrains.com/plugin/21316-gpt-mentor/versions/stable/310232#verification-results
 
 ## Resolve issues before release
