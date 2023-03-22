@@ -1,5 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.ui.history
 
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem

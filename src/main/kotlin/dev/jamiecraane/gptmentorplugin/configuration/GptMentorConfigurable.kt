@@ -85,6 +85,7 @@ class GptMentorConfigurable : Configurable {
         settingsPanel.add(openAiApiKey, c)
 
         var gridY = 0
+        c.gridx = 0
         for (promptIndex in prompts.indices) {
             c.gridy = ++gridY
             settingsPanel.add(labels[promptIndex], c)
