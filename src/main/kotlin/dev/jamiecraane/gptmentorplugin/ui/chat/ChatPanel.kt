@@ -21,6 +21,7 @@ class ChatPanel : JPanel(), ChatView {
     val presenter = ChatPresenter(this)
     private val loader: JComponent = createLoadingComponent()
     private val submitButton = JButton("Submit")
+    private val numberOfTokens = JLabel("")
 
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
@@ -138,6 +139,7 @@ class ChatPanel : JPanel(), ChatView {
             }
         }
         panel.add(newChatButton)
+//        panel.add(numberOfTokens)
 
         panel.add(Box.createHorizontalGlue())
         return panel
@@ -250,8 +252,6 @@ class ChatPanel : JPanel(), ChatView {
 
     companion object {
         private const val PROMPT_MAX_HEIGHT = 200
-        private val INTRO_MESSAGE = """
-            Pyhton hello world
-        """.trimIndent()
+        private val INTRO_MESSAGE = "Hello, I am GPT-Mentor, your smart coding assistant!"
     }
 }

@@ -1,7 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.openapi
 
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
-import dev.jamiecraane.gptmentorplugin.openapi.response.ErrorMessage
 import dev.jamiecraane.gptmentorplugin.openapi.response.ErrorResponse
 import dev.jamiecraane.gptmentorplugin.openapi.response.streaming.ChatCompletion
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.sse.EventSource
 import okhttp3.sse.EventSources
 
 class RealOpenApi(
@@ -61,9 +59,7 @@ class RealOpenApi(
                         ?: response?.message?.takeIf { it.isNotEmpty() }
                         ?: UNKNOWM_ERROR
 
-                    if (message != "timeout") {
-                        trySend(StreamingResponse.Error(message))
-                    }
+                    trySend(StreamingResponse.Error(message))
                 },
             ) { response ->
                 try {
