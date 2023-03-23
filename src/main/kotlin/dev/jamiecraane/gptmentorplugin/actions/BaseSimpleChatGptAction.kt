@@ -12,7 +12,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import dev.jamiecraane.gptmentorplugin.ui.GptMentorToolWindowFactory
 
 abstract class BaseSimpleChatGptAction : AnAction() {
-    protected val promptFactory = PromptFactory(GptMentorSettingsState.getInstance())
+    protected lateinit var promptFactory: PromptFactory
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
@@ -20,6 +20,10 @@ abstract class BaseSimpleChatGptAction : AnAction() {
 
         if (project == null || editor == null) {
             return
+        }
+
+        if (!this::promptFactory.isInitialized) {
+            promptFactory = PromptFactory(project.getService(GptMentorSettingsState::class.java))
         }
 
         val selectedText = editor.selectionModel.selectedText

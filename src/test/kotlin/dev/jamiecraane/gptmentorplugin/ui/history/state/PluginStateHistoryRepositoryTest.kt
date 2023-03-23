@@ -10,10 +10,10 @@ class PluginStateHistoryRepositoryTest {
 
     @Test
     fun testAddHistoryItem() {
-        val currentHistory = History(listOf(HistoryItem("1", "item1", "systemprompt", emptyList())))
+        val currentHistory = History(listOf(HistoryItem("1", "item1", "systemprompt", 1L, emptyList())))
         state.history = currentHistory
 
-        val newItem = HistoryItem("2", "item2", "systemprompt", emptyList())
+        val newItem = HistoryItem("2", "item2", "systemprompt", 1L, emptyList())
         repository.addOrUpdateHistoryItem(newItem)
 
         assertEquals(currentHistory.items + newItem, state.history.items)
@@ -21,8 +21,8 @@ class PluginStateHistoryRepositoryTest {
 
     @Test
     fun testDeleteHistoryItem() {
-        val itemToDelete = HistoryItem("1", "item1", "systemprompt", emptyList())
-        val currentHistory = History(listOf(itemToDelete, HistoryItem("1", "item2", "systemprompt", emptyList())))
+        val itemToDelete = HistoryItem("1", "item1", "systemprompt", 1L, emptyList())
+        val currentHistory = History(listOf(itemToDelete, HistoryItem("1", "item2", "systemprompt", 1L, emptyList())))
         state.history = currentHistory
 
         repository.deleteHistoryItem(itemToDelete)
@@ -31,8 +31,8 @@ class PluginStateHistoryRepositoryTest {
 
     @Test
     fun testRenameHistoryItem() {
-        val itemToRename = HistoryItem("1", "item1", "systemprompt", emptyList())
-        val currentHistory = History(listOf(itemToRename, HistoryItem("2", "item2", "systemprompt", emptyList())))
+        val itemToRename = HistoryItem("1", "item1", "systemprompt", 1L, emptyList())
+        val currentHistory = History(listOf(itemToRename, HistoryItem("2", "item2", "systemprompt", 1L, emptyList())))
         state.history = currentHistory
 
         val newName = "newName"
@@ -52,7 +52,9 @@ class PluginStateHistoryRepositoryTest {
     @Test
     fun testGetAllHistoryItems() {
         val currentHistory =
-            History(listOf(HistoryItem("item1", "1", "systemprompt", emptyList()), HistoryItem("item2", "2", "systemprompt", emptyList())))
+            History(listOf(HistoryItem("item1", "1", "systemprompt", 1L, emptyList()), HistoryItem("item2", "2", "systemprompt", 1L,
+                emptyList
+                ())))
         state.history = currentHistory
         val result = repository.getAllHistoryItems()
         assertEquals(currentHistory.items, result)
@@ -61,8 +63,8 @@ class PluginStateHistoryRepositoryTest {
 
     @Test
     fun testUpdateExistingHistoryItem() {
-        val itemToUpdate = HistoryItem("1", "item1", "systemprompt", emptyList())
-        val currentHistory = History(listOf(itemToUpdate, HistoryItem("2", "item2", "systemprompt", emptyList())))
+        val itemToUpdate = HistoryItem("1", "item1", "systemprompt", 1L, emptyList())
+        val currentHistory = History(listOf(itemToUpdate, HistoryItem("2", "item2", "systemprompt", 1L, emptyList())))
         state.history = currentHistory
 
         val updatedItem = itemToUpdate.copy(title = "updatedTitle")

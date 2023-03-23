@@ -3,8 +3,8 @@ package dev.jamiecraane.gptmentorplugin.domain
 import dev.jamiecraane.gptmentorplugin.openapi.JSON
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import kotlinx.serialization.json.Json
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class ChatGptRequestTest {
     @Test

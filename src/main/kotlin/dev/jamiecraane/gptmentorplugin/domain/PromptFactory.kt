@@ -3,7 +3,7 @@ package dev.jamiecraane.gptmentorplugin.domain
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 
-class PromptFactory(private val state: GptMentorSettingsState = GptMentorSettingsState.getInstance()) {
+class PromptFactory(private val state: GptMentorSettingsState) {
     fun explain(code: String) = BasicPrompt.ExplainCode(code, state.systemPromptExplainCode)
     fun improve(code: String) = BasicPrompt.ImproveCode(code, state.systemPromptImproveCode)
     fun review(code: String) = BasicPrompt.ReviewCode(code, state.systemPromptReviewCode)

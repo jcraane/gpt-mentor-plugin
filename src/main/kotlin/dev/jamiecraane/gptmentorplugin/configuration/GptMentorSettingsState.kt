@@ -1,8 +1,7 @@
 package dev.jamiecraane.gptmentorplugin.configuration
 
-import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
@@ -34,7 +33,7 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
     }
 
     companion object {
-        fun getInstance() = ServiceManager.getService(GptMentorSettingsState::class.java)
+        fun getInstance() = ApplicationManager.getApplication().getService(GptMentorSettingsState::class.java)
 
         const val DEFAULT_PROMPT = "You are an expert AI programmer."
 

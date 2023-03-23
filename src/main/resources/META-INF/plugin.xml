@@ -16,11 +16,6 @@
         </toolWindow>
     </extensions>
 
-    <applicationListeners>
-        <listener class="dev.jamiecraane.gptmentorplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
-
     <actions>
         <group id="org.intellij.sdk.action.GroupedActions" text="GPT Mentor"
                popup="true">

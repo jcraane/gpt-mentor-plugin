@@ -7,7 +7,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
-import com.intellij.util.ui.UIUtil
 import dev.jamiecraane.gptmentorplugin.ui.chat.ChatPanel
 import dev.jamiecraane.gptmentorplugin.ui.history.HistoryPanel
 import dev.jamiecraane.gptmentorplugin.ui.util.isInDarkMode
