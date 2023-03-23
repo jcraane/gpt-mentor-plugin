@@ -1,4 +1,4 @@
-- Add loader
+- Do not show timeouts after the first response token is aleady received
 - Add token counter
 - Add advanced options like temperature, top-k, model.
 - Add option to create new file from selection

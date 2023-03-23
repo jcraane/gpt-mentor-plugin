@@ -59,6 +59,7 @@ class ChatPresenter(
     }
 
     private fun executeStreaming(prompt: BasicPrompt) {
+        chatView.showLoading()
         apiJob?.cancel()
         apiJob = scope.launch {
             chatView.appendPrompt(prompt.action.addNewLinesIfNeeded(1))
@@ -92,9 +93,11 @@ class ChatPresenter(
 
     private fun handleError(error: String): Unit {
         chatView.showError(error)
+        chatView.hideLoading()
     }
 
-    private fun handleDone(): Unit {
+    private fun handleDone() {
+        chatView.hideLoading()
         chatView.onExplanationDone()
         chatView.clearPrompt()
         chatContext = chatContext.addMessage(explanationBuilder.toString(), ChatGptRequest.Message.Role.SYSTEM)
@@ -102,6 +105,7 @@ class ChatPresenter(
     }
 
     fun onStopClicked() {
+        chatView.hideLoading()
         apiJob?.cancel()
     }
 
@@ -120,6 +124,7 @@ class ChatPresenter(
         chatContext = historyItem.getChatContext().also { context ->
             explanationBuilder.clear()
             chatView.clearAll()
+            chatView.hideLoading()
             chatView.setFocusOnPrompt()
             when (context.chat) {
                 is BasicPrompt.Chat -> {
@@ -143,6 +148,7 @@ class ChatPresenter(
     }
 
     fun onNewChatClicked() {
+        chatView.hideLoading()
         apiJob?.cancel()
         explanationBuilder.clear()
         chatContext = ChatContext(

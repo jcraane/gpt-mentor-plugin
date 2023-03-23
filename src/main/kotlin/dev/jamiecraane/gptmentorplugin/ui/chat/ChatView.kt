@@ -12,6 +12,7 @@ interface ChatView {
     fun appendExplanation(explanation: String)
 
     fun showLoading()
+    fun hideLoading()
 
     fun getPrompt(): String
 

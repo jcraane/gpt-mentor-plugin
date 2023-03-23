@@ -1,13 +1,14 @@
 package dev.jamiecraane.gptmentorplugin.ui.chat
 
-import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
+import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -18,6 +19,8 @@ import javax.swing.text.StyledDocument
 
 class ChatPanel : JPanel(), ChatView {
     val presenter = ChatPresenter(this)
+    private val loader: JComponent = createLoadingComponent()
+    private val submitButton = JButton("Submit")
 
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
@@ -107,12 +110,18 @@ class ChatPanel : JPanel(), ChatView {
 
     private fun createButtonPanel(): JPanel {
         val panel = createHorizontalBoxPanel()
-        val submitButton = JButton("Submit").apply {
+
+        with(submitButton) {
             addActionListener {
                 presenter.onSubmitClicked()
             }
         }
         panel.add(submitButton)
+
+        // Add loading component (JProgressBar or JLabel with spinning animation)
+        loader.isVisible = false
+        panel.add(loader)
+
         panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
 
         val stopButton = JButton("Stop").apply {
@@ -123,14 +132,19 @@ class ChatPanel : JPanel(), ChatView {
         panel.add(stopButton)
 
         panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
-        val newChatButton = JButton("New Chat")
-        newChatButton.addActionListener {
-            presenter.onNewChatClicked()
+        val newChatButton = JButton("New Chat").apply {
+            addActionListener {
+                presenter.onNewChatClicked()
+            }
         }
-
         panel.add(newChatButton)
+
         panel.add(Box.createHorizontalGlue())
         return panel
+    }
+
+    private fun createLoadingComponent(): JComponent {
+        return JLabel("Loading...", AnimatedIcon.Default(), SwingConstants.LEFT)
     }
 
     private fun createExplanationLabelPanel(): JPanel {
@@ -190,9 +204,13 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     override fun showLoading() {
-        ApplicationManager.getApplication().invokeLater {
-            explanationArea.text = "Loading..."
-        }
+        submitButton.isVisible = false
+        loader.isVisible = true
+    }
+
+    override fun hideLoading() {
+        submitButton.isVisible = true
+        loader.isVisible = false
     }
 
     override fun getPrompt(): String {
