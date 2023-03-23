@@ -5,15 +5,26 @@ import org.junit.Test
 
 class StringExtKtTest {
     @Test
-    fun `test addNewLinesIfNeeded`() {
-        val string = "Hello\nWorld\n"
-        assertEquals("Hello\nWorld\n\n", string.addNewLinesIfNeeded(3))
-        assertEquals("Hello\nWorld\n", string.addNewLinesIfNeeded(2))
-        assertEquals("Hello\nWorld\n", string.addNewLinesIfNeeded(1))
+    fun `addNewLinesIfNeeded appends newlines when needed`() {
+        val str = "Hello"
+        assert(str.addNewLinesIfNeeded(1) == "Hello\n")
+        assert(str.addNewLinesIfNeeded(2) == "Hello\n\n")
+        assert(str.addNewLinesIfNeeded(3) == "Hello\n\n\n")
+    }
 
-        val emptyString = ""
-        assertEquals("\n\n\n", emptyString.addNewLinesIfNeeded(3))
-        assertEquals("\n\n", emptyString.addNewLinesIfNeeded(2))
-        assertEquals("\n", emptyString.addNewLinesIfNeeded(1))
+    @Test
+    fun `addNewLinesIfNeeded does not change string when no newlines needed`() {
+        val str = "Hello\nWorld\n"
+        assert(str.addNewLinesIfNeeded(0) == "Hello\nWorld\n")
+        assert(str.addNewLinesIfNeeded(1) == "Hello\nWorld\n")
+        assert(str.addNewLinesIfNeeded(2) == "Hello\nWorld\n\n")
+    }
+
+    @Test
+    fun `addNewLinesIfNeeded works with empty string`() {
+        val str = ""
+        assert(str.addNewLinesIfNeeded(0) == "")
+        assert(str.addNewLinesIfNeeded(1) == "\n")
+        assert(str.addNewLinesIfNeeded(2) == "\n\n")
     }
 }

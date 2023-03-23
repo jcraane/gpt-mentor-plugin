@@ -1,7 +1,8 @@
 package dev.jamiecraane.gptmentorplugin.openapi
 
-import com.intellij.ide.plugins.PluginManager
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
+import dev.jamiecraane.gptmentorplugin.openapi.response.ErrorMessage
+import dev.jamiecraane.gptmentorplugin.openapi.response.ErrorResponse
 import dev.jamiecraane.gptmentorplugin.openapi.response.streaming.ChatCompletion
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
 import io.ktor.client.*
@@ -18,7 +19,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.sse.EventSources
-import org.slf4j.LoggerFactory
 
 class RealOpenApi(
     private val client: HttpClient,
@@ -67,7 +67,7 @@ class RealOpenApi(
                     if (e is CancellationException) {
                         throw e
                     } else {
-                        trySend(StreamingResponse.Error(e.message ?: "Unknown error"))
+                        trySend(StreamingResponse.Error(e.message ?: UNKNOWM_ERROR))
                     }
                 }
             }
@@ -76,7 +76,11 @@ class RealOpenApi(
 
             okHttpClient.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    trySend(StreamingResponse.Error(response.message))
+                    val message = parseErrorMessage(response.body?.string())
+                        ?: response.message.takeIf { it.isNotEmpty() }
+                        ?: UNKNOWM_ERROR
+
+                    trySend(StreamingResponse.Error(message))
                 }
             }
 
@@ -85,8 +89,13 @@ class RealOpenApi(
             }
         }
 
+    private fun parseErrorMessage(json: String?) = json?.let {
+        JSON.decodeFromString(ErrorResponse.serializer(), it)
+    }?.error?.message
+
     companion object {
         const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
+        private const val UNKNOWM_ERROR = "Unknown error"
         private val logger = com.intellij.openapi.diagnostic.Logger.getInstance(RealOpenApi::class.java)
     }
 }

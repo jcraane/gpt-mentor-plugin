@@ -7,6 +7,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
+import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -152,7 +153,8 @@ class ChatPanel : JPanel(), ChatView {
     override fun appendPrompt(message: String) {
         ApplicationManager.getApplication().invokeLater {
             val doc = explanationArea.styledDocument
-            doc.insertString(explanationArea.styledDocument.length, message, userStyle)
+            val withNewlines = message.addNewLinesIfNeeded(2)
+            doc.insertString(explanationArea.styledDocument.length, withNewlines, userStyle)
         }
     }
 
