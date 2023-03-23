@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.sse.EventSource
 import okhttp3.sse.EventSources
 
 class RealOpenApi(
@@ -53,7 +54,18 @@ class RealOpenApi(
                 .post(JSON.encodeToString(ChatGptRequest.serializer(), chatGptRequest).toRequestBody())
                 .build()
 
-            val listener = ChatGptEventSourceListener { response ->
+            val listener = ChatGptEventSourceListener(
+                logger = logger,
+                onError = { response ->
+                    val message = parseErrorMessage(response?.body?.string())
+                        ?: response?.message?.takeIf { it.isNotEmpty() }
+                        ?: UNKNOWM_ERROR
+
+                    if (message != "timeout") {
+                        trySend(StreamingResponse.Error(message))
+                    }
+                },
+            ) { response ->
                 try {
                     if (response == "[DONE]") {
                         trySend(StreamingResponse.Done)
@@ -71,18 +83,9 @@ class RealOpenApi(
                     }
                 }
             }
+
             val eventSource = EventSources.createFactory(okHttpClient)
                 .newEventSource(request = request, listener = listener)
-
-            okHttpClient.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    val message = parseErrorMessage(response.body?.string())
-                        ?: response.message.takeIf { it.isNotEmpty() }
-                        ?: UNKNOWM_ERROR
-
-                    trySend(StreamingResponse.Error(message))
-                }
-            }
 
             awaitClose {
                 eventSource.cancel()

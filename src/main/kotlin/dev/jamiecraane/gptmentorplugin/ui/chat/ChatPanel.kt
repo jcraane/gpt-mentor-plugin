@@ -251,7 +251,7 @@ class ChatPanel : JPanel(), ChatView {
     companion object {
         private const val PROMPT_MAX_HEIGHT = 200
         private val INTRO_MESSAGE = """
-            Hello, I am GPT-Mentor, your smart coding assistant. Use the build-in prompts or type a custom one!           
+            Pyhton hello world
         """.trimIndent()
     }
 }
