@@ -9,6 +9,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
+import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -17,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.sse.EventSources
+import org.slf4j.LoggerFactory
 
 class RealOpenApi(
     private val client: HttpClient,
@@ -61,7 +63,7 @@ class RealOpenApi(
                         trySend(StreamingResponse.Data(content))
                     }
                 } catch (e: Exception) {
-                    logger.error(e)
+                    logger.error("Error while processing response", e)
                     if (e is CancellationException) {
                         throw e
                     } else {
@@ -85,6 +87,6 @@ class RealOpenApi(
 
     companion object {
         const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-        private val logger = PluginManager.getLogger()
+        private val logger = com.intellij.openapi.diagnostic.Logger.getInstance(RealOpenApi::class.java)
     }
 }

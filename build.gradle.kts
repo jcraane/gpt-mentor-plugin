@@ -31,8 +31,6 @@ repositories {
 dependencies {
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    // sklf4j
-    implementation("org.slf4j:slf4j-api:1.7.32")
     // kotlin-serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
     implementation("io.ktor:ktor-client-core:2.2.2")
