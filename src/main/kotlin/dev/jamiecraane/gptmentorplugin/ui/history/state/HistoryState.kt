@@ -95,7 +95,7 @@ data class HistoryItem(
 
     companion object {
         const val NO_TITLE_PLACEHOLDER = "No title"
-        const val MAX_TITLE_LENGTH = 60
+        const val MAX_TITLE_LENGTH = 100
 
         fun from(chatContext: ChatContext, timestamp: Long = System.currentTimeMillis()): HistoryItem {
             val request = chatContext.chat.createRequest()
