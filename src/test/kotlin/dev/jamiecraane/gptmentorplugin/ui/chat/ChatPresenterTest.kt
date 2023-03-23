@@ -1,12 +1,10 @@
 package dev.jamiecraane.gptmentorplugin.ui.chat
 
-import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
-import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
-import dev.jamiecraane.gptmentorplugin.domain.PromptFactory
 import dev.jamiecraane.gptmentorplugin.openapi.OpenApi
+import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
-import io.mockk.MockKCancellation
+import io.mockk.Called
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -33,28 +31,28 @@ class ChatPresenterTest {
 
     @Test
     fun `onSubmitClicked should set prompt and execute streaming with new user message`() {
-            every { chatView.getPrompt() } returns "action"
-            presenter.onSubmitClicked()
+        every { chatView.getPrompt() } returns "action"
+        presenter.onSubmitClicked()
 
-            coVerify {
-                chatView.setPrompt("action")
-                chatView.appendPrompt("action")
-                openApi.executeBasicActionStreaming(
-                    BasicPrompt.Chat(listOf(message), "").createRequest()
-                )
-            }
+        coVerify {
+            chatView.setPrompt("action")
+            chatView.appendPrompt("action")
+            openApi.executeBasicActionStreaming(
+                BasicPrompt.Chat(listOf(message), "").createRequest()
+            )
         }
+    }
 
     @Test
     fun `onNewPrompt should set prompt and execute streaming`() {
-            presenter.onNewPrompt(prompt)
+        presenter.onNewPrompt(prompt)
 
-            coVerify {
-                chatView.setPrompt(prompt.action)
-                chatView.clearExplanation()
-                openApi.executeBasicActionStreaming(prompt.createRequest())
-            }
+        coVerify {
+            chatView.setPrompt(prompt.action)
+            chatView.clearExplanation()
+            openApi.executeBasicActionStreaming(prompt.createRequest())
         }
+    }
 
     @Test
     fun `onNewChatClicked should clear all views and reset chat`() {
@@ -63,6 +61,17 @@ class ChatPresenterTest {
         coVerify {
             chatView.clearAll()
             chatView.setFocusOnPrompt()
+        }
+    }
+
+    @Test
+    fun `submit button is clicked with empty prompt`() {
+        every { chatView.getPrompt() } returns ""
+
+        presenter.onSubmitClicked()
+
+        coVerify {
+            openApi wasNot Called
         }
     }
 }

@@ -139,7 +139,7 @@ class ChatPanel : JPanel(), ChatView {
             }
         }
         panel.add(newChatButton)
-//        panel.add(numberOfTokens)
+        panel.add(numberOfTokens)
 
         panel.add(Box.createHorizontalGlue())
         return panel
@@ -242,6 +242,10 @@ class ChatPanel : JPanel(), ChatView {
         ApplicationManager.getApplication().invokeLater {
             promptTextArea.text = ""
         }
+    }
+
+    override fun updateNumberOfTokens(label: String) {
+        numberOfTokens.text = label
     }
 
     private fun StyledDocument.addNewLines(numberOfLines: Int) {

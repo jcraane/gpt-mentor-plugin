@@ -21,4 +21,5 @@ interface ChatView {
     fun setFocusOnPrompt()
     fun onExplanationDone()
     fun clearPrompt()
+    fun updateNumberOfTokens(label: String)
 }

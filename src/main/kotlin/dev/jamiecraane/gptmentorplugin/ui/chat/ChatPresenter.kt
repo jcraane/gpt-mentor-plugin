@@ -1,7 +1,11 @@
 package dev.jamiecraane.gptmentorplugin.ui.chat
 
+import com.intellij.openapi.project.Project
+import dev.jamiecraane.gptmentorplugin.common.BasicTokenizer
 import dev.jamiecraane.gptmentorplugin.common.IdGenerator
+import dev.jamiecraane.gptmentorplugin.common.Tokenizer
 import dev.jamiecraane.gptmentorplugin.common.UUIDIdGenerator
+import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
 import dev.jamiecraane.gptmentorplugin.domain.PromptFactory
@@ -15,8 +19,6 @@ import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
 import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
-import com.intellij.openapi.project.Project
-import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import io.ktor.client.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -36,6 +38,7 @@ class ChatPresenter(
     ),
     private val historyRepository: HistoryRepository = PluginStateHistoryRepository(),
     private val idGenerator: IdGenerator = UUIDIdGenerator(),
+    private val tokenizer: Tokenizer = BasicTokenizer(),
 ) : ChatGptApiListener {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var apiJob: Job? = null
@@ -52,8 +55,12 @@ class ChatPresenter(
 
     fun onSubmitClicked() {
         val prompt = chatView.getPrompt()
-        chatView.setPrompt(prompt)
 
+        if (prompt.isEmpty()) {
+            return
+        }
+
+        chatView.setPrompt(prompt)
         chatContext = chatContext.addMessage(prompt, ChatGptRequest.Message.Role.USER)
         executeStreaming(chatContext.chat)
     }
@@ -133,6 +140,7 @@ class ChatPresenter(
                             ChatGptRequest.Message.Role.USER -> {
                                 chatView.appendPrompt(message.content)
                             }
+
                             ChatGptRequest.Message.Role.SYSTEM -> {
                                 chatView.appendExplanation(message.content)
                             }
