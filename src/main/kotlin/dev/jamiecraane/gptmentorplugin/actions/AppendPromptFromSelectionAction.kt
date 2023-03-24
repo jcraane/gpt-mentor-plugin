@@ -8,16 +8,15 @@ import dev.jamiecraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 class AppendPromptFromSelectionAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+        val editor = e.getData(CommonDataKeys.EDITOR)
 
-        if (project == null || psiFile == null) {
+        if (project == null || editor == null) {
             return
         }
 
-        val virtualFile = psiFile.virtualFile
-        val contents = String(virtualFile.contentsToByteArray())
-        if (contents.isNotEmpty()) {
-            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(contents)
+        val selectedText = editor.selectionModel.selectedText
+        if (selectedText?.isNotEmpty() == true) {
+            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(selectedText)
         }
     }
 }
