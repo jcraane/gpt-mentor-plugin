@@ -70,15 +70,18 @@
             </action>
         </group>
 
-        <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromFileAction"
-                text="Send to GPT-Mentor">
-
-<!--            Right-click on a file in the file tree -->
+        <group id="gptMentorFileActions" text="GPT Mentor"
+               popup="true">
+            <!--            Right-click on a file in the file tree -->
             <add-to-group
                     group-id="CutCopyPasteGroup"
                     anchor="last">
             </add-to-group>
-        </action>
+
+            <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromFileAction"
+                    text="Send to GPT-Mentor"/>
+        </group>
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
