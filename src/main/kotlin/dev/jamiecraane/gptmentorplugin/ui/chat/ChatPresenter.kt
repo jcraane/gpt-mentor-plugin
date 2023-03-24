@@ -54,8 +54,23 @@ class ChatPresenter(
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
     }
 
+    /**
+     * Used to update the token count.
+     */
     fun promptCharTyped(keyCode: Int) {
         charsTyped.append(keyCode.toChar())
+        countTokensAndDisplay(charsTyped.toString())
+    }
+
+    /**
+     * Handles text deleted from the prompt. Used to update the token count.
+     */
+    fun promptTextDeleted(length: Int) {
+        if (charsTyped.length >= length) {
+            charsTyped = charsTyped.delete(charsTyped.length - length, charsTyped.length)
+        } else {
+            charsTyped = StringBuilder()
+        }
         countTokensAndDisplay(charsTyped.toString())
     }
 
