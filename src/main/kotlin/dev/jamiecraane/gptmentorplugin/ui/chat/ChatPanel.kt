@@ -32,23 +32,17 @@ class ChatPanel : JPanel(), ChatView {
         onKeyPressed { event ->
             if (event?.keyCode == KeyEvent.VK_ENTER && event.isMetaDown) {
                 presenter.onSubmitClicked()
-            } /*else {
-                if (event?.keyCode != null) {
-                    presenter.promptCharTyped(event.keyCode)
-                }
-            }*/
+            }
         }
         document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent) {
                 // Text has been pasted into the text area or typed
                 val pastedText = e.document.getText(e.offset, e.length)
-                println("insertUpdate $pastedText")
                 presenter.promptPastedFromClipboard(pastedText)
             }
 
             override fun removeUpdate(e: DocumentEvent) {
                 // Text has been deleted from the text area
-                println("removeUpdate ${e.length}")
                 presenter.promptTextDeleted(e.length)
             }
 
