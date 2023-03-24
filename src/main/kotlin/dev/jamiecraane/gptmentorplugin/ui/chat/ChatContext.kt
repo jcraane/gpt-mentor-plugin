@@ -9,14 +9,15 @@ import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
  * @param chatId A unique identifier for the chat.
  * @param chat An object representing the chat prompt.
  */
-class ChatContext(
+data class ChatContext(
     val chatId: String,
     val chat: BasicPrompt,
 ) {
     fun addMessage(message: String, role: ChatGptRequest.Message.Role): ChatContext {
         val chatContext = when (chat) {
             is BasicPrompt.Chat -> {
-                ChatContext(chatId, chat.copy(messages = chat.messages + ChatGptRequest.Message.newMessage(message, role)))
+                ChatContext(chatId, chat.copy(
+                    messages = chat.messages + ChatGptRequest.Message.newMessage(message, role)))
             }
 
             is BasicPrompt.AddComments -> getUpdatedChat(message, chat.code, chat.systemMessage)

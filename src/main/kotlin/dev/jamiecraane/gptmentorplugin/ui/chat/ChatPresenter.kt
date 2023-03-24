@@ -48,9 +48,25 @@ class ChatPresenter(
         chatId = idGenerator.generateId(),
         chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
     )
+    private var charsTyped = StringBuilder()
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
+    }
+
+    fun promptCharTyped(keyCode: Int) {
+        charsTyped.append(keyCode.toChar())
+        countTokensAndDisplay(charsTyped.toString())
+    }
+
+    private fun countTokensAndDisplay(text: String) {
+        val tokens = tokenizer.countTokens(text)
+        chatView.updateNumberOfTokens("Approx. $tokens tokens")
+    }
+
+    private fun resetTokens() {
+        chatView.updateNumberOfTokens("Approx. 0 tokens")
+        charsTyped.clear()
     }
 
     fun onSubmitClicked() {
@@ -67,6 +83,7 @@ class ChatPresenter(
 
     private fun executeStreaming(prompt: BasicPrompt) {
         chatView.showLoading()
+        charsTyped.clear()
         apiJob?.cancel()
         apiJob = scope.launch {
             chatView.appendPrompt(prompt.action.addNewLinesIfNeeded(1))
@@ -93,20 +110,22 @@ class ChatPresenter(
         }
     }
 
-    private fun handleData(data: String): Unit {
+    private fun handleData(data: String) {
         explanationBuilder.append(data)
         chatView.appendExplanation(data)
     }
 
-    private fun handleError(error: String): Unit {
+    private fun handleError(error: String) {
         chatView.showError(error)
         chatView.hideLoading()
+        chatView.updateNumberOfTokens("")
     }
 
     private fun handleDone() {
         chatView.hideLoading()
         chatView.onExplanationDone()
         chatView.clearPrompt()
+        chatView.updateNumberOfTokens("")
         chatContext = chatContext.addMessage(explanationBuilder.toString(), ChatGptRequest.Message.Role.SYSTEM)
         historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatContext))
     }
@@ -120,6 +139,7 @@ class ChatPresenter(
         explanationBuilder.clear()
         chatContext = ChatContext.fromPrompt(id = idGenerator.generateId(), prompt = prompt)
 
+        countTokensAndDisplay(prompt.action)
         chatView.setPrompt(prompt.action, positionCursorAtEnd = prompt.executeImmediate.not())
         chatView.clearExplanation()
         if (prompt.executeImmediate) {
@@ -129,10 +149,7 @@ class ChatPresenter(
 
     override fun loadChatFromHistory(historyItem: HistoryItem) {
         chatContext = historyItem.getChatContext().also { context ->
-            explanationBuilder.clear()
-            chatView.clearAll()
-            chatView.hideLoading()
-            chatView.setFocusOnPrompt()
+            resetAll()
             when (context.chat) {
                 is BasicPrompt.Chat -> {
                     context.chat.messages.forEach { message ->
@@ -156,15 +173,20 @@ class ChatPresenter(
     }
 
     fun onNewChatClicked() {
-        chatView.hideLoading()
         apiJob?.cancel()
-        explanationBuilder.clear()
         chatContext = ChatContext(
             chatId = idGenerator.generateId(),
             chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
         )
 
+        resetAll()
+    }
+
+    private fun resetAll() {
+        explanationBuilder.clear()
         chatView.clearAll()
+        chatView.hideLoading()
         chatView.setFocusOnPrompt()
+        resetTokens()
     }
 }

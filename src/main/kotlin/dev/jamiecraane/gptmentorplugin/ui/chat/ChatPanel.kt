@@ -30,6 +30,10 @@ class ChatPanel : JPanel(), ChatView {
         onKeyPressed { event ->
             if (event?.keyCode == KeyEvent.VK_ENTER && event.isMetaDown) {
                 presenter.onSubmitClicked()
+            } else {
+                if (event?.keyCode != null) {
+                    presenter.promptCharTyped(event.keyCode)
+                }
             }
         }
     }
@@ -139,6 +143,7 @@ class ChatPanel : JPanel(), ChatView {
             }
         }
         panel.add(newChatButton)
+        panel.add(Box.createHorizontalStrut(5).apply { maximumSize = Dimension(5, 5) })
         panel.add(numberOfTokens)
 
         panel.add(Box.createHorizontalGlue())
