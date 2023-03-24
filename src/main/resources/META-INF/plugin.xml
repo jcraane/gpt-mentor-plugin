@@ -19,11 +19,13 @@
     <actions>
         <group id="org.intellij.sdk.action.GroupedActions" text="GPT Mentor"
                popup="true">
+<!--            Add actions to the tools menu-->
             <add-to-group
                     group-id="ToolsMenu"
                     anchor="last">
             </add-to-group>
 
+<!--            Right-click in the editor-->
             <add-to-group
                     group-id="EditorPopupMenu"
                     anchor="last">
@@ -34,7 +36,6 @@
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X 10.5+" replace-all="true"/>
-
             </action>
 
             <action id="improveCode" class="dev.jamiecraane.gptmentorplugin.actions.ImproveCodeAction"
@@ -68,8 +69,17 @@
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
         </group>
-    </actions>
 
+        <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromFileAction"
+                text="Send to GPT-Mentor">
+
+<!--            Right-click on a file in the file tree -->
+            <add-to-group
+                    group-id="CutCopyPasteGroup"
+                    anchor="last">
+            </add-to-group>
+        </action>
+    </actions>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable
