@@ -5,18 +5,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import dev.jamiecraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 
-class AppendPromptFromFileAction : AnAction() {
+class AppendPromptFromSelectionAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
-        val editor = e.getData(CommonDataKeys.EDITOR)
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
 
-        if (project == null || editor == null) {
+        if (project == null || psiFile == null) {
             return
         }
 
-        val selectedText = editor.selectionModel.selectedText
-        if (selectedText?.isNotEmpty() == true) {
-            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(selectedText)
+        val virtualFile = psiFile.virtualFile
+        val contents = String(virtualFile.contentsToByteArray())
+        if (contents.isNotEmpty()) {
+            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(contents)
         }
     }
 }
