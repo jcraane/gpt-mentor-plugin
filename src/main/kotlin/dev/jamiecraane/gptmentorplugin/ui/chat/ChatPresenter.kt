@@ -59,6 +59,11 @@ class ChatPresenter(
         countTokensAndDisplay(charsTyped.toString())
     }
 
+    fun promptPastedFromClipboard(text: String) {
+        charsTyped.append(text)
+        countTokensAndDisplay(charsTyped.toString())
+    }
+
     private fun countTokensAndDisplay(text: String) {
         val tokens = tokenizer.countTokens(text)
         chatView.updateNumberOfTokens("Approx. $tokens tokens")

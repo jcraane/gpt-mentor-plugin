@@ -14,6 +14,8 @@ import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyEvent
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
 
@@ -36,6 +38,21 @@ class ChatPanel : JPanel(), ChatView {
                 }
             }
         }
+        document.addDocumentListener(object : DocumentListener {
+            override fun insertUpdate(e: DocumentEvent) {
+                val pastedText = e.document.getText(e.offset, e.length)
+                presenter.promptPastedFromClipboard(pastedText)
+            }
+
+            override fun removeUpdate(e: DocumentEvent) {
+                // Text has been deleted from the text area
+//                presenter.promptTextChanged()
+            }
+
+            override fun changedUpdate(e: DocumentEvent) {
+                // Not used for plain-text documents
+            }
+        })
     }
 
     private val explanationArea = JTextPane().apply {
