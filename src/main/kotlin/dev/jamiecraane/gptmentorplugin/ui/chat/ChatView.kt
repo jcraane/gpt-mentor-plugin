@@ -1,7 +1,8 @@
 package dev.jamiecraane.gptmentorplugin.ui.chat
 
 interface ChatView {
-    fun appendPrompt(message: String)
+    fun appendToExplanation(message: String)
+    fun appendToPrompt(text: String)
 
     fun setPrompt(message: String, positionCursorAtEnd: Boolean = false)
 

@@ -36,7 +36,7 @@ class ChatPresenterTest {
 
         coVerify {
             chatView.setPrompt("action")
-            chatView.appendPrompt("action")
+            chatView.appendToExplanation("action")
             openApi.executeBasicActionStreaming(
                 BasicPrompt.Chat(listOf(message), "").createRequest()
             )

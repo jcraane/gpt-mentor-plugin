@@ -55,14 +55,6 @@ class ChatPresenter(
     }
 
     /**
-     * Used to update the token count.
-     */
-    fun promptCharTyped(keyCode: Int) {
-        charsTyped.append(keyCode.toChar())
-        countTokensAndDisplay(charsTyped.toString())
-    }
-
-    /**
      * Handles text deleted from the prompt. Used to update the token count.
      */
     fun promptTextDeleted(length: Int) {
@@ -75,7 +67,7 @@ class ChatPresenter(
     }
 
     fun promptPastedFromClipboard(text: String) {
-        charsTyped.append(text)
+        charsTyped.append(text.addNewLinesIfNeeded(2))
         countTokensAndDisplay(charsTyped.toString())
     }
 
@@ -106,7 +98,7 @@ class ChatPresenter(
         charsTyped.clear()
         apiJob?.cancel()
         apiJob = scope.launch {
-            chatView.appendPrompt(prompt.action.addNewLinesIfNeeded(1))
+            chatView.appendToExplanation(prompt.action.addNewLinesIfNeeded(1))
             kotlin.runCatching {
                 val chatGptRequest = prompt.createRequest()
                 openApi.executeBasicActionStreaming(chatGptRequest)
@@ -167,6 +159,10 @@ class ChatPresenter(
         }
     }
 
+    override fun appendToPrompt(prompt: String) {
+        chatView.appendToPrompt(prompt.addNewLinesIfNeeded(2))
+    }
+
     override fun loadChatFromHistory(historyItem: HistoryItem) {
         chatContext = historyItem.getChatContext().also { context ->
             resetAll()
@@ -175,7 +171,7 @@ class ChatPresenter(
                     context.chat.messages.forEach { message ->
                         when (message.role) {
                             ChatGptRequest.Message.Role.USER -> {
-                                chatView.appendPrompt(message.content)
+                                chatView.appendToExplanation(message.content)
                             }
 
                             ChatGptRequest.Message.Role.SYSTEM -> {
@@ -186,7 +182,7 @@ class ChatPresenter(
                 }
 
                 else -> {
-                    chatView.appendPrompt(chatContext.chat.action)
+                    chatView.appendToExplanation(chatContext.chat.action)
                 }
             }
         }

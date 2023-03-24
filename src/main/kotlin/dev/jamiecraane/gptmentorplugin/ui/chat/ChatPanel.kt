@@ -191,12 +191,16 @@ class ChatPanel : JPanel(), ChatView {
         return panel
     }
 
-    override fun appendPrompt(message: String) {
+    override fun appendToExplanation(message: String) {
         ApplicationManager.getApplication().invokeLater {
             val doc = explanationArea.styledDocument
             val withNewlines = message.addNewLinesIfNeeded(2)
             doc.insertString(explanationArea.styledDocument.length, withNewlines, userStyle)
         }
+    }
+
+    override fun appendToPrompt(text: String) {
+        promptTextArea.append(text)
     }
 
     override fun setPrompt(message: String, positionCursorAtEnd: Boolean) {

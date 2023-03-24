@@ -13,6 +13,11 @@ interface ChatGptApiListener {
     fun onNewPrompt(prompt: BasicPrompt)
 
     /**
+     * Appends new text to an existing prompt.
+     */
+    fun appendToPrompt(prompt: String)
+
+    /**
      * An item loaded from history will result in a chat which the user can continue.
      */
     fun loadChatFromHistory(historyItem: HistoryItem)

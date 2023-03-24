@@ -78,8 +78,11 @@
                     anchor="last">
             </add-to-group>
 
-            <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromFileAction"
-                    text="Send to GPT-Mentor"/>
+            <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.NewPromptFromFileAction"
+                    text="New Prompt From File"/>
+
+            <action id="appendPromptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.AppendPromptFromFileAction"
+                    text="Append Prompt With File"/>
         </group>
 
     </actions>
