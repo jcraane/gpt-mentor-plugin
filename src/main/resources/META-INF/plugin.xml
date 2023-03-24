@@ -23,11 +23,18 @@
                     group-id="ToolsMenu"
                     anchor="last">
             </add-to-group>
+
+            <add-to-group
+                    group-id="EditorPopupMenu"
+                    anchor="last">
+            </add-to-group>
+
             <action id="explainCode" class="dev.jamiecraane.gptmentorplugin.actions.ExplainCodeAction"
                     text="Explain Code">
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X 10.5+" replace-all="true"/>
+
             </action>
 
             <action id="improveCode" class="dev.jamiecraane.gptmentorplugin.actions.ImproveCodeAction"

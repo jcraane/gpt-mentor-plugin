@@ -1,5 +1,5 @@
 - provide icon for toolwindow
-- Add token counter
+- 
 - Add advanced options like temperature, top-k, model.
 - Add option to create new file from selection
 - Integrate diff action for selected code
