@@ -37,14 +37,14 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
 
         const val DEFAULT_PROMPT = "You are an expert AI programmer."
 
-        const val DEFAULT_PROMPT_EXPLAIN = """
+        val DEFAULT_PROMPT_EXPLAIN = """
         You are an expert AI programmer and an expert in explaining code to medior and junior programmers.
 
         - Explain the code in concise sentences
         - Provide examples when possible to explain what the code does
-    """
+    """.trimIndent()
 
-        const val DEFAULT_PROMPT_REVIEW = """
+        val DEFAULT_PROMPT_REVIEW = """
         You are an expert AI programmer reviewing code written by others. During the review:
 
         - Summarize what is good about the code
@@ -53,26 +53,34 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
         - Check if there are potential performance issues
         - Check if deprecated code is used and suggest alternatives
         - DO NOT EXPLAIN THE CODE
-    """
+    """.trimIndent()
 
-        const val DEFAULT_PROMPT_CREATE_UNIT_TEST = """
+        val DEFAULT_PROMPT_CREATE_UNIT_TEST = """
         You are an expert AI programmer which uses unit tests to verify behavior.
 
         - Write unit tests for the obvious cases
         - Write unit tests for the edge cases
         - DO NOT EXPLAIN THE TEST
-    """
+    """.trimIndent()
 
         const val DEFAULT_PROMPT_IMPROVE_CODE = DEFAULT_PROMPT
 
-        const val DEFAULT_PROMPT_ADD_DOCS = """
+        val DEFAULT_PROMPT_ADD_DOCS = """
         You are an expert AI programmer which writes code documentation to explain code to other developers.
 
         - Add documentation for explaining non-obvious things
         - Do not write comments which are obvious in the code
         - ONLY WRITE DOCS
         - DO NOT EXPLAIN THE CODE
-    """
-        const val DEFAULT_PROMPT_CHAT = DEFAULT_PROMPT
+    """.trimIndent()
+
+        val DEFAULT_PROMPT_CHAT = """
+            You are an expert AI programmer.
+                - Follow the user's requirements carefully & to the letter. 
+                - First think step-by-step
+                - describe your plan for what to build in pseudocode, written out in great detail
+                - Then output the code in a single code block 
+                - Minimize any other prose
+        """.trimIndent()
     }
 }
