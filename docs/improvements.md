@@ -1,5 +1,3 @@
-- provide icon for toolwindow, JV
-  
 - restore chat from history, newlines are not correctly restored
 - system prompt hoeft ook niet gezien te worden na inladen chath van history
 - Add advanced options like temperature, top-k, model.
