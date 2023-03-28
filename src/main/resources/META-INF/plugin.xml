@@ -16,6 +16,8 @@
                     anchor="right">
 
         </toolWindow>
+
+        <iconMapper mappingFile="GPT MentorIconMappings.json "/>
     </extensions>
 
     <actions>
