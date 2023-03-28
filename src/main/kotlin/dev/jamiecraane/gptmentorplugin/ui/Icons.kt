@@ -3,5 +3,6 @@ package dev.jamiecraane.gptmentorplugin.ui
 import com.intellij.openapi.util.IconLoader
 
 object Icons {
-    val ToolWindow = IconLoader.getIcon("/")
+    @JvmField
+    val ToolWindow = IconLoader.getIcon("/icons/toolWindow.svg", javaClass)
 }

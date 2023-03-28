@@ -10,7 +10,9 @@
         <applicationService serviceImplementation="dev.jamiecraane.gptmentorplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="dev.jamiecraane.gptmentorplugin.services.MyProjectService"/>
 
-        <toolWindow id="GPT-Mentor" factoryClass="dev.jamiecraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
+        <toolWindow id="GPT-Mentor"
+                    factoryClass="dev.jamiecraane.gptmentorplugin.ui.GptMentorToolWindowFactory"
+                    icon="dev.jamiecraane.gptmentorplugin.ui.Icons.ToolWindow"
                     anchor="right">
 
         </toolWindow>
@@ -19,13 +21,13 @@
     <actions>
         <group id="org.intellij.sdk.action.GroupedActions" text="GPT Mentor"
                popup="true">
-<!--            Add actions to the tools menu-->
+            <!--            Add actions to the tools menu-->
             <add-to-group
                     group-id="ToolsMenu"
                     anchor="last">
             </add-to-group>
 
-<!--            Right-click in the editor-->
+            <!--            Right-click in the editor-->
             <add-to-group
                     group-id="EditorPopupMenu"
                     anchor="last">
