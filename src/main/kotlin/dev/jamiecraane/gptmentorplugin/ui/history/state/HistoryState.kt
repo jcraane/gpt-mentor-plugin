@@ -99,12 +99,13 @@ data class HistoryItem(
 
         fun from(chatContext: ChatContext, timestamp: Long = System.currentTimeMillis()): HistoryItem {
             val request = chatContext.chat.createRequest()
+
             return HistoryItem(
                 id = chatContext.chatId,
                 title = request.title,
                 systemPrompt = chatContext.chat.systemPrompt,
                 timestamp = timestamp,
-                messages = request.messages.map {
+                messages = chatContext.messages.map {
                     HistoryMessage(
                         content = it.content,
                         role = it.role.code,

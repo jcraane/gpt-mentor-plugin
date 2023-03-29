@@ -13,6 +13,7 @@ data class ChatContext(
     val chatId: String,
     val chat: BasicPrompt,
 ) {
+    val messages = (chat as? BasicPrompt.Chat)?.messages ?: emptyList()
     fun addMessage(message: String, role: ChatGptRequest.Message.Role): ChatContext {
         val chatContext = when (chat) {
             is BasicPrompt.Chat -> {

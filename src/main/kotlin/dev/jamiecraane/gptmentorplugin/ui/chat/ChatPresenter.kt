@@ -171,11 +171,11 @@ class ChatPresenter(
                     context.chat.messages.forEach { message ->
                         when (message.role) {
                             ChatGptRequest.Message.Role.USER -> {
-                                chatView.appendToExplanation(message.content)
+                                chatView.appendToExplanation(message.content.addNewLinesIfNeeded(2))
                             }
 
                             ChatGptRequest.Message.Role.SYSTEM -> {
-                                chatView.appendExplanation(message.content)
+                                chatView.appendExplanation(message.content.addNewLinesIfNeeded(2))
                             }
                         }
                     }
