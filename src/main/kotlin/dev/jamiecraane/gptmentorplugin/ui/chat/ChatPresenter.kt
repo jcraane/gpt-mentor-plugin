@@ -46,7 +46,7 @@ class ChatPresenter(
     private val explanationBuilder = StringBuilder()
     private var chatContext: ChatContext = ChatContext(
         chatId = idGenerator.generateId(),
-        chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
+        chat = PromptFactory(GptMentorSettingsState.getInstance()).chat(emptyList()),
     )
     private var charsTyped = StringBuilder()
 
@@ -192,7 +192,7 @@ class ChatPresenter(
         apiJob?.cancel()
         chatContext = ChatContext(
             chatId = idGenerator.generateId(),
-            chat = PromptFactory(GptMentorSettingsState()).chat(emptyList()),
+            chat = PromptFactory(GptMentorSettingsState.getInstance()).chat(emptyList()),
         )
 
         resetAll()

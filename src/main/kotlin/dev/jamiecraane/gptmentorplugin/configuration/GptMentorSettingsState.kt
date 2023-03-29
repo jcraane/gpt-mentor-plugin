@@ -15,7 +15,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     name = "dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState",
     storages = [Storage("GptMentorConfig.xml")]
 )
-class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> {
+class GptMentorSettingsState private constructor(): PersistentStateComponent<GptMentorSettingsState> {
     var openAiApiKey: String = "SECURED"
     var systemPromptExplainCode: String = DEFAULT_PROMPT_EXPLAIN
     var systemPromptCreateUnitTest: String = DEFAULT_PROMPT_CREATE_UNIT_TEST
