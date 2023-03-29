@@ -57,7 +57,7 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     private val userStyle = explanationArea.addStyle("User", null).apply {
-        StyleConstants.setFontFamily(this, "Consolas");
+        StyleConstants.setFontFamily(this, "Menlo");
         StyleConstants.setFontSize(this, 14);
         StyleConstants.setForeground(
             this, JBColor(
@@ -68,7 +68,7 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     private val systemStyle = explanationArea.addStyle("System", null).apply {
-        StyleConstants.setFontFamily(this, "Consolas");
+        StyleConstants.setFontFamily(this, "Menlo");
         StyleConstants.setFontSize(this, 14);
         StyleConstants.setForeground(
             this,
