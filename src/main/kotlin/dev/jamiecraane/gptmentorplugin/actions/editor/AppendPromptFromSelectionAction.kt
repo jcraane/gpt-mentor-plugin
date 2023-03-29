@@ -1,4 +1,4 @@
-package dev.jamiecraane.gptmentorplugin.actions
+package dev.jamiecraane.gptmentorplugin.actions.editor
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

@@ -35,44 +35,44 @@
                     anchor="last">
             </add-to-group>
 
-            <action id="explainCode" class="dev.jamiecraane.gptmentorplugin.actions.ExplainCodeAction"
+            <action id="explainCode" class="dev.jamiecraane.gptmentorplugin.actions.editor.ExplainCodeAction"
                     text="Explain Code">
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift E" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
 
-            <action id="improveCode" class="dev.jamiecraane.gptmentorplugin.actions.ImproveCodeAction"
+            <action id="improveCode" class="dev.jamiecraane.gptmentorplugin.actions.editor.ImproveCodeAction"
                     text="Improve Code">
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift I" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="reviewCode" class="dev.jamiecraane.gptmentorplugin.actions.ReviewCodeAction"
+            <action id="reviewCode" class="dev.jamiecraane.gptmentorplugin.actions.editor.ReviewCodeAction"
                     text="Review Code">
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="$default" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift R" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="createUnitTest" class="dev.jamiecraane.gptmentorplugin.actions.CreateUnitTestAction"
+            <action id="createUnitTest" class="dev.jamiecraane.gptmentorplugin.actions.editor.CreateUnitTestAction"
                     text="Create Unit Test">
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift T" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="addComments" class="dev.jamiecraane.gptmentorplugin.actions.AddCommentsAction"
+            <action id="addComments" class="dev.jamiecraane.gptmentorplugin.actions.editor.AddCommentsAction"
                     text="Add Comments">
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift C" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="promptFromSelection" class="dev.jamiecraane.gptmentorplugin.actions.PromptFromSelectionAction"
+            <action id="promptFromSelection" class="dev.jamiecraane.gptmentorplugin.actions.editor.PromptFromSelectionAction"
                     text="Prompt From Selection">
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="control alt shift P" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <action id="appendSelectionToPrompt" class="dev.jamiecraane.gptmentorplugin.actions.AppendPromptFromSelectionAction"
+            <action id="appendSelectionToPrompt" class="dev.jamiecraane.gptmentorplugin.actions.editor.AppendPromptFromSelectionAction"
                     text="Append Selected Text">
                 <keyboard-shortcut first-keystroke="control alt shift S" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="control alt shift S" keymap="Mac OS X" replace-all="true"/>
@@ -88,10 +88,10 @@
                     anchor="last">
             </add-to-group>
 
-            <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.NewPromptFromFileAction"
+            <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.file.NewPromptFromFileAction"
                     text="New Prompt From File"/>
 
-            <action id="appendPromptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.AppendPromptFromFileAction"
+            <action id="appendPromptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.file.AppendPromptFromFileAction"
                     text="Append Prompt With File"/>
         </group>
 

@@ -1,6 +1,5 @@
-package dev.jamiecraane.gptmentorplugin.actions
+package dev.jamiecraane.gptmentorplugin.actions.editor
 
-import com.intellij.openapi.actionSystem.ActionManager
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
 import dev.jamiecraane.gptmentorplugin.domain.PromptFactory
