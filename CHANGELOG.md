@@ -17,6 +17,7 @@
 ## [0.0.5] - 2023-03-29
 
 - Send vcs commits to prompt by right-click on commit message(s) and select: Add Commits To Prompt
+- Fixed issue #10 where custom prompts were not being taken into account
 
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
