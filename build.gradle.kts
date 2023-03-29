@@ -118,21 +118,19 @@ tasks {
 
         // Get the latest available change notes from the changelog file
 
-        /*
-        Commented because of: Execution failed for task ':patchPluginXml'.
+        /*Commented because of: Execution failed for task ':patchPluginXml'.
 > Error while evaluating property 'changeNotes' of task ':patchPluginXml'
    > Failed to calculate the value of task ':patchPluginXml' property 'changeNotes'.
-      > org.jetbrains.changelog.exceptions.MissingVersionException: Version is missing: any
-         */
+      > org.jetbrains.changelog.exceptions.MissingVersionException: Version is missing: any*/
 
-        /*changeNotes.set(provider {
+        changeNotes.set(provider {
             with(changelog) {
                 renderItem(
                     getOrNull(properties("pluginVersion")) ?: getLatest(),
                     Changelog.OutputType.HTML,
                 )
             }
-        })*/
+        })
     }
 
     // Configure UI tests plugin
