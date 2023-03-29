@@ -95,6 +95,11 @@
                     text="Append Prompt With File"/>
         </group>
 
+        <action id="addGitCommitsToPrompt" class="dev.jamiecraane.gptmentorplugin.actions.git.AddGitCommitsToPromptAction"
+                text="Add Commits To Prompt">
+            <add-to-group group-id="Vcs.Log.ContextMenu"/>
+        </action>
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

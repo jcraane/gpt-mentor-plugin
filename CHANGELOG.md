@@ -14,6 +14,10 @@
 - Fixed Issue #1: Addressed error preventing proper functionality
 - Added toolwindow icon for improved user experience
 
+## [0.0.5] - 2023-03-29
+
+- Send vcs commits to prompt by right-click on commit message(s) and select: Add Commits To Prompt
+
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
