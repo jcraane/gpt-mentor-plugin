@@ -11,7 +11,7 @@ class ChatGptRequestTest {
     fun testDeserialization() {
         // Given
         val json = """{
-            "model": "gpt-3.5-turbo",
+            "model": "${Model.GPT_4.code}",
             "messages": [
                 {"role": "user", "content": "Hello!"},
                 {"role": "system", "content": "Hi there!"}
@@ -24,7 +24,7 @@ class ChatGptRequestTest {
         val request = JSON.decodeFromString(ChatGptRequest.serializer(), json)
 
         // Then
-        assertEquals("gpt-3.5-turbo", request.model)
+        assertEquals(Model.GPT_4, request.model)
         assertEquals(0.9f, request.temperature)
         assertEquals(2048, request.maxTokens)
         assertEquals(2, request.messages.size)
@@ -37,7 +37,7 @@ class ChatGptRequestTest {
     @Test
     fun testDeserialize() {
         val expectedRequest = ChatGptRequest(
-            model = "gpt-4.0-turbo",
+            model = Model.GPT_4,
             temperature = 0.9f,
             maxTokens = 2048,
             messages = listOf(
@@ -48,5 +48,6 @@ class ChatGptRequestTest {
 
         val json = JSON.encodeToString(ChatGptRequest.serializer(), expectedRequest)
         val actualRequest = Json.decodeFromString(ChatGptRequest.serializer(), json)
+        assertEquals(expectedRequest, actualRequest)
     }
 }

@@ -1,5 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.openapi.request
 
+import dev.jamiecraane.gptmentorplugin.domain.Model
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -9,7 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 
 @Serializable
 data class ChatGptRequest(
-    val model: String = "gpt-3.5-turbo",
+    val model: Model = Model.GPT_3_5_TURBO,
     val messages: List<Message>,
     val temperature: Float = 0.8f,
     @SerialName("max_tokens")

@@ -1,5 +1,8 @@
 package dev.jamiecraane.gptmentorplugin.openapi.request
 
+import dev.jamiecraane.gptmentorplugin.domain.Model
+import dev.jamiecraane.gptmentorplugin.domain.Model.*
+
 @DslMarker
 annotation class GptRequest
 
@@ -10,7 +13,7 @@ fun chatGptRequest(block: ChatGptRequestBuilder.() -> Unit): ChatGptRequest {
 
 @GptRequest
 class ChatGptRequestBuilder(
-    var model: String = "gpt-3.5-turbo",
+    var model: Model = GPT_3_5_TURBO,
     var messages: MutableList<MessageBuilder> = mutableListOf(),
     var temperature: Float = 0.8f,
     var maxTokens: Int = 1024,
