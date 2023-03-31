@@ -74,7 +74,7 @@ class GptMentorConfigurable : Configurable {
             JLabel("Create Unit Test Prompt:", JLabel.TRAILING),
             JLabel("Improve Code Prompt:", JLabel.TRAILING),
             JLabel("Review Code Prompt:", JLabel.TRAILING),
-            JLabel("Add Docs Prompt:", JLabel.TRAILING),
+            JLabel("Add Comments Prompt:", JLabel.TRAILING),
             JLabel("Chat Prompt:", JLabel.TRAILING)
         )
 
