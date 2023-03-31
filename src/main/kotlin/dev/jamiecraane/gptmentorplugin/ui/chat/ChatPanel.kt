@@ -9,6 +9,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
+import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -19,8 +20,8 @@ import javax.swing.event.DocumentListener
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
 
-class ChatPanel : JPanel(), ChatView {
-    val presenter = ChatPresenter(this)
+class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
+    val presenter = ChatPresenter(this, mainPresenter)
     private val loader: JComponent = createLoadingComponent()
     private val submitButton = JButton("Submit")
     private val numberOfTokens = JLabel("")

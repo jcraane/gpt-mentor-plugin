@@ -9,6 +9,9 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import dev.jamiecraane.gptmentorplugin.ui.chat.ChatPanel
 import dev.jamiecraane.gptmentorplugin.ui.history.HistoryPanel
+import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
+import dev.jamiecraane.gptmentorplugin.ui.main.MainView
+import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 import dev.jamiecraane.gptmentorplugin.ui.util.isInDarkMode
 import org.intellij.lang.annotations.Language
 import java.awt.BorderLayout
@@ -21,7 +24,10 @@ import javax.swing.JPanel
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 
-class GptMentorToolWindowFactory : ToolWindowFactory {
+class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
+    private val tabbedPane: JBTabbedPane = JBTabbedPane()
+    private val presenter = MainPresenter(this)
+
     private var helpPane = JTextPane().apply {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
         contentType = "text/html"
@@ -41,25 +47,24 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
 
-        val tabbedPane = JBTabbedPane().apply {
-            val chatPanel = ChatPanel().apply { onAttach(project) }
-            addTab("Chat", chatPanel)
+        with(tabbedPane) {
+            val chatPanel = ChatPanel(presenter).apply { onAttach(project) }
+            addTab(Tab.CHAT.label, chatPanel)
             val historyPanel = HistoryPanel { historyItem ->
                 chatPanel.presenter.loadChatFromHistory(historyItem)
-                this.selectedIndex = TAB_CHAT
             }
-            addTab("History", historyPanel)
-            addTab("Help", createHelpPanel())
+            addTab(Tab.HISTORY.label, historyPanel)
+            addTab(Tab.HELP.label, createHelpPanel())
             addChangeListener {
                 when (selectedIndex) {
-                    TAB_CHAT -> {
+                    Tab.CHAT.code -> {
                     }
 
-                    TAB_HISTORY -> {
+                    Tab.HISTORY.code -> {
                         historyPanel.presenter.refreshHistory()
                     }
 
-                    TAB_HELP -> {
+                    Tab.HELP.code -> {
                         updateText()
                     }
 
@@ -121,10 +126,11 @@ class GptMentorToolWindowFactory : ToolWindowFactory {
         }
     }
 
+    override fun selectTab(tab: Tab) {
+        tabbedPane.selectedIndex = tab.code
+    }
+
     companion object {
         const val ID = "GPT-Mentor"
-        private const val TAB_CHAT = 0
-        private const val TAB_HISTORY = 1
-        private const val TAB_HELP = 2
     }
 }

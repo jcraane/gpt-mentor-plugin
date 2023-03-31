@@ -16,6 +16,8 @@ import dev.jamiecraane.gptmentorplugin.openapi.RealOpenApi
 import dev.jamiecraane.gptmentorplugin.openapi.StreamingResponse
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
+import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
+import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
 import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
@@ -27,6 +29,7 @@ import java.util.concurrent.TimeUnit
 
 class ChatPresenter(
     private val chatView: ChatView,
+    private val mainPresenter: MainPresenter,
     private val openApi: OpenApi = RealOpenApi(
         client = HttpClient(),
         okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
@@ -157,10 +160,13 @@ class ChatPresenter(
         if (prompt.executeImmediate) {
             executeStreaming(prompt)
         }
+
+        mainPresenter.selectTab(Tab.CHAT)
     }
 
     override fun appendToPrompt(prompt: String) {
         chatView.appendToPrompt(prompt.addNewLinesIfNeeded(2))
+        mainPresenter.selectTab(Tab.CHAT)
     }
 
     override fun loadChatFromHistory(historyItem: HistoryItem) {
@@ -186,6 +192,8 @@ class ChatPresenter(
                 }
             }
         }
+
+        mainPresenter.selectTab(Tab.CHAT)
     }
 
     fun onNewChatClicked() {
