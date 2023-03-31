@@ -2,13 +2,18 @@ package dev.jamiecraane.gptmentorplugin.ui.chat
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
+import com.intellij.ui.jcef.JCEFHtmlPanel
 import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
+import org.intellij.plugins.markdown.ui.preview.MarkdownPreviewFileEditor
+import org.intellij.plugins.markdown.ui.preview.MarkdownPreviewFileEditorProvider
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -24,6 +29,8 @@ class ChatPanel : JPanel(), ChatView {
     private val loader: JComponent = createLoadingComponent()
     private val submitButton = JButton("Submit")
     private val numberOfTokens = JLabel("")
+    private lateinit var project: Project
+    private var virtualFile: LightVirtualFile? = null
 
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
@@ -52,6 +59,7 @@ class ChatPanel : JPanel(), ChatView {
         })
     }
 
+    private val test = JCEFHtmlPanel("https://www.google.com")
     private val explanationArea = JTextPane().apply {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
     }
@@ -85,6 +93,7 @@ class ChatPanel : JPanel(), ChatView {
     }
 
     fun onAttach(project: Project) {
+        this.project = project
         presenter.onAttach(project)
     }
 
@@ -108,8 +117,14 @@ class ChatPanel : JPanel(), ChatView {
         promptPanel.add(Box.createVerticalStrut(10))
         createExplanationLabelPanel().also { promptPanel.add(it) }
         promptPanel.add(Box.createVerticalStrut(10))
-        val explanationScrollPane = createExplanationScrollPane()
-        promptPanel.add(explanationScrollPane)
+
+//        val explanationScrollPane = createExplanationScrollPane()
+//        promptPanel.add(explanationScrollPane)
+
+        virtualFile = LightVirtualFile("explanation.md")?.also {
+            val editor = MarkdownPreviewFileEditor(project, it)
+            promptPanel.add(editor.component)
+        }
 
         return promptPanel
     }
