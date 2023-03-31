@@ -84,20 +84,25 @@ class GptMentorConfigurable : Configurable {
             JLabel("Chat Prompt:", JLabel.TRAILING)
         )
 
-        c.gridy = 0
+        var gridY = 0
+        c.gridy = gridY
         c.gridx = 0
         settingsPanel.add(JLabel("OpenAI API Key:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
         c.gridx = 1
         settingsPanel.add(openAiApiKey, c)
-
-        var gridY = 0
-        c.gridx = 0
 
         c.gridy = ++gridY
         c.gridx = 0
         settingsPanel.add(JLabel("Model:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
         c.gridx = 1
         settingsPanel.add(modelComboBox, c)
+
+//        add label below combox with the text: gpt-4 is in limited beta. Check OpenAI for availability.
+        c.gridy = ++gridY
+        c.gridx = 0
+        settingsPanel.add(JLabel("", JLabel.TRAILING), c)
+        c.gridx = 1
+        settingsPanel.add(JLabel("gpt-4 is in limited beta. See OpenAI for availability", JLabel.LEADING), c)
 
         for (promptIndex in prompts.indices) {
             c.gridy = ++gridY
