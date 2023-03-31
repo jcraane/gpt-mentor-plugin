@@ -1,6 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.configuration
 
-import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_DOCS
+import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_COMMENTS
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CHAT
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CREATE_UNIT_TEST
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_EXPLAIN
@@ -127,7 +127,7 @@ class GptMentorConfigurable : Configurable {
             1 -> createUnitTestPrompt.text = DEFAULT_PROMPT_CREATE_UNIT_TEST
             2 -> improveCodePrompt.text = DEFAULT_PROMPT_IMPROVE_CODE
             3 -> reviewCodePrompt.text = DEFAULT_PROMPT_REVIEW
-            4 -> addDocsPrompt.text = DEFAULT_PROMPT_ADD_DOCS
+            4 -> addDocsPrompt.text = DEFAULT_PROMPT_ADD_COMMENTS
             5 -> chatPrompt.text = DEFAULT_PROMPT_CHAT
         }
     }

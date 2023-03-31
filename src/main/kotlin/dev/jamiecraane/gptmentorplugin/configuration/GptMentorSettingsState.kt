@@ -21,7 +21,7 @@ class GptMentorSettingsState private constructor(): PersistentStateComponent<Gpt
     var systemPromptCreateUnitTest: String = DEFAULT_PROMPT_CREATE_UNIT_TEST
     var systemPromptImproveCode: String = DEFAULT_PROMPT_IMPROVE_CODE
     var systemPromptReviewCode: String = DEFAULT_PROMPT_REVIEW
-    var systemPromptAddDocs: String = DEFAULT_PROMPT_ADD_DOCS
+    var systemPromptAddDocs: String = DEFAULT_PROMPT_ADD_COMMENTS
     var systemPromptChat: String = DEFAULT_PROMPT_CHAT
 
     override fun getState(): GptMentorSettingsState {
@@ -65,7 +65,7 @@ class GptMentorSettingsState private constructor(): PersistentStateComponent<Gpt
 
         const val DEFAULT_PROMPT_IMPROVE_CODE = DEFAULT_PROMPT
 
-        val DEFAULT_PROMPT_ADD_DOCS = """
+        val DEFAULT_PROMPT_ADD_COMMENTS = """
         You are an expert AI programmer which writes code documentation to explain code to other developers.
 
         - Add documentation for explaining non-obvious things
