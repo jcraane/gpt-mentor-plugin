@@ -3,6 +3,7 @@ package dev.jamiecraane.gptmentorplugin.ui.history
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBScrollPane
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
 import java.awt.BorderLayout
@@ -112,7 +113,8 @@ class HistoryPanel(
 
     init {
         layout = BorderLayout()
-        add(historyList, BorderLayout.CENTER)
+        val historyScroll = JBScrollPane(historyList)
+        add(historyScroll, BorderLayout.CENTER)
         presenter.refreshHistory()
     }
 
