@@ -52,6 +52,7 @@ class ChatPresenter(
         chat = PromptFactory(GptMentorSettingsState.getInstance()).chat(emptyList()),
     )
     private var charsTyped = StringBuilder()
+    private lateinit var project: Project
 
     fun onAttach(project: Project) {
         project.messageBus.connect().subscribe(CHAT_GPT_ACTION_TOPIC, this)
@@ -103,7 +104,8 @@ class ChatPresenter(
         apiJob = scope.launch {
             chatView.appendToExplanation(prompt.action.addNewLinesIfNeeded(1))
             kotlin.runCatching {
-                val chatGptRequest = prompt.createRequest()
+                val state = GptMentorSettingsState.getInstance()
+                val chatGptRequest = prompt.createRequest(state.model)
                 openApi.executeBasicActionStreaming(chatGptRequest)
                     .collect { streamingResponse ->
                         handleResponse(streamingResponse)

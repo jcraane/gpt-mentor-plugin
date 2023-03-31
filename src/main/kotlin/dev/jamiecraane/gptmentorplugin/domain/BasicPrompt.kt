@@ -8,8 +8,9 @@ sealed class BasicPrompt(
     open val systemPrompt: String,
     open val executeImmediate: Boolean,
 ) {
-    open fun createRequest(): ChatGptRequest {
+    open fun createRequest(model: Model): ChatGptRequest {
         return chatGptRequest {
+            this.model = model
             this.systemPrompt(this@BasicPrompt.systemPrompt)
             message {
                 role = ChatGptRequest.Message.Role.USER
@@ -44,8 +45,9 @@ sealed class BasicPrompt(
 
     data class Chat(val messages: List<ChatGptRequest.Message>, val systemMessage: String) :
         BasicPrompt(action = messages.lastOrNull()?.content ?: "", systemPrompt = systemMessage, executeImmediate = true) {
-        override fun createRequest(): ChatGptRequest {
+        override fun createRequest(model: Model): ChatGptRequest {
             return chatGptRequest {
+                this.model = model
                 this.systemPrompt(this@Chat.systemPrompt)
                 this@Chat.messages.forEach { message ->
                     message {

@@ -13,6 +13,10 @@ import kotlinx.serialization.encoding.Encoder
 enum class Model(val code: String) {
     GPT_3_5_TURBO("gpt-3.5-turbo"),
     GPT_4("gpt-4");
+
+    companion object {
+        fun fromCode(code: String): Model = values().firstOrNull { it.code.equals(code, ignoreCase = true) } ?: GPT_3_5_TURBO
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)

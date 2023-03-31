@@ -1,30 +1,35 @@
 package dev.jamiecraane.gptmentorplugin.configuration
 
+import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBPasswordField
+import com.intellij.ui.components.JBTextArea
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_COMMENTS
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CHAT
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CREATE_UNIT_TEST
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_EXPLAIN
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_IMPROVE_CODE
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_REVIEW
+import dev.jamiecraane.gptmentorplugin.domain.Model
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
-import com.intellij.openapi.options.Configurable
-import com.intellij.ui.JBColor
-import com.intellij.ui.components.JBPasswordField
-import com.intellij.ui.components.JBTextArea
 import java.awt.*
 import javax.swing.*
 
 
 class GptMentorConfigurable : Configurable {
     private lateinit var settingsPanel: JPanel
-    private var openAiApiKey = JBPasswordField()
+    private val openAiApiKey = JBPasswordField()
 
-    private var explainCodePrompt = createTextArea()
-    private var createUnitTestPrompt = createTextArea()
-    private var improveCodePrompt = createTextArea()
-    private var reviewCodePrompt = createTextArea()
-    private var addDocsPrompt = createTextArea()
-    private var chatPrompt = createTextArea()
+    private val explainCodePrompt = createTextArea()
+    private val createUnitTestPrompt = createTextArea()
+    private val improveCodePrompt = createTextArea()
+    private val reviewCodePrompt = createTextArea()
+    private val addDocsPrompt = createTextArea()
+    private val chatPrompt = createTextArea()
+    private val modelComboBox = ComboBox(Model.values().map {
+        it.code
+    }.toTypedArray())
 
     private val config: GptMentorSettingsState = GptMentorSettingsState.getInstance()
 
@@ -50,6 +55,7 @@ class GptMentorConfigurable : Configurable {
         reviewCodePrompt.text = config.systemPromptReviewCode
         addDocsPrompt.text = config.systemPromptAddDocs
         chatPrompt.text = config.systemPromptChat
+        modelComboBox.selectedItem = config.selectedModel
 
         settingsPanel = JPanel()
         settingsPanel.layout = GridBagLayout()
@@ -86,6 +92,13 @@ class GptMentorConfigurable : Configurable {
 
         var gridY = 0
         c.gridx = 0
+
+        c.gridy = ++gridY
+        c.gridx = 0
+        settingsPanel.add(JLabel("Model:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
+        c.gridx = 1
+        settingsPanel.add(modelComboBox, c)
+
         for (promptIndex in prompts.indices) {
             c.gridy = ++gridY
             settingsPanel.add(labels[promptIndex], c)
@@ -148,6 +161,7 @@ class GptMentorConfigurable : Configurable {
         modified = modified || reviewCodePrompt.text != config.systemPromptReviewCode
         modified = modified || addDocsPrompt.text != config.systemPromptAddDocs
         modified = modified || chatPrompt.text != config.systemPromptChat
+        modified = modified || modelComboBox.selectedItem != config.selectedModel
 
         return modified
     }
@@ -163,6 +177,7 @@ class GptMentorConfigurable : Configurable {
         config.systemPromptReviewCode = reviewCodePrompt.text
         config.systemPromptAddDocs = addDocsPrompt.text
         config.systemPromptChat = chatPrompt.text
+        config.selectedModel = modelComboBox.selectedItem as String
 
         GptMentorCredentialsManager.setPassword(openAiApiKey.text)
     }

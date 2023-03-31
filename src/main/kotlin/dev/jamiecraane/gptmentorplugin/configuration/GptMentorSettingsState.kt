@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
+import dev.jamiecraane.gptmentorplugin.domain.Model
 
 /**
  * Supports storing the application settings in a persistent way.
@@ -15,7 +16,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     name = "dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState",
     storages = [Storage("GptMentorConfig.xml")]
 )
-class GptMentorSettingsState private constructor(): PersistentStateComponent<GptMentorSettingsState> {
+class GptMentorSettingsState private constructor() : PersistentStateComponent<GptMentorSettingsState> {
     var openAiApiKey: String = "SECURED"
     var systemPromptExplainCode: String = DEFAULT_PROMPT_EXPLAIN
     var systemPromptCreateUnitTest: String = DEFAULT_PROMPT_CREATE_UNIT_TEST
@@ -23,6 +24,12 @@ class GptMentorSettingsState private constructor(): PersistentStateComponent<Gpt
     var systemPromptReviewCode: String = DEFAULT_PROMPT_REVIEW
     var systemPromptAddDocs: String = DEFAULT_PROMPT_ADD_COMMENTS
     var systemPromptChat: String = DEFAULT_PROMPT_CHAT
+    var selectedModel: String = Model.GPT_3_5_TURBO.code
+
+    val model: Model
+        get() {
+            return Model.fromCode(selectedModel)
+        }
 
     override fun getState(): GptMentorSettingsState {
         return this
