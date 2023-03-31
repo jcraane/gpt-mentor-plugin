@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
+import dev.jamiecraane.gptmentorplugin.openapi.RealOpenApi
 import dev.jamiecraane.gptmentorplugin.ui.chat.ChatPanel
 import dev.jamiecraane.gptmentorplugin.ui.history.HistoryPanel
 import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
@@ -17,12 +18,9 @@ import org.intellij.lang.annotations.Language
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Desktop.*
-import java.io.IOException
-import java.net.URISyntaxException
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 import javax.swing.JTextPane
-import javax.swing.event.HyperlinkEvent
 
 class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
     private val tabbedPane: JBTabbedPane = JBTabbedPane()
@@ -33,14 +31,7 @@ class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
         contentType = "text/html"
         isEditable = false
         addHyperlinkListener { e ->
-            if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    getDesktop().browse(e.url.toURI())
-                } catch (ex: IOException) {
-                    // Handle exception
-                } catch (ex: URISyntaxException) {
-                }
-            }
+            presenter.openUrl(e)
         }
     }
 
@@ -132,5 +123,6 @@ class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
 
     companion object {
         const val ID = "GPT-Mentor"
+        private val logger = com.intellij.openapi.diagnostic.Logger.getInstance(RealOpenApi::class.java)
     }
 }
