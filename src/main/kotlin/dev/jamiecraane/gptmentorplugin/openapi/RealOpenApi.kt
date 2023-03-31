@@ -63,7 +63,7 @@ class RealOpenApi(
                 },
             ) { response ->
                 try {
-                    if (response == "[DONE]") {
+                    if (response == MESSAGE_DONE) {
                         trySend(StreamingResponse.Done)
                     } else {
                         val chatCompletion = JSON.decodeFromString(ChatCompletion.serializer(), response)
@@ -96,5 +96,6 @@ class RealOpenApi(
         const val API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
         private const val UNKNOWM_ERROR = "Unknown error"
         private val logger = com.intellij.openapi.diagnostic.Logger.getInstance(RealOpenApi::class.java)
+        private const val MESSAGE_DONE = "[DONE]"
     }
 }
