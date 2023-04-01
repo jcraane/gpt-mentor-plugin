@@ -25,6 +25,8 @@ class GptMentorSettingsState private constructor() : PersistentStateComponent<Gp
     var systemPromptAddDocs: String = DEFAULT_PROMPT_ADD_COMMENTS
     var systemPromptChat: String = DEFAULT_PROMPT_CHAT
     var selectedModel: String = Model.GPT_3_5_TURBO.code
+    var temperature: Float = DEFAULT_TEMPERATURE
+    var maxTokens: Int = DEFAULT_MAX_TOKENS
 
     val model: Model
         get() {
@@ -89,5 +91,8 @@ class GptMentorSettingsState private constructor() : PersistentStateComponent<Gp
                 - Then output the code in a single code block 
                 - Minimize any other prose
         """.trimIndent()
+
+        const val DEFAULT_TEMPERATURE = 0.8f
+        const val DEFAULT_MAX_TOKENS = 1024
     }
 }

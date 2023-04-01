@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextArea
+import com.intellij.ui.components.JBTextField
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_COMMENTS
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CHAT
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CREATE_UNIT_TEST
@@ -30,6 +31,8 @@ class GptMentorConfigurable : Configurable {
     private val modelComboBox = ComboBox(Model.values().map {
         it.code
     }.toTypedArray())
+    private val temperature = JBTextField()
+    private val maxTokens = JBTextField()
 
     private val config: GptMentorSettingsState = GptMentorSettingsState.getInstance()
 
@@ -91,18 +94,7 @@ class GptMentorConfigurable : Configurable {
         c.gridx = 1
         settingsPanel.add(openAiApiKey, c)
 
-        c.gridy = ++gridY
-        c.gridx = 0
-        settingsPanel.add(JLabel("Model:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
-        c.gridx = 1
-        settingsPanel.add(modelComboBox, c)
-
-//        add label below combox with the text: gpt-4 is in limited beta. Check OpenAI for availability.
-        c.gridy = ++gridY
-        c.gridx = 0
-        settingsPanel.add(JLabel("", JLabel.TRAILING), c)
-        c.gridx = 1
-        settingsPanel.add(JLabel("gpt-4 is in limited beta. See OpenAI for availability", JLabel.LEADING), c)
+        gridY = addAdvancedParameters(c, gridY)
 
         for (promptIndex in prompts.indices) {
             c.gridy = ++gridY
@@ -139,6 +131,62 @@ class GptMentorConfigurable : Configurable {
         return settingsPanel
     }
 
+    private fun addAdvancedParameters(c: GridBagConstraints, gridY: Int): Int {
+        var gridYNew = addModelSelection(gridY, c)
+        gridYNew = addTemperatureSelection(gridYNew, c)
+        gridYNew = addMaxTokensSelection(gridYNew, c)
+        return gridYNew
+    }
+
+    private fun addModelSelection(gridY: Int, c: GridBagConstraints): Int {
+        var gridY1 = gridY
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("Model:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
+        c.gridx = 1
+        settingsPanel.add(modelComboBox, c)
+
+        //        add label below combox with the text: gpt-4 is in limited beta. Check OpenAI for availability.
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("", JLabel.TRAILING), c)
+        c.gridx = 1
+        settingsPanel.add(JLabel("gpt-4 is in limited beta. See OpenAI for availability", JLabel.LEADING), c)
+        return gridY1
+    }
+
+    private fun addTemperatureSelection(gridY: Int, c: GridBagConstraints): Int {
+        var gridY1 = gridY
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("Temperature:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
+        c.gridx = 1
+        settingsPanel.add(temperature, c)
+        // add label below textfield with the text: The sampling temperature to use. Lower values are more conservative, higher values are more creative.
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("", JLabel.TRAILING), c)
+        c.gridx = 1
+        settingsPanel.add(JLabel("The sampling temperature to use. Lower values are more conservative, higher values are more creative.", JLabel.LEADING), c)
+        return gridY1
+    }
+
+    private fun addMaxTokensSelection(gridY: Int, c: GridBagConstraints): Int {
+        var gridY1 = gridY
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("Max Tokens:", JLabel.TRAILING).apply { preferredSize = Dimension(100, 0) }, c)
+        c.gridx = 1
+        settingsPanel.add(maxTokens, c)
+        // add label below textfield with the text: The maximum number of tokens to generate in the output. Longer outputs may take longer to generate.
+        c.gridy = ++gridY1
+        c.gridx = 0
+        settingsPanel.add(JLabel("", JLabel.TRAILING), c)
+        c.gridx = 1
+        settingsPanel.add(JLabel("The maximum number of tokens to generate in the output. Longer outputs may take longer to generate.", JLabel.LEADING), c)
+        return gridY1
+    }
+
     private fun resetPrompt(i: Int) {
         when (i) {
             0 -> explainCodePrompt.text = DEFAULT_PROMPT_EXPLAIN
@@ -167,6 +215,8 @@ class GptMentorConfigurable : Configurable {
         modified = modified || addDocsPrompt.text != config.systemPromptAddDocs
         modified = modified || chatPrompt.text != config.systemPromptChat
         modified = modified || modelComboBox.selectedItem != config.selectedModel
+        modified = modified || temperature.text != config.temperature.toString()
+        modified = modified || maxTokens.text != config.maxTokens.toString()
 
         return modified
     }
@@ -183,6 +233,8 @@ class GptMentorConfigurable : Configurable {
         config.systemPromptAddDocs = addDocsPrompt.text
         config.systemPromptChat = chatPrompt.text
         config.selectedModel = modelComboBox.selectedItem as String
+        config.temperature = temperature.text.toFloatOrNull() ?: config.temperature
+        config.maxTokens = maxTokens.text.toIntOrNull() ?: config.maxTokens
 
         GptMentorCredentialsManager.setPassword(openAiApiKey.text)
     }
