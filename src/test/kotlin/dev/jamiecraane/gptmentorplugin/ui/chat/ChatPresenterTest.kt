@@ -1,6 +1,7 @@
 package dev.jamiecraane.gptmentorplugin.ui.chat
 
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
+import dev.jamiecraane.gptmentorplugin.domain.Model
 import dev.jamiecraane.gptmentorplugin.openapi.OpenApi
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
@@ -42,7 +43,7 @@ class ChatPresenterTest {
             chatView.setPrompt("action")
             chatView.appendToExplanation("action")
             openApi.executeBasicActionStreaming(
-                BasicPrompt.Chat(listOf(message), "").createRequest()
+                BasicPrompt.Chat(listOf(message), "").createRequest(Model.GPT_3_5_TURBO, 0.7f, 1024)
             )
         }
     }
@@ -54,7 +55,7 @@ class ChatPresenterTest {
         coVerify {
             chatView.setPrompt(prompt.action)
             chatView.clearExplanation()
-            openApi.executeBasicActionStreaming(prompt.createRequest())
+            openApi.executeBasicActionStreaming(prompt.createRequest(Model.GPT_3_5_TURBO, 0.7f, 1024))
         }
     }
 

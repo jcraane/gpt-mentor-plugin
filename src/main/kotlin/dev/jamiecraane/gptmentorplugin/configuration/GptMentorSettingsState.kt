@@ -16,7 +16,7 @@ import dev.jamiecraane.gptmentorplugin.domain.Model
     name = "dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState",
     storages = [Storage("GptMentorConfig.xml")]
 )
-class GptMentorSettingsState private constructor() : PersistentStateComponent<GptMentorSettingsState> {
+class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> {
     var openAiApiKey: String = "SECURED"
     var systemPromptExplainCode: String = DEFAULT_PROMPT_EXPLAIN
     var systemPromptCreateUnitTest: String = DEFAULT_PROMPT_CREATE_UNIT_TEST

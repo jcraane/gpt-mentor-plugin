@@ -1,15 +1,15 @@
 package dev.jamiecraane.gptmentorplugin.ui.history.state
 
-import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
-import dev.jamiecraane.gptmentorplugin.openapi.JSON
-import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
-import dev.jamiecraane.gptmentorplugin.ui.chat.ChatContext
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
+import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
+import dev.jamiecraane.gptmentorplugin.openapi.JSON
+import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
+import dev.jamiecraane.gptmentorplugin.ui.chat.ChatContext
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KProperty
 
@@ -98,9 +98,16 @@ data class HistoryItem(
         const val NO_TITLE_PLACEHOLDER = "No title"
         const val MAX_TITLE_LENGTH = 100
 
-        fun from(chatContext: ChatContext, timestamp: Long = System.currentTimeMillis()): HistoryItem {
-            val state = GptMentorSettingsState.getInstance()
-            val request = chatContext.chat.createRequest(state.model)
+        fun from(
+            chatContext: ChatContext,
+            timestamp: Long = System.currentTimeMillis(),
+            state: GptMentorSettingsState = GptMentorSettingsState.getInstance(),
+        ): HistoryItem {
+            val state = state
+            val request = chatContext.chat.createRequest(
+                model = state.model, temperature = state.temperature,
+                maxTokens = state.maxTokens,
+            )
 
             return HistoryItem(
                 id = chatContext.chatId,

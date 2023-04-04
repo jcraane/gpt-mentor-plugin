@@ -16,11 +16,11 @@ import dev.jamiecraane.gptmentorplugin.openapi.RealOpenApi
 import dev.jamiecraane.gptmentorplugin.openapi.StreamingResponse
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
-import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
-import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryRepository
 import dev.jamiecraane.gptmentorplugin.ui.history.state.PluginStateHistoryRepository
+import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
+import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 import io.ktor.client.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -105,7 +105,11 @@ class ChatPresenter(
             chatView.appendToExplanation(prompt.action.addNewLinesIfNeeded(1))
             kotlin.runCatching {
                 val state = GptMentorSettingsState.getInstance()
-                val chatGptRequest = prompt.createRequest(state.model)
+                val chatGptRequest = prompt.createRequest(
+                    model = state.model,
+                    temperature = state.temperature,
+                    maxTokens = state.maxTokens,
+                )
                 openApi.executeBasicActionStreaming(chatGptRequest)
                     .collect { streamingResponse ->
                         handleResponse(streamingResponse)

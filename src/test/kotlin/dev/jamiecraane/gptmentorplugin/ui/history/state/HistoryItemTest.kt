@@ -1,5 +1,6 @@
 package dev.jamiecraane.gptmentorplugin.ui.history.state
 
+import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
 import dev.jamiecraane.gptmentorplugin.openapi.request.ChatGptRequest
 import dev.jamiecraane.gptmentorplugin.ui.chat.ChatContext
@@ -71,7 +72,8 @@ class HistoryItemTest {
                         ChatGptRequest.Message(ChatGptRequest.Message.Role.USER, messageContent)
                     ), ""
                 )
-            )
+            ),
+            state = GptMentorSettingsState(),
         )
     }
 }

@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextArea
-import com.intellij.ui.components.JBTextField
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_ADD_COMMENTS
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CHAT
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_CREATE_UNIT_TEST
@@ -14,6 +13,8 @@ import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Comp
 import dev.jamiecraane.gptmentorplugin.configuration.GptMentorSettingsState.Companion.DEFAULT_PROMPT_REVIEW
 import dev.jamiecraane.gptmentorplugin.domain.Model
 import dev.jamiecraane.gptmentorplugin.security.GptMentorCredentialsManager
+import dev.jamiecraane.gptmentorplugin.ui.common.ConstraintTextField
+import dev.jamiecraane.gptmentorplugin.ui.common.NumberVerifier
 import java.awt.*
 import javax.swing.*
 
@@ -31,8 +32,8 @@ class GptMentorConfigurable : Configurable {
     private val modelComboBox = ComboBox(Model.values().map {
         it.code
     }.toTypedArray())
-    private val temperature = JBTextField()
-    private val maxTokens = JBTextField()
+    private val temperature = ConstraintTextField(verifier = NumberVerifier(decimalField = true))
+    private val maxTokens = ConstraintTextField()
 
     private val config: GptMentorSettingsState = GptMentorSettingsState.getInstance()
 
@@ -59,6 +60,8 @@ class GptMentorConfigurable : Configurable {
         addDocsPrompt.text = config.systemPromptAddDocs
         chatPrompt.text = config.systemPromptChat
         modelComboBox.selectedItem = config.selectedModel
+        temperature.text = config.temperature.toString()
+        maxTokens.text = config.maxTokens.toString()
 
         settingsPanel = JPanel()
         settingsPanel.layout = GridBagLayout()
@@ -167,7 +170,8 @@ class GptMentorConfigurable : Configurable {
         c.gridx = 0
         settingsPanel.add(JLabel("", JLabel.TRAILING), c)
         c.gridx = 1
-        settingsPanel.add(JLabel("The sampling temperature to use. Lower values are more conservative, higher values are more creative.", JLabel.LEADING), c)
+        settingsPanel.add(JLabel("The temperature to use (0..2). Lower values are more conservative, higher values are more creative.",
+            JLabel.LEADING), c)
         return gridY1
     }
 
@@ -215,7 +219,7 @@ class GptMentorConfigurable : Configurable {
         modified = modified || addDocsPrompt.text != config.systemPromptAddDocs
         modified = modified || chatPrompt.text != config.systemPromptChat
         modified = modified || modelComboBox.selectedItem != config.selectedModel
-        modified = modified || temperature.text != config.temperature.toString()
+        modified = modified || (temperature.text) != config.temperature.toString()
         modified = modified || maxTokens.text != config.maxTokens.toString()
 
         return modified
@@ -233,8 +237,8 @@ class GptMentorConfigurable : Configurable {
         config.systemPromptAddDocs = addDocsPrompt.text
         config.systemPromptChat = chatPrompt.text
         config.selectedModel = modelComboBox.selectedItem as String
-        config.temperature = temperature.text.toFloatOrNull() ?: config.temperature
-        config.maxTokens = maxTokens.text.toIntOrNull() ?: config.maxTokens
+        config.temperature = (temperature.text.toFloatOrNull() ?: config.temperature).coerceIn(0f, 2f)
+        config.maxTokens = (maxTokens.text.toIntOrNull() ?: config.maxTokens).coerceIn(1, 4096)
 
         GptMentorCredentialsManager.setPassword(openAiApiKey.text)
     }
