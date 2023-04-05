@@ -21,7 +21,7 @@ class HistoryItemTest {
             systemMessage = "System message"
         )
 
-        val from = HistoryItem.from(ChatContext("1", prompt))
+        val from = HistoryItem.from(ChatContext("1", prompt), state = GptMentorSettingsState())
         assertTrue(from.id.isNotEmpty())
         // Assert message
         assertEquals("Hello!", from.title)

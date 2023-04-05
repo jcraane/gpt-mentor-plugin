@@ -42,7 +42,7 @@ class GptMentorSettingsState : PersistentStateComponent<GptMentorSettingsState> 
     }
 
     companion object {
-        fun getInstance() = ApplicationManager.getApplication().getService(GptMentorSettingsState::class.java)
+        fun getInstance(): GptMentorSettingsState = ApplicationManager.getApplication().getService(GptMentorSettingsState::class.java)
 
         const val DEFAULT_PROMPT = "You are an expert AI programmer."
 

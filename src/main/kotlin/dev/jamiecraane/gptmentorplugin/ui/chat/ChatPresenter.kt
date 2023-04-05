@@ -148,7 +148,7 @@ class ChatPresenter(
         chatView.clearPrompt()
         chatView.updateNumberOfTokens("")
         chatContext = chatContext.addMessage(explanationBuilder.toString(), ChatGptRequest.Message.Role.SYSTEM)
-        historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatContext))
+        historyRepository.addOrUpdateHistoryItem(HistoryItem.from(chatContext, state = GptMentorSettingsState.getInstance()))
     }
 
     fun onStopClicked() {

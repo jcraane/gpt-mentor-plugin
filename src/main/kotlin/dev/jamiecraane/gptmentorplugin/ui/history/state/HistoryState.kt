@@ -101,7 +101,7 @@ data class HistoryItem(
         fun from(
             chatContext: ChatContext,
             timestamp: Long = System.currentTimeMillis(),
-            state: GptMentorSettingsState = GptMentorSettingsState.getInstance(),
+            state: GptMentorSettingsState,
         ): HistoryItem {
             val state = state
             val request = chatContext.chat.createRequest(

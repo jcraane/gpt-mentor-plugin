@@ -187,7 +187,9 @@ class GptMentorConfigurable : Configurable {
         c.gridx = 0
         settingsPanel.add(JLabel("", JLabel.TRAILING), c)
         c.gridx = 1
-        settingsPanel.add(JLabel("The maximum number of tokens to generate in the output. Longer outputs may take longer to generate.", JLabel.LEADING), c)
+        settingsPanel.add(JLabel("""The maximum number of tokens to generate in the output. Longer outputs may take longer to generate.
+            |The maxtokens of the completion and the input combined cannot exceed 4096.
+        """.trimMargin(), JLabel.LEADING), c)
         return gridY1
     }
 
