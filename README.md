@@ -24,6 +24,10 @@ The history view displays the chat history. You can also remove messages from th
 - Select one or multiple elements and use the backspace or context menu to delete items from the history
 - Rename history items with the context menu or Shift+F6
 
+Right-click on a file in the tree view to add the contents of the file to the chat window.<br><br>
+
+Select Commits in the VCS log and use right-click -> Add Commits To Prompt to send the commit messages to the chat window.<br><br>
+
 To start using it create an account and API key at: https://platform.openai.com/account/api-keys  
 
 After you have created an API key you can add it in the settings of the plugin.  
