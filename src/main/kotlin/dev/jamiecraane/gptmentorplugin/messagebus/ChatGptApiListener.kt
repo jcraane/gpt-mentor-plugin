@@ -3,6 +3,7 @@ package dev.jamiecraane.gptmentorplugin.messagebus
 import dev.jamiecraane.gptmentorplugin.domain.BasicPrompt
 import dev.jamiecraane.gptmentorplugin.ui.history.state.HistoryItem
 import com.intellij.util.messages.Topic
+import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 
 val CHAT_GPT_ACTION_TOPIC: Topic<ChatGptApiListener> = Topic.create("GptMentorChatGptTopic", ChatGptApiListener::class.java)
 

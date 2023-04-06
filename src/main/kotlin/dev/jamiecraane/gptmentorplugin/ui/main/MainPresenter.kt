@@ -1,12 +1,20 @@
 package dev.jamiecraane.gptmentorplugin.ui.main
 
+import com.intellij.openapi.project.Project
+import dev.jamiecraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
+import dev.jamiecraane.gptmentorplugin.messagebus.COMMON_ACTIONS_TOPIC
 import dev.jamiecraane.gptmentorplugin.openapi.RealOpenApi
 import java.awt.Desktop
 import javax.swing.event.HyperlinkEvent
 
-class MainPresenter(private val mainView: MainView) {
+class MainPresenter() {
+    private lateinit var project: Project
+    fun onAttach(project: Project) {
+        this.project = project
+    }
+
     fun selectTab(tab: Tab) {
-        mainView.selectTab(tab)
+        project.messageBus.syncPublisher(COMMON_ACTIONS_TOPIC).selectTab(tab)
     }
 
     fun openUrl(event: HyperlinkEvent) {

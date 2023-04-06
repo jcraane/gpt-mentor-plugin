@@ -4,9 +4,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.content.Content
-import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.content.*
+import dev.jamiecraane.gptmentorplugin.messagebus.COMMON_ACTIONS_TOPIC
+import dev.jamiecraane.gptmentorplugin.messagebus.CommonActions
 import dev.jamiecraane.gptmentorplugin.openapi.RealOpenApi
 import dev.jamiecraane.gptmentorplugin.ui.chat.ChatPanel
 import dev.jamiecraane.gptmentorplugin.ui.history.HistoryPanel
@@ -16,47 +16,42 @@ import dev.jamiecraane.gptmentorplugin.ui.main.Tab
 import dev.jamiecraane.gptmentorplugin.ui.util.isInDarkMode
 import org.intellij.lang.annotations.Language
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Desktop.*
 import javax.swing.BorderFactory
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextPane
 
-class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
-    private val tabbedPane: JBTabbedPane = JBTabbedPane()
-    private val presenter = MainPresenter(this)
-
-    private var helpPane = JTextPane().apply {
-        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        contentType = "text/html"
-        isEditable = false
-        addHyperlinkListener { e ->
-            presenter.openUrl(e)
-        }
-    }
-
+//todo Refactor in a proper GptMentorToolWindow class decoupled from the factory. See tool_window project
+class GptMentorToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        val presenter = MainPresenter()
+        presenter.onAttach(project)
+
+        val helpPane = JTextPane().apply {
+            border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            contentType = "text/html"
+            isEditable = false
+            addHyperlinkListener { e ->
+                presenter.openUrl(e)
+            }
+        }
+
         val contentFactory = ContentFactory.SERVICE.getInstance()
 
-        with(tabbedPane) {
-            val chatPanel = ChatPanel(presenter).apply { onAttach(project) }
-            addTab(Tab.CHAT.label, chatPanel)
-            val historyPanel = HistoryPanel { historyItem ->
-                chatPanel.presenter.loadChatFromHistory(historyItem)
-            }
-            addTab(Tab.HISTORY.label, historyPanel)
-            addTab(Tab.HELP.label, createHelpPanel())
-            addChangeListener {
-                when (selectedIndex) {
-                    Tab.CHAT.code -> {
+        toolWindow.contentManager.addContentManagerListener(object : ContentManagerListener {
+            override fun selectionChanged(event: ContentManagerEvent) {
+                println("selectioChanged")
+                when (event.content?.displayName) {
+                    Tab.CHAT.label -> {
                     }
 
-                    Tab.HISTORY.code -> {
-                        historyPanel.presenter.refreshHistory()
+                    Tab.HISTORY.label -> {
+                        (event.content.component as HistoryPanel).presenter.refreshHistory()
                     }
 
-                    Tab.HELP.code -> {
-                        updateText()
+                    Tab.HELP.label -> {
+                        updateText(helpPane)
                     }
 
                     else -> {
@@ -64,13 +59,45 @@ class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
                     }
                 }
             }
-        }
+        })
 
-        val content: Content = contentFactory.createContent(tabbedPane, "", false)
-        toolWindow.contentManager.addContent(content)
+        val chatPanel = ChatPanel(presenter).apply { onAttach(project) }
+        val historyPanel = HistoryPanel { historyItem ->
+            chatPanel.presenter.loadChatFromHistory(historyItem)
+        }
+        val helpPanel = createHelpPanel(helpPane)
+
+        val chatContent = contentFactory.createContent(chatPanel, Tab.CHAT.label, false)
+        toolWindow.contentManager.addContent(chatContent)
+
+        val historyContent = contentFactory.createContent(historyPanel, Tab.HISTORY.label, false)
+        historyPanel.presenter.refreshHistory()
+        toolWindow.contentManager.addContent(historyContent)
+
+        val helpContent = contentFactory.createContent(helpPanel, Tab.HELP.label, false)
+        updateText(helpPane)
+        toolWindow.contentManager.addContent(helpContent)
+
+        project.messageBus.connect().subscribe(COMMON_ACTIONS_TOPIC, object : CommonActions {
+            override fun selectTab(tab: Tab) {
+                when (tab) {
+                    Tab.CHAT -> {
+                        toolWindow.contentManager.setSelectedContent(chatContent)
+                    }
+
+                    Tab.HISTORY -> {
+                        toolWindow.contentManager.setSelectedContent(historyContent)
+                    }
+
+                    Tab.HELP -> {
+                        toolWindow.contentManager.setSelectedContent(helpContent)
+                    }
+                }
+            }
+        })
     }
 
-    private fun updateText() {
+    private fun updateText(helpPane: JTextPane) {
         val helpTextColor = if (isInDarkMode()) {
             "#dddddd"
         } else {
@@ -112,16 +139,12 @@ class GptMentorToolWindowFactory : ToolWindowFactory, MainView {
         helpPane.text = helpText
     }
 
-    private fun createHelpPanel(): Component {
+    private fun createHelpPanel(helpPane: JTextPane): JComponent {
         return JPanel().apply {
             layout = BorderLayout()
             val scrollPane = JBScrollPane(helpPane)
             add(scrollPane, BorderLayout.CENTER)
         }
-    }
-
-    override fun selectTab(tab: Tab) {
-        tabbedPane.selectedIndex = tab.code
     }
 
     companion object {
