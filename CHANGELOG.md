@@ -19,6 +19,13 @@
 - Send vcs commits to prompt by right-click on commit message(s) and select: Add Commits To Prompt
 - Fixed issue #10 where custom prompts were not being taken into account
 
+## [0.0.7] - 2023-04-06
+
+- Added scrollbars to history panel
+- Renamed settings prompt for consistency
+- Add model, temperature and max tokens to settings
+- Fixed toolwindow state
+
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
