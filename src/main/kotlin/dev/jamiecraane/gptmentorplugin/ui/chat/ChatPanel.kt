@@ -55,6 +55,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     private val explanationArea = JTextPane().apply {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        isEditable = false
     }
 
     private val userStyle = explanationArea.addStyle("User", null).apply {

@@ -26,6 +26,8 @@
 - Add model, temperature and max tokens to settings
 - Fixed toolwindow state
 
+## [0.0.8] - TBD
+
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
