@@ -26,7 +26,11 @@
 - Add model, temperature and max tokens to settings
 - Fixed toolwindow state
 
-## [0.0.8] - TBD
+## [0.0.8] - 2023-06-13
+
+- Add gpt-3.5-turbo-16k model
+- Add gpt-4-32k model
+- Create prompt with the contents of multiple selected files using the New Prompt or Append to Prompt actions (right-click in Project view)
 
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)

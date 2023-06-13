@@ -10,16 +10,24 @@ import dev.jamiecraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 class NewPromptFromFileAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+        val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
 
-        if (project == null || psiFile == null) {
+        if (project == null || files.isNullOrEmpty()) {
             return
         }
 
-        val virtualFile = psiFile.virtualFile
-        val contents = String(virtualFile.contentsToByteArray())
+        val allFilesContent = buildString {
+            files.forEach { file ->
+                val contents = String(file.contentsToByteArray())
+                append(contents)
+                repeat(2) {
+                    appendLine()
+                }
+            }
+        }
+
         val promptFactory = PromptFactory(project.getService(GptMentorSettingsState::class.java))
-        promptFactory.promptFromSelection(contents).let { prompt ->
+        promptFactory.promptFromSelection(allFilesContent).let { prompt ->
             project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).onNewPrompt(prompt)
         }
     }

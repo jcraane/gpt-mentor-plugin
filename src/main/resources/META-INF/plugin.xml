@@ -89,10 +89,10 @@
             </add-to-group>
 
             <action id="promptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.file.NewPromptFromFileAction"
-                    text="New Prompt From File"/>
+                    text="New Prompt From File(s)"/>
 
             <action id="appendPromptFromFile" class="dev.jamiecraane.gptmentorplugin.actions.file.AppendPromptFromFileAction"
-                    text="Append Prompt With File"/>
+                    text="Append Prompt With File(s)"/>
         </group>
 
         <action id="addGitCommitsToPrompt" class="dev.jamiecraane.gptmentorplugin.actions.git.AddGitCommitsToPromptAction"

@@ -8,16 +8,25 @@ import dev.jamiecraane.gptmentorplugin.messagebus.CHAT_GPT_ACTION_TOPIC
 class AppendPromptFromFileAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+        val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
 
-        if (project == null || psiFile == null) {
+        if (project == null || files.isNullOrEmpty()) {
             return
         }
 
-        val virtualFile = psiFile.virtualFile
-        val contents = String(virtualFile.contentsToByteArray())
-        if (contents.isNotEmpty()) {
-            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(contents)
+        val allFilesContent = buildString {
+            files.forEach { file ->
+                val contents = String(file.contentsToByteArray())
+                append(contents)
+                repeat(2) {
+                    appendLine()
+                }
+            }
+        }
+
+
+        if (allFilesContent.isNotEmpty()) {
+            project.messageBus.syncPublisher(CHAT_GPT_ACTION_TOPIC).appendToPrompt(allFilesContent)
         }
     }
 }
