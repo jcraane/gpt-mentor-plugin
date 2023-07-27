@@ -53,33 +53,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
         })
     }
 
-//    private val explanationArea = JTextPane().apply {
-//        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-//        isEditable = false
-//    }
-
-//    private val userStyle = explanationArea.addStyle("User", null).apply {
-//        StyleConstants.setFontFamily(this, "Menlo");
-//        StyleConstants.setFontSize(this, 14);
-//        StyleConstants.setForeground(
-//            this, JBColor(
-//                Color(77, 111, 151),
-//                Color(115, 170, 212)
-//            )
-//        );
-//    }
-
-//    private val systemStyle = explanationArea.addStyle("System", null).apply {
-//        StyleConstants.setFontFamily(this, "Menlo");
-//        StyleConstants.setFontSize(this, 14);
-//        StyleConstants.setForeground(
-//            this,
-//            JBColor(
-//                Color(103, 81, 111),
-//                Color(187, 134, 206)
-//            )
-//        );
-//    }
 
     init {
         layout = BorderLayout()
@@ -191,11 +164,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     override fun appendToExplanation(message: String) {
         // TODO: Add message to chat bubble
 
-//        ApplicationManager.getApplication().invokeLater {
-//            val doc = explanationArea.styledDocument
-//            val withNewlines = message.addNewLinesIfNeeded(2)
-//            doc.insertString(explanationArea.styledDocument.length, withNewlines, userStyle)
-//        }
     }
 
     override fun appendToPrompt(text: String) {
@@ -254,7 +222,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     override fun onExplanationDone() {
         ApplicationManager.getApplication().invokeLater {
-//            explanationArea.styledDocument.addNewLines(2)
             promptTextArea.text = ""
         }
         setFocusOnPrompt()
