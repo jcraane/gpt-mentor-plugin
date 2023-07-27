@@ -32,6 +32,10 @@
 - Add gpt-4-32k model
 - Create prompt with the contents of multiple selected files using the New Prompt or Append to Prompt actions (right-click in Project view)
 
+## [0.0.9] - 2023-07-27
+
+- Compatibility with IntelliJ 2023.2
+
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
