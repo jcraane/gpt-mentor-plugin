@@ -32,7 +32,7 @@ class ChatBubbleGroup : JBPanel<ChatBubbleGroup>(), NullableComponent {
         }
     }
 
-    fun newBubble(text: String) {
-        ChatBubble(text).also { myList.add(it) }
+    fun newBubble(text: String, isUser: Boolean = true) {
+        ChatBubble(text, isUser).also { add(it) }
     }
 }

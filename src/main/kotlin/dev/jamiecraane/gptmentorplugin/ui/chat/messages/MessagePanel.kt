@@ -7,6 +7,7 @@ import java.awt.Font
 
 class MessagePanel : HtmlPanel() {
 
+
     private var msg = ""
 
     @Nls
@@ -18,7 +19,11 @@ class MessagePanel : HtmlPanel() {
     }
 
     fun updateMessage(updateMessage: String) {
-        this.msg = updateMessage
+        msg = updateMessage
         update()
+    }
+
+    fun appendMessage(newData: String){
+        updateMessage(msg + newData)
     }
 }

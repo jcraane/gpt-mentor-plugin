@@ -9,16 +9,18 @@ import java.awt.Component
 import javax.swing.JEditorPane
 import javax.swing.JPanel
 
-class ChatBubble (msg : String, me : Boolean = true): JBPanel<ChatBubble>() {
+class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
     private val component = MessagePanel()
+    val isUser = user
+
 
 
 
     init {
-        var question : String = msg
+        val question : String = msg
 
         isOpaque = true
-        background = if (me) JBColor(0xEAEEF7, 0x45494A) else JBColor(0xE0EEF7, 0x2d2f30 /*2d2f30*/)
+        background = if (user) JBColor(0xEAEEF7, 0x45494A) else JBColor(0xE0EEF7, 0x2d2f30 /*2d2f30*/)
         border = JBUI.Borders.empty(10, 10, 10, 3)
         layout = BorderLayout(JBUI.scale(7), 1)
 
@@ -44,7 +46,7 @@ class ChatBubble (msg : String, me : Boolean = true): JBPanel<ChatBubble>() {
     }
 
     fun appendMessage(data: String) {
-        component.updateMessage(component.text + data)
+        component.appendMessage(data)
     }
 
 }

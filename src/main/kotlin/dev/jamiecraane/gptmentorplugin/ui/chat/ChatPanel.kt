@@ -194,7 +194,12 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     override fun appendExplanation(explanation: String) {
-        // TODO: Add explanation to existing chat bubble
+        ApplicationManager.getApplication().invokeLater {
+            chatBubbles.lastComponent?.let {
+                if (it.isUser) chatBubbles.newBubble(explanation, false)
+                else it.appendMessage(explanation)
+            }
+        }
     }
 
     override fun showLoading() {
