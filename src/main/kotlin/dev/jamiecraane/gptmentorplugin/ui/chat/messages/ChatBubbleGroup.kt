@@ -31,4 +31,8 @@ class ChatBubbleGroup : JBPanel<ChatBubbleGroup>(), NullableComponent {
             layout.addLayoutComponent(null, myList.getComponent(i))
         }
     }
+
+    fun newBubble(text: String) {
+        ChatBubble(text).also { myList.add(it) }
+    }
 }

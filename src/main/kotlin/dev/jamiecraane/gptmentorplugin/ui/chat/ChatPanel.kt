@@ -162,7 +162,9 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     override fun appendToExplanation(message: String) {
-        // TODO: Add message to chat bubble
+        ApplicationManager.getApplication().invokeLater {
+            chatBubbles.newBubble(message)
+        }
 
     }
 
