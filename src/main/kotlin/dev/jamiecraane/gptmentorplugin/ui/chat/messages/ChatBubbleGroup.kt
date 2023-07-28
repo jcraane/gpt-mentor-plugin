@@ -7,7 +7,7 @@ import com.intellij.util.ui.JBUI
 import javax.swing.JPanel
 
 
-class chatBubbleGroup : JBPanel<chatBubbleGroup>(), NullableComponent {
+class ChatBubbleGroup : JBPanel<ChatBubbleGroup>(), NullableComponent {
 
     val myList = JPanel(VerticalLayout(JBUI.scale(10)))
     var lastComponent: ChatBubble? = null

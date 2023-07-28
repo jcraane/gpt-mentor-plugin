@@ -3,22 +3,20 @@ package dev.jamiecraane.gptmentorplugin.ui.chat
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.AnimatedIcon
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
-import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
+import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubble
 import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyEvent
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import javax.swing.text.StyleConstants
 import javax.swing.text.StyledDocument
+import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubbleGroup
 
 class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     val presenter = ChatPresenter(this, mainPresenter)
@@ -52,6 +50,8 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
             }
         })
     }
+
+    private val chatBubbles = ChatBubbleGroup()
 
 
     init {
@@ -151,8 +151,8 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     private fun createExplanationScrollPane(): JBScrollPane {
-        // TODO: add the MessageGroupComponent & default chat bubble
-        return JBScrollPane(JLabel("Empty Area"))
+        chatBubbles.add(ChatBubble(INTRO_MESSAGE, false))
+        return JBScrollPane(chatBubbles.myList).apply { horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER }
     }
 
     private fun createHorizontalBoxPanel(): JPanel {
