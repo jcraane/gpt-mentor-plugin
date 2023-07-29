@@ -15,10 +15,6 @@ import java.awt.event.KeyEvent
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import javax.swing.text.StyledDocument
-import com.vladsch.flexmark.parser.Parser
-import com.vladsch.flexmark.util.ast.Node
-import com.vladsch.flexmark.html.HtmlRenderer
 import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubbleGroup
 
 
@@ -246,12 +242,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     override fun updateNumberOfTokens(label: String) {
         numberOfTokens.text = label
-    }
-
-    private fun StyledDocument.addNewLines(numberOfLines: Int) {
-        val docLength = length
-        val newLines = "\n".repeat(numberOfLines)
-        insertString(docLength, newLines, null)
     }
 
     companion object {
