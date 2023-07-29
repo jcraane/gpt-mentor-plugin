@@ -16,7 +16,11 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.StyledDocument
+import com.vladsch.flexmark.parser.Parser
+import com.vladsch.flexmark.util.ast.Node
+import com.vladsch.flexmark.html.HtmlRenderer
 import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubbleGroup
+
 
 class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     val presenter = ChatPresenter(this, mainPresenter)
@@ -186,7 +190,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     override fun clearExplanation() {
-        // TODO: delete all chat bubbles
+        chatBubbles.myList.removeAll()
     }
 
     override fun showError(message: String) {

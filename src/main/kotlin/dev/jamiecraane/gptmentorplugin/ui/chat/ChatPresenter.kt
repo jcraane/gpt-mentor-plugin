@@ -124,8 +124,14 @@ class ChatPresenter(
     }
 
     private fun handleResponse(streamingResponse: StreamingResponse) {
+        var allData = ""
+        var temp = ""
         when (streamingResponse) {
-            is StreamingResponse.Data -> handleData(streamingResponse.data)
+            is StreamingResponse.Data -> {
+                temp = streamingResponse.data
+                allData += temp
+                handleData(temp)
+            }
             is StreamingResponse.Error -> handleError(streamingResponse.error)
             StreamingResponse.Done -> handleDone()
         }
