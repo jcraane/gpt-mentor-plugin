@@ -12,19 +12,16 @@ import javax.swing.JTextArea
 
 class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
     val isUser = user
-    private val responseComponent = MessagePanel()
-    private val questionComponent = JTextArea()
-
-
-
-
+    // responseComponent and questionComponent are mutually exclusive (one will be null)
+    private val responseComponent: MessagePanel? = if (!isUser) MessagePanel() else null
+    private val questionComponent: JTextArea? = if (isUser) JTextArea() else null
 
 
     init {
         val question : String = msg
 
         isOpaque = true
-        background = if (user) JBColor(0xEAEEF7, 0x45494A) else JBColor(0xE0EEF7, 0x2d2f30 /*2d2f30*/)
+        background = if (user) JBColor(0xEAEEF7, 0x45494A) else JBColor(0xE0EEF7, 0x2d2f30)
         border = JBUI.Borders.empty(10, 10, 10, 3)
         layout = BorderLayout(JBUI.scale(7), 1)
 
@@ -38,11 +35,12 @@ class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
 
     fun createContentComponent(content :String) : Component {
         val component = if (isUser) questionComponent else responseComponent
-        responseComponent.contentType = "text/html; charset=UTF-8"
-        responseComponent.updateMessage(content)
-        questionComponent.append(content)
-        questionComponent.lineWrap = true
-        questionComponent.wrapStyleWord = true
+        component!! // Assuming that isUser must be true or false making question and response mutually exclusive
+        responseComponent?.contentType  = "text/html; charset=UTF-8"
+        responseComponent?.updateMessage(content)
+        questionComponent?.append(content)
+        questionComponent?.lineWrap = true
+        questionComponent?.wrapStyleWord = true
 
         component.isEditable = false
         component.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, java.lang.Boolean.TRUE)
@@ -55,7 +53,7 @@ class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
     }
 
     fun appendMessage(data: String) {
-        responseComponent.appendMessage(data)
+        responseComponent?.appendMessage(data)
     }
 
 }
