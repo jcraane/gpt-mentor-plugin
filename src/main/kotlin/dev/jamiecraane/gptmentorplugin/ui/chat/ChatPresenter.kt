@@ -102,7 +102,8 @@ class ChatPresenter(
         charsTyped.clear()
         apiJob?.cancel()
         apiJob = scope.launch {
-            chatView.appendToExplanation(prompt.action.addNewLinesIfNeeded(1))
+            chatView.appendToExplanation(prompt.action)
+//            chatView.appendToExplanation(prompt.action.addNewLinesIfNeeded(1))
             kotlin.runCatching {
                 val state = GptMentorSettingsState.getInstance()
                 val chatGptRequest = prompt.createRequest(
@@ -189,11 +190,13 @@ class ChatPresenter(
                     context.chat.messages.forEach { message ->
                         when (message.role) {
                             ChatGptRequest.Message.Role.USER -> {
-                                chatView.appendToExplanation(message.content.addNewLinesIfNeeded(2))
+                                chatView.appendToExplanation(message.content)
+//                                chatView.appendToExplanation(message.content.addNewLinesIfNeeded(2))
                             }
 
                             ChatGptRequest.Message.Role.SYSTEM -> {
-                                chatView.appendExplanation(message.content.addNewLinesIfNeeded(2))
+                                chatView.appendExplanation(message.content)
+//                                chatView.appendExplanation(message.content.addNewLinesIfNeeded(2))
                             }
                         }
                     }
