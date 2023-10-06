@@ -8,7 +8,7 @@ import com.vladsch.flexmark.util.ast.Node
 import org.jetbrains.annotations.Nls
 import java.awt.Font
 
-class MessagePanel : HtmlPanel() {
+class MessagePanel() : HtmlPanel() {
 
 
     private var msg = ""

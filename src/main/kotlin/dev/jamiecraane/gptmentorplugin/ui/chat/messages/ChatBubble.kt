@@ -8,10 +8,14 @@ import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JEditorPane
 import javax.swing.JPanel
+import javax.swing.JTextArea
 
 class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
-    private val component = MessagePanel()
     val isUser = user
+    private val responseComponent = MessagePanel()
+    private val questionComponent = JTextArea()
+
+
 
 
 
@@ -33,20 +37,25 @@ class ChatBubble (msg : String, user : Boolean = true): JBPanel<ChatBubble>() {
     }
 
     fun createContentComponent(content :String) : Component {
+        val component = if (isUser) questionComponent else responseComponent
+        responseComponent.contentType = "text/html; charset=UTF-8"
+        responseComponent.updateMessage(content)
+        questionComponent.append(content)
+        questionComponent.lineWrap = true
+        questionComponent.wrapStyleWord = true
+
         component.isEditable = false
         component.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, java.lang.Boolean.TRUE)
-        component.contentType = "text/html; charset=UTF-8"
         component.isOpaque = false
         component.border = null
-
-        component.updateMessage(content)
         component.revalidate()
         component.repaint()
+
         return component
     }
 
     fun appendMessage(data: String) {
-        component.appendMessage(data)
+        responseComponent.appendMessage(data)
     }
 
 }
