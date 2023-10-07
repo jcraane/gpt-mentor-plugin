@@ -3,28 +3,28 @@ package dev.jamiecraane.gptmentorplugin.ui.chat
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.AnimatedIcon
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
-import dev.jamiecraane.gptmentorplugin.common.extensions.addNewLinesIfNeeded
 import dev.jamiecraane.gptmentorplugin.common.extensions.onKeyPressed
+import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubble
 import dev.jamiecraane.gptmentorplugin.ui.main.MainPresenter
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyEvent
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import javax.swing.text.StyleConstants
-import javax.swing.text.StyledDocument
+import dev.jamiecraane.gptmentorplugin.ui.chat.messages.ChatBubbleGroup
+
 
 class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     val presenter = ChatPresenter(this, mainPresenter)
     private val loader: JComponent = createLoadingComponent()
     private val submitButton = JButton("Submit")
     private val numberOfTokens = JLabel("")
+
+    private lateinit var explanationScrollPane : JBScrollPane
 
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
@@ -53,33 +53,8 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
         })
     }
 
-    private val explanationArea = JTextPane().apply {
-        border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        isEditable = false
-    }
+    private val chatBubbles = ChatBubbleGroup()
 
-    private val userStyle = explanationArea.addStyle("User", null).apply {
-        StyleConstants.setFontFamily(this, "Menlo");
-        StyleConstants.setFontSize(this, 14);
-        StyleConstants.setForeground(
-            this, JBColor(
-                Color(77, 111, 151),
-                Color(115, 170, 212)
-            )
-        );
-    }
-
-    private val systemStyle = explanationArea.addStyle("System", null).apply {
-        StyleConstants.setFontFamily(this, "Menlo");
-        StyleConstants.setFontSize(this, 14);
-        StyleConstants.setForeground(
-            this,
-            JBColor(
-                Color(103, 81, 111),
-                Color(187, 134, 206)
-            )
-        );
-    }
 
     init {
         layout = BorderLayout()
@@ -110,7 +85,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
         promptPanel.add(Box.createVerticalStrut(10))
         createExplanationLabelPanel().also { promptPanel.add(it) }
         promptPanel.add(Box.createVerticalStrut(10))
-        val explanationScrollPane = createExplanationScrollPane()
+        explanationScrollPane = createExplanationScrollPane()
         promptPanel.add(explanationScrollPane)
 
         return promptPanel
@@ -178,7 +153,8 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     private fun createExplanationScrollPane(): JBScrollPane {
-        return JBScrollPane(explanationArea)
+        chatBubbles.add(ChatBubble(INTRO_MESSAGE, false))
+        return JBScrollPane(chatBubbles.myList).apply { horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER }
     }
 
     private fun createHorizontalBoxPanel(): JPanel {
@@ -189,10 +165,11 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     override fun appendToExplanation(message: String) {
         ApplicationManager.getApplication().invokeLater {
-            val doc = explanationArea.styledDocument
-            val withNewlines = message.addNewLinesIfNeeded(2)
-            doc.insertString(explanationArea.styledDocument.length, withNewlines, userStyle)
+            chatBubbles.newBubble(message)
+            explanationScrollPane.verticalScrollBar.value = explanationScrollPane.verticalScrollBar.maximum
         }
+
+
     }
 
     override fun appendToPrompt(text: String) {
@@ -213,20 +190,20 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     }
 
     override fun clearExplanation() {
-        ApplicationManager.getApplication().invokeLater {
-            explanationArea.text = ""
-        }
+        chatBubbles.myList.removeAll()
     }
 
     override fun showError(message: String) {
-        ApplicationManager.getApplication().invokeLater {
-            explanationArea.text = message
-        }
+        // TODO: Add error to a new chat bubble
     }
 
     override fun appendExplanation(explanation: String) {
         ApplicationManager.getApplication().invokeLater {
-            explanationArea.styledDocument.insertString(explanationArea.styledDocument.length, explanation, systemStyle)
+            chatBubbles.lastComponent?.let {
+                if (it.isUser) chatBubbles.newBubble(explanation, false)
+                else it.appendMessage(explanation)
+            }
+            explanationScrollPane.verticalScrollBar.value = explanationScrollPane.verticalScrollBar.maximum
         }
     }
 
@@ -247,7 +224,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     override fun clearAll() {
         ApplicationManager.getApplication().invokeLater {
             promptTextArea.text = ""
-            explanationArea.text = ""
+            clearExplanation()
         }
     }
 
@@ -257,7 +234,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     override fun onExplanationDone() {
         ApplicationManager.getApplication().invokeLater {
-            explanationArea.styledDocument.addNewLines(2)
             promptTextArea.text = ""
         }
         setFocusOnPrompt()
@@ -271,12 +247,6 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
 
     override fun updateNumberOfTokens(label: String) {
         numberOfTokens.text = label
-    }
-
-    private fun StyledDocument.addNewLines(numberOfLines: Int) {
-        val docLength = length
-        val newLines = "\n".repeat(numberOfLines)
-        insertString(docLength, newLines, null)
     }
 
     companion object {
