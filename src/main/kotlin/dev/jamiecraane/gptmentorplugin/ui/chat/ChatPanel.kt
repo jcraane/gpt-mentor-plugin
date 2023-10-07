@@ -24,6 +24,8 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     private val submitButton = JButton("Submit")
     private val numberOfTokens = JLabel("")
 
+    private lateinit var explanationScrollPane : JBScrollPane
+
     private val promptTextArea = JBTextArea(INTRO_MESSAGE).apply {
         lineWrap = true
         minimumSize = Dimension(Integer.MAX_VALUE, PROMPT_MAX_HEIGHT)
@@ -83,7 +85,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
         promptPanel.add(Box.createVerticalStrut(10))
         createExplanationLabelPanel().also { promptPanel.add(it) }
         promptPanel.add(Box.createVerticalStrut(10))
-        val explanationScrollPane = createExplanationScrollPane()
+        explanationScrollPane = createExplanationScrollPane()
         promptPanel.add(explanationScrollPane)
 
         return promptPanel
@@ -164,7 +166,9 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
     override fun appendToExplanation(message: String) {
         ApplicationManager.getApplication().invokeLater {
             chatBubbles.newBubble(message)
+            explanationScrollPane.verticalScrollBar.value = explanationScrollPane.verticalScrollBar.maximum
         }
+
 
     }
 
@@ -199,6 +203,7 @@ class ChatPanel(mainPresenter: MainPresenter) : JPanel(), ChatView {
                 if (it.isUser) chatBubbles.newBubble(explanation, false)
                 else it.appendMessage(explanation)
             }
+            explanationScrollPane.verticalScrollBar.value = explanationScrollPane.verticalScrollBar.maximum
         }
     }
 
